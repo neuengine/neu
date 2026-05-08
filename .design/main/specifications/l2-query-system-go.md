@@ -24,7 +24,7 @@ The Go implementation of the Query system provides the primary mechanism for eff
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on generics for type-safe queries and `iter` for range-over-func loops.
+- **Go 1.26.3+**: Relies on generics for type-safe queries and `iter` for range-over-func loops.
 - **Arity limits**: Fixed-arity types (`Query1` to `Query8`) are used to work around Go's variadic generic limitations.
 - **Cache validity**: Query caches are invalidated only when new archetypes are created or destroyed.
 

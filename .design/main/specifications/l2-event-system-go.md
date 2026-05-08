@@ -23,7 +23,7 @@ The Go implementation of the Event system provides decoupled communication betwe
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on generics for type-safe event/message streams and `iter` for consumption.
+- **Go 1.26.3+**: Relies on generics for type-safe event/message streams and `iter` for consumption.
 - **Double-buffering**: Events are retained for exactly two frames to ensure all systems have a chance to read them.
 - **Observer Depth**: A hard recursion limit (default 64) prevents infinite trigger loops.
 

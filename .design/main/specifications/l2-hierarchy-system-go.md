@@ -24,7 +24,7 @@ The Go implementation of the Hierarchy system enables complex entity relationshi
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on generics for relationship components and `iter` for tree walks.
+- **Go 1.26.3+**: Relies on generics for relationship components and `iter` for tree walks.
 - **Single Parent**: Each entity can have at most one `ChildOf` component.
 - **Affine Math**: Relies on `internal/math` for high-performance SIMD-friendly transform calculations.
 

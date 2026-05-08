@@ -24,7 +24,7 @@ The Go implementation of the Component system provides the data-oriented foundat
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on `reflect` for type metadata and `unique` for component identification.
+- **Go 1.26.3+**: Relies on `reflect` for type metadata and `unique` for component identification.
 - **Data Purity**: Components MUST be plain data structs; they should not contain logic or pointers to unmanaged memory.
 - **Alignment**: Component storage must respect Go's alignment requirements for the target architecture.
 

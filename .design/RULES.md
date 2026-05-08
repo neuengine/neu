@@ -208,7 +208,7 @@ To minimize redundant resource usage and improve performance, the agent may opti
 
 ### C24 — Go Standard Library First
 
-1. **Language Version**: The project targets **Go 1.26.2** or later. Code MUST utilize the latest language features, specifically:
+1. **Language Version**: The project targets **Go 1.26.3** or later. Code MUST utilize the latest language features, specifically:
     - **Generics & Self-referential Types**: for complex ECS relationships.
     - **Bitmask Matching**: Queries utilizes 128-bit bitmask-based archetype matching (O(1)).
     - **Range-over-func Iteration**: Using `iter.Seq2` for all entity and component traversals.

@@ -24,7 +24,7 @@ The Go implementation of the Type Registry provides the metadata foundation for 
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies heavily on the `reflect` package and generics.
+- **Go 1.26.3+**: Relies heavily on the `reflect` package and generics.
 - **Initialization-Only Registration**: Types must be registered during application setup; registration is not thread-safe and is locked after init.
 - **Struct Alignment**: Relies on `reflect` to correctly compute field offsets and struct padding for memory-safe access.
 

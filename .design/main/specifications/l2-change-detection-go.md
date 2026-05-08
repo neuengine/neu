@@ -23,7 +23,7 @@ The Go implementation of change detection provides the high-performance tracking
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on modern Go features like `iter` for removals and `unique` for component identification.
+- **Go 1.26.3+**: Relies on modern Go features like `iter` for removals and `unique` for component identification.
 - **Tick wrapping**: A `uint32` is assumed to never wrap within a single game session (~828 days at 60Hz).
 - **Single-writer rule**: Only one system may have mutable access to a component type at a time (enforced by the scheduler).
 

@@ -23,7 +23,7 @@ The tree below describes the intended target architecture, not the current compl
 
 ```plaintext
 ecs-engine/                 # Root of the engine project
-├── cmd/                    # CLI tools and standalone executables (Go 1.26.2)
+├── cmd/                    # CLI tools and standalone executables (Go 1.26.3)
 │   ├── cli/                # Scaffolding and project management tool
 │   ├── ci/                 # CI automation tool (l1-build-tooling §4.1)
 │   │   ├── main.go         # Subcommand dispatch: format, vet, lint, test, bench, …

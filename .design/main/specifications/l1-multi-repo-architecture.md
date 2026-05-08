@@ -110,7 +110,7 @@ The editor depends on the engine as a versioned Go module. This is the only stru
 // ecs-editor/go.mod (development)
 module github.com/org/ecs-editor
 
-go 1.26.2
+go 1.26.3
 
 require github.com/org/ecs-engine v0.3.0
 

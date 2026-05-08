@@ -23,7 +23,7 @@ The Go implementation of the Entity system provides the core identity mechanism 
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Uses `unique` for internal labels if needed, though pure `uint64` is preferred for IDs.
+- **Go 1.26.3+**: Uses `unique` for internal labels if needed, though pure `uint64` is preferred for IDs.
 - **Memory Efficiency**: Entity IDs are packed into a single word to avoid pointer overhead in large slices.
 - **Generation limit**: A `uint32` generation counter is assumed to never wrap for a single slot in a session (~4 billion reuses).
 

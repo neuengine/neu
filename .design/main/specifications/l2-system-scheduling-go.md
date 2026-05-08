@@ -24,7 +24,7 @@ The Go implementation of the System Scheduling provides the execution engine for
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on generics for type-safe system parameters and reflection for injection.
+- **Go 1.26.3+**: Relies on generics for type-safe system parameters and reflection for injection.
 - **DAG Consistency**: Schedules must be acyclic; cycles are detected and rejected at build time.
 - **Access Safety**: Systems must declare their data access (`Read`/`Write`) to enable safe parallelism.
 

@@ -29,7 +29,7 @@ A concrete Go implementation of the World is needed to:
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on modern Go features like `unique`, `iter`, and `simd`.
+- **Go 1.26.3+**: Relies on modern Go features like `unique`, `iter`, and `simd`.
 - **Memory Locality**: Storage MUST remain contiguous to maximize cache hits.
 - **Pinning**: Large component blocks are managed in a way that minimizes GC pressure (reuse via sync.Pool).
 

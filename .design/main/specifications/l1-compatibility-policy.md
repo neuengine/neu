@@ -38,11 +38,11 @@ The engine maintains a strict "Latest + 1" support policy.
 
 | Engine Version | Min Go Version | Primary Features Used |
 | :--- | :--- | :--- |
-| **v0.1.x** | Go 1.26.2 | Green Tea GC, SIMD, Enhanced `new`, Iterators (Go 1.23+) |
+| **v0.1.x** | Go 1.26.3 | Green Tea GC, SIMD, Enhanced `new`, Iterators (Go 1.23+) |
 
 ### 3.1 Support Window
 
-- **Active Development**: Targets the absolute latest stable Go release (currently Go 1.26.2).
+- **Active Development**: Targets the absolute latest stable Go release (currently Go 1.26.3).
 - **Maintenance**: Supports the current (N) and previous (N-1) major Go releases.
 - **Deprecation**: Support for a Go version is dropped when it becomes N-2 relative to the current Go release, unless otherwise specified.
 

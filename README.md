@@ -1,7 +1,7 @@
 # ECS Engine
 
 ![Engine Version](https://img.shields.io/badge/engine-v1.5.206-blue)
-![Go Version](https://img.shields.io/badge/go-1.26.2-00ADD8)
+![Go Version](https://img.shields.io/badge/go-1.26.3-00ADD8)
 ![Phase](https://img.shields.io/badge/phase-1_ECS_Core_POC-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 

@@ -24,7 +24,7 @@ The Go implementation of the Command system provides a safe, deferred mechanism 
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Uses `atomic` for thread-safe entity reservation and `unique` for command tagging if needed.
+- **Go 1.26.3+**: Uses `atomic` for thread-safe entity reservation and `unique` for command tagging if needed.
 - **FIFO Ordering**: Commands are applied strictly in the order they were pushed to the buffer.
 - **Single-writer sync**: Command application (flush) is a serialized process at synchronization points.
 

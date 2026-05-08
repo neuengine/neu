@@ -23,7 +23,7 @@ The Go implementation of the App framework provides the glue that binds the ECS 
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Uses `unique` for plugin identification and labels.
+- **Go 1.26.3+**: Uses `unique` for plugin identification and labels.
 - **Single-threaded Builder**: App construction is not concurrent safe; `Run()` starts the execution environment.
 
 ## 3. Core Invariants

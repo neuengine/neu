@@ -24,7 +24,7 @@ The Go implementation of the Input system provides a unified, cross-platform int
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on generics for type-safe input mapping and `comparable` constraints on maps.
+- **Go 1.26.3+**: Relies on generics for type-safe input mapping and `comparable` constraints on maps.
 - **PreUpdate Schedule**: Input state is updated at the beginning of each frame before any user systems execute.
 - **Coordinate System**: Mouse/Touch positions are window-relative pixels (top-left is 0,0).
 

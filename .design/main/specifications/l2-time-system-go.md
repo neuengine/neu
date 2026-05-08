@@ -24,7 +24,7 @@ The Go implementation of the Time system provides precise, multi-dimensional tim
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on `time.Duration` and `time.Time` from the standard library.
+- **Go 1.26.3+**: Relies on `time.Duration` and `time.Time` from the standard library.
 - **Single Source**: Wall-clock time is sampled exactly once per frame at the start of the `First` schedule.
 - **Accumulator Safety**: Fixed time accumulation is capped (default 1s) to prevent "death spirals."
 

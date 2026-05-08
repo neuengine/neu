@@ -24,7 +24,7 @@ The Go implementation of the State system provides a hierarchical, type-safe fin
 
 ## 2. Constraints & Assumptions
 
-- **Go 1.26.2+**: Relies on generics for type-safe state resources and `comparable` constraints for transition checks.
+- **Go 1.26.3+**: Relies on generics for type-safe state resources and `comparable` constraints for transition checks.
 - **Single Transition**: Only one transition per state type can be pending at a time (last one wins).
 - **Schedule Flush**: Transitions are processed at explicit synchronization points in the main schedule.
 

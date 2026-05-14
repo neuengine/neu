@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-05-01
+**Generated:** 2026-05-14
 
 ## Active Technologies
 
@@ -24,6 +24,7 @@
 ├── examples/
 │   ├── 2d/
 │   ├── 3d/
+│   ├── README.md
 │   ├── app/
 │   ├── asset/
 │   ├── audio/
@@ -56,7 +57,6 @@
 └── pkg/
     ├── codegen/
     ├── diagnostic/
-    ├── editor/
     ├── math/
     ├── platform/
     └── protocol/

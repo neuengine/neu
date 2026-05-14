@@ -1,4 +1,4 @@
-# ECS Lifecycle and Optimization Patterns
+﻿# ECS Lifecycle and Optimization Patterns
 
 **Version:** 0.2.0
 **Status:** Draft
@@ -182,4 +182,5 @@ Function Release(pool, entity):
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial Draft of lifecycle and optimization patterns |
 | 0.2.0 | 2026-03-28 | Added frame delay mitigation strategies, entity object pooling pattern |
+| 0.3.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |
 | [example](examples/ecs-lifecycle) | | TBD: Placeholder for correlation |

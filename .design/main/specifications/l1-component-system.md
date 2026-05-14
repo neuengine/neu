@@ -1,4 +1,4 @@
-# Component System
+﻿# Component System
 
 **Version:** 0.4.0
 **Status:** Draft
@@ -270,4 +270,4 @@ The following patterns are known to cause subtle bugs and architectural decay. A
 | 0.2.0 | 2026-03-26 | Added component attachment validation rules, associated data pattern |
 | 0.3.0 | 2026-03-28 | Added anti-patterns section (shared mutable refs, bool flags, god components, monolithic systems) |
 | 0.4.0 | 2026-04-19 | Added `## 1. Motivation` section (RULES §5 compliance) |
-| — | — | Planned examples: `examples/ecs/` |
+| 0.5.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |

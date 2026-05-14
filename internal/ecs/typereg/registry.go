@@ -13,6 +13,7 @@ type TypeRegistration struct {
 	Name   string
 	Type   reflect.Type
 	Fields []FieldInfo
+	Hooks  TypeHooks
 	Tags   TypeTags
 	Size   uintptr
 	Align  uintptr

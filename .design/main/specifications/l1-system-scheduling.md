@@ -1,4 +1,4 @@
-# System Scheduling
+﻿# System Scheduling
 
 **Version:** 0.4.0
 **Status:** Draft
@@ -303,4 +303,4 @@ Test "NoAmbiguities":
 | 0.2.0 | 2026-03-26 | Added automatic system discovery, dual-phase registration, dependency graph, flexible registration |
 | 0.3.0 | 2026-03-28 | Added system ordering verification and testing patterns |
 | 0.4.0 | 2026-04-20 | Added explicit UIUpdate and UILateUpdate schedule sets based on 3D Engine analysis |
-| — | — | Planned examples: `examples/ecs/` |
+| 0.5.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |

@@ -129,5 +129,6 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-05-01
+- **Last Updated**: 2026-05-14
 - **Total Specifications**: 79 (63 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 79
+- **Engine Version:** 2.1.27

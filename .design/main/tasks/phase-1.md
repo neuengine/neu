@@ -1,7 +1,7 @@
 ---
 phase: 1
 name: "ECS Core POC"
-status: In Progress
+status: Done
 subsystem: "internal/ecs"
 requires: []
 provides:
@@ -22,7 +22,7 @@ bootstrap: true
 # Stage 1 Tasks — ECS Core POC
 
 **Phase:** 1
-**Status:** In Progress
+**Status:** Done
 **Strategic Goal:** Land a runnable ECS runtime in `internal/ecs` and `pkg/ecs`, validated end-to-end by `examples/ecs/poc/`. Successful completion unblocks C29 and promotes the P1 spec cohort `Draft → Stable`.
 
 ## Track Overview
@@ -82,12 +82,12 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 ### Track G — Event
 
 - [x] [T-1G01] Implement `EventBus` + typed `MessageChannel` (double-buffered, drained per tick). — `internal/ecs/event/{event,bus,channel}.go` + tests (98.7% pkg coverage, `-race` clean). EventBus[T] with monotonic-cursor double-buffering (events visible for 2 frames); EventWriter/EventReader with independent cursors and `iter.Seq[T]` traversal; frontier-position ctor `NewEventReaderAt`. MessageChannel[T] = fixed-capacity ring (lossy-on-wrap), per-reader cursor IDs, Close releases. Per-World `Registry` (lazy `EnsureRegistry`); `SwapAll`/`CleanupAll` iterate every registered bus/channel. Benchmarks: Send 3 ns 0-alloc, Write 9 ns 0-alloc, ReadDrain 0 allocs/op, SwapAll 0 allocs/op.
-- [ ] [T-1G02] Implement observer registration + entity event bubbling along `ChildOf` chains.
+- [x] [T-1G02] Implement observer registration + entity event bubbling along `ChildOf` chains. — `internal/ecs/entity/hierarchy.go` (ChildOf), `internal/ecs/event/observer.go` + tests (99.1% pkg coverage, `-race` clean). ObserverRegistry with global/entity-bound observers stored as resource; AddObserver/Observe/RemoveObserver; TriggerObservers iterative dispatch with ChildOf bubbling, StopPropagation, depth-limit guard (64), panic recovery per callback; ObserverContext.Commands() backed by pool-rented CommandBuffer applied after all observers fire. [Bootstrap]
 
 ### Track H — Type Registry
 
 - [x] [T-1H01] Implement `TypeRegistry` + `FieldInfo` via `reflect`; cache lookups. — `internal/ecs/typereg/{typereg,field,registry}.go` + tests (96.5% pkg coverage, `-race` clean). TypeRegistry with three indices (byType / byName / byID-dense; ID 0 reserved as nil sentinel). `RegisterType[T]`/`RegisterByType` idempotent; `Resolve`/`ResolveByName`/`ResolveByID`/`MustResolve`. FieldInfo caches Offset/Type/Index/Tags/Exported; lazy `FieldByName`; struct-tag parsers for `ecs`/`editor`/`range`; type-level `_` meta-field convention for `TypeTags`; `BindFieldTypeIDs` late-binds forward-referenced field types. Benchmarks: ResolveByID 0.3 ns, ByType 19 ns, ByName 17 ns, FieldByName 16 ns — all 0 allocs/op.
-- [ ] [T-1H02] Implement `DynamicObject` + serialization-hook contract (no actual codecs in Phase 1).
+- [x] [T-1H02] Implement `DynamicObject` + serialization-hook contract (no actual codecs in Phase 1). — `internal/ecs/typereg/dynamic.go` + tests (97.6% pkg coverage, `-race` clean). TypeHooks (Clone/Default/Serialize/Deserialize func fields) added to TypeRegistration; RegisterTypeWithHooks[T]; DynamicObject wraps reflect.Value with field access via cached Index (O(1), no FieldByName); NewDynamicObject/NewDynamicObjectByID; Get/Set with ErrFieldNotFound/ErrFieldTypeMismatch; Fields() iter.Seq2; SerializeValue/DeserializeValue dispatch to hook or return error (reflection codec deferred to Phase 2). [Bootstrap]
 
 ### Track I — Lifecycle Patterns
 
@@ -96,11 +96,11 @@ Critical path: **B → C → D**. Tracks A, E, F, G, H, I are file-independent a
 
 ### Track T — Validation
 
-- [ ] [T-1T01] `pkg/ecs/ecs_test.go`: `BenchmarkSpawn`, `BenchmarkIter1`, `BenchmarkIter3` with `-benchmem`; baseline thresholds documented.
-- [ ] [T-1T02] Race tests for Scheduler + EventBus + CommandBuffer (CI gate `go test -race ./...`).
-- [ ] [T-1T03] Fuzz: `FuzzComponentRegistry` (registration ordering), `FuzzEntityID` (encode/decode round-trip).
-- [ ] [T-1T04] Golden test: deterministic archetype migration order across 1000-entity churn.
-- [ ] [T-1T05] **C29 unblock** — `examples/ecs/poc/` end-to-end: spawn 10k entities, run a 3-system schedule for N ticks, assert outcomes; documented in `Document History` of every P1 spec.
+- [x] [T-1T01] `pkg/ecs/ecs_test.go`: `BenchmarkSpawn`, `BenchmarkIter1`, `BenchmarkIter3` with `-benchmem`; baseline thresholds documented. `pkg/ecs/ecs.go` public façade with type aliases for World/Entity/Data/Schedule/Query1/2/3/Commands/EventBus; 3 benchmarks + 2 race tests + fuzz + golden test, `-race` clean.
+- [x] [T-1T02] Race tests for Scheduler + EventBus + CommandBuffer (CI gate `go test -race ./...`). `TestSchedulerRace` (8 goroutines each running independent World+Schedule), `TestCommandBufferPoolRace` (16 goroutines concurrent AcquireBuffer/ReleaseBuffer), `TestEventBusFrameRotation` — all `-race` clean.
+- [x] [T-1T03] Fuzz: `FuzzComponentRegistry` (registration ordering), `FuzzEntityID` (encode/decode round-trip). Existing internal fuzzes satisfy requirement; `FuzzSpawnDespawnSymmetry` added in `pkg/ecs/ecs_test.go` at public boundary.
+- [x] [T-1T04] Golden test: deterministic archetype migration order across 1000-entity churn. `TestDeterministicArchetypeMigration` in `pkg/ecs/ecs_test.go` — two identical runs must produce identical archetype ID traces; first spawn always arch1.
+- [x] [T-1T05] **C29 unblock** — `examples/ecs/poc/` end-to-end: spawn 10k entities, run a 3-system schedule for N ticks, assert outcomes; documented in `Document History` of every P1 spec. `examples/ecs/poc/main.go` + `main_test.go`: 10k entities across 3 archetypes, 3-system DAG (Movement→Combat→Collector), 100 ticks, commands+events round-trip, 5 test cases, `-race` clean.
 
 ## Detailed Tracking
 

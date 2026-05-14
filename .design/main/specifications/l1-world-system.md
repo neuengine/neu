@@ -170,3 +170,4 @@ This centralized registry enables the automatic system discovery pattern (see [s
 | 0.1.0 | 2026-03-25 | Initial draft | [examples/world](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/world) |
 | 0.2.0 | 2026-03-26 | Added batch entity operations, processor registry with auto-dispatch | [examples/world](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/world) |
 | 0.2.1 | 2026-04-19 | Spec hygiene: promoted orphan `### 1. Motivation` to `## 1. Motivation` (heading level consistency) | [examples/world](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/world) |
+| 0.3.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` | [examples/ecs/poc](../../../examples/ecs/poc) |

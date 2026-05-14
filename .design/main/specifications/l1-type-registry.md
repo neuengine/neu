@@ -1,4 +1,4 @@
-# Type Registry
+﻿# Type Registry
 
 **Version:** 0.2.0
 **Status:** Draft
@@ -124,4 +124,4 @@ This enables system dependency declarations like "I require any component implem
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added default processor discovery, interface-based type matching |
-| — | — | Planned examples: `examples/reflect/` |
+| 0.3.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |

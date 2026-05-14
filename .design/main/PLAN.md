@@ -1,15 +1,15 @@
 # Implementation Plan — ECS Engine
 
-**Version:** 1.1.0
-**Generated:** 2026-04-25
-**Based on:** .design/main/INDEX.md v2.22.0
+**Version:** 1.2.0
+**Generated:** 2026-05-14
+**Based on:** .design/main/INDEX.md v2.23.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
 **Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until C29 unblock via `examples/ecs/poc/`.
 
 ## Overview
 
-Force-Bootstrap regeneration of the implementation plan. Every registered specification (78 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
+Force-Bootstrap regeneration of the implementation plan. Every registered specification (79 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
 
 - **STOP FACTOR**: phases ≥ 4 are frozen (`Hold`) until Phase 1 (POC) is validated by code in `examples/ecs/poc/` (C29).
 - **Layer Order**: every L1 concept spec is scheduled before its L2 Go implementation within the same phase.
@@ -103,6 +103,7 @@ Dependency analysis (Implements: chains):
 - [ ] **AI Assistant System** ([l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md)) [L1]
 - [ ] **Plugin Distribution** ([l1-plugin-distribution.md](specifications/l1-plugin-distribution.md)) [L1] `[Bootstrap]`
 - [ ] **AI API Plugin** ([l1-ai-api-plugin.md](specifications/l1-ai-api-plugin.md)) [L1] `[Bootstrap]`
+- [ ] **Visual Graph System** ([l1-visual-graph-system.md](specifications/l1-visual-graph-system.md)) [L1] `[Bootstrap]`
 - [ ] **Examples Framework** ([l1-examples-framework.md](specifications/l1-examples-framework.md)) [L1]
 - [ ] **Compatibility Policy** ([l1-compatibility-policy.md](specifications/l1-compatibility-policy.md)) [L1]
 - [ ] **Error Core** ([l1-error-core.md](specifications/l1-error-core.md)) [L1]
@@ -168,3 +169,4 @@ Dependency analysis (Implements: chains):
 | :--- | :--- | :--- |
 | 1.0.0 | 2026-04-25 | Force-Bootstrap regeneration; 76 specs mapped across 8 phases |
 | 1.1.0 | 2026-05-01 | Added `l1-plugin-distribution` + `l1-ai-api-plugin` to Phase 6 (UI, Tooling & Quality); INDEX v2.22.0 |
+| 1.2.0 | 2026-05-14 | Added `l1-visual-graph-system` to Phase 6 (Track P already decomposed in `tasks/phase-6.md` as T-6P01..04); INDEX v2.23.0 |

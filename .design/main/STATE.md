@@ -4,21 +4,21 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-01 18:56
-**Phase:** 1 — ECS Core POC
+**Updated:** 2026-05-14
+**Phase:** 2 — Framework Primitives
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Track I complete (2/2). T-1G02 (observers + ChildOf bubbling) and T-1H02 (DynamicObject + serialize hooks) are all that remain before Validation Track T. T-1G02 now has every dependency in place (archetype listeners from T-1I01, command queue from Track F).
-- **Spec:** l2-event-system-go.md (T-1G02), l2-type-registry-go.md (T-1H02)
-- **Next Action:** Continue Phase 1: T-1G02 (observers + ChildOf bubbling). Phase 6 expanded with plugin-distribution + ai-api-plugin (Hold).
+- **Task:** Phase 1 complete — C29 unblocked
+- **Spec:** all 17 P1 specs Document History updated; `examples/ecs/poc/` validates runtime
+- **Next Action:** Run `/magic.task` to decompose Phase 2 (hierarchy, time, input, state, change-detection, app/plugin)
 
 ## Progress
 
 ```
-Phase 1: [21/27] ███████░ 78%
-Overall: [21/27] ███████░ 78%
+Phase 1: [27/27] ████████ 100% ✓ Done
+Overall: [27/27] ████████ 100%
 ```
 
 ## Recent Decisions

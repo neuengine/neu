@@ -1,4 +1,4 @@
-# Event System — Go Implementation
+﻿# Event System — Go Implementation
 
 **Version:** 0.1.0
 **Status:** Draft
@@ -411,3 +411,4 @@ var (
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial L2 draft |
+| 0.2.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |

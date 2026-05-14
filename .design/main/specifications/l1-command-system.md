@@ -1,4 +1,4 @@
-# Command System
+﻿# Command System
 
 **Version:** 0.1.0
 **Status:** Draft
@@ -126,4 +126,4 @@ Use `CommandBuffer` for spawn, despawn, and component insert/remove to ensure it
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
-| — | — | Planned examples: `examples/ecs/` |
+| 0.2.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |

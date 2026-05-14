@@ -1,4 +1,4 @@
-# Entity System
+﻿# Entity System
 
 **Version:** 0.3.0
 **Status:** Draft
@@ -191,4 +191,4 @@ Not all entities represent visible game objects. Entities are equally suited for
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-03-26 | Added dual-phase entity registration, entity reference counting |
 | 0.3.0 | 2026-03-28 | Added abstract concept entities pattern (squads, sessions, quests as entities) |
-| — | — | Planned examples: `examples/ecs/` |
+| 0.4.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |

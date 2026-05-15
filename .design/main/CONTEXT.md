@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-05-14
+**Generated:** 2026-05-15
 
 ## Active Technologies
 
@@ -11,16 +11,16 @@
 ```plaintext
 .
 ├── .design/
+│   ├── .cache/
 │   ├── .graph-cache/
+│   ├── .version
 │   ├── INDEX.md
 │   ├── RULES.md
 │   ├── main/
 │   ├── wiki/
 │   └── workspace.json
 ├── cmd/
-│   ├── ci/
-│   ├── cli/
-│   └── showcase/
+│   └── cli/
 ├── examples/
 │   ├── 2d/
 │   ├── 3d/
@@ -36,30 +36,9 @@
 │   ├── ui/
 │   └── world/
 ├── internal/
-│   ├── app/
-│   ├── asset/
-│   ├── audio/
-│   ├── definition/
-│   ├── ecs/
-│   ├── events/
-│   ├── hierarchy/
-│   ├── hotreload/
-│   ├── input/
-│   ├── network/
-│   ├── physics/
-│   ├── registry/
-│   ├── render/
-│   ├── scene/
-│   ├── state/
-│   ├── time/
-│   ├── ui/
-│   └── window/
+│   └── ecs/
 └── pkg/
-    ├── codegen/
-    ├── diagnostic/
-    ├── math/
-    ├── platform/
-    └── protocol/
+    └── ecs/
 ```
 
 ## Recent Changes

@@ -1,8 +1,8 @@
 # Master Task Index (Registry)
 
-**Version:** 1.3.0
-**Generated:** 2026-05-14
-**Based on:** .design/main/PLAN.md v1.2.0
+**Version:** 1.4.0
+**Generated:** 2026-05-15
+**Based on:** .design/main/PLAN.md v1.3.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Execution Mode:** Parallel (per C3)
 **Status:** Active

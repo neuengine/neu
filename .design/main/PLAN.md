@@ -1,8 +1,8 @@
 # Implementation Plan — Bolt Engine
 
-**Version:** 1.2.0
-**Generated:** 2026-05-14
-**Based on:** .design/main/INDEX.md v2.23.0
+**Version:** 1.3.0
+**Generated:** 2026-05-15
+**Based on:** .design/main/INDEX.md v2.24.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
 **Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until C29 unblock via `examples/ecs/poc/`.
@@ -52,6 +52,7 @@ Dependency analysis (Implements: chains):
 - [ ] **Time System (Go)** ([l2-time-system-go.md](specifications/l2-time-system-go.md)) [L2] `[Bootstrap]`
 - [ ] **Input System** ([l1-input-system.md](specifications/l1-input-system.md)) [L1] `[Bootstrap]`
 - [ ] **Input System (Go)** ([l2-input-system-go.md](specifications/l2-input-system-go.md)) [L2] `[Bootstrap]`
+- [ ] **Input System Codes (Go)** ([l2-input-system-go-codes.md](specifications/l2-input-system-go-codes.md)) [L2] `[Bootstrap]`
 - [ ] **State System** ([l1-state-system.md](specifications/l1-state-system.md)) [L1] `[Bootstrap]`
 - [ ] **State System (Go)** ([l2-state-system-go.md](specifications/l2-state-system-go.md)) [L2] `[Bootstrap]`
 - [ ] **Change Detection** ([l1-change-detection.md](specifications/l1-change-detection.md)) [L1] `[Bootstrap]`
@@ -94,16 +95,20 @@ Dependency analysis (Implements: chains):
 *Definition layer, window/UI, diagnostics, build & CLI tooling, platform abstraction, AI assistant surface, examples framework, compatibility policy, error taxonomy, benchmark suite, codegen.*
 
 - [ ] **Definition System** ([l1-definition-system.md](specifications/l1-definition-system.md)) [L1]
+- [ ] **Definition Integration** ([l1-definition-integration.md](specifications/l1-definition-integration.md)) [L1] `[Bootstrap]`
 - [ ] **Window System** ([l1-window-system.md](specifications/l1-window-system.md)) [L1]
 - [ ] **Diagnostic System** ([l1-diagnostic-system.md](specifications/l1-diagnostic-system.md)) [L1]
 - [ ] **UI System** ([l1-ui-system.md](specifications/l1-ui-system.md)) [L1]
 - [ ] **Build Tooling** ([l1-build-tooling.md](specifications/l1-build-tooling.md)) [L1]
 - [ ] **CLI Tooling** ([l1-cli-tooling.md](specifications/l1-cli-tooling.md)) [L1]
+- [ ] **Code Documentation** ([l1-code-documentation.md](specifications/l1-code-documentation.md)) [L1] `[Bootstrap]`
+- [ ] **Code Documentation (Go)** ([l2-code-documentation-go.md](specifications/l2-code-documentation-go.md)) [L2] `[Bootstrap]`
 - [ ] **Platform System** ([l1-platform-system.md](specifications/l1-platform-system.md)) [L1]
 - [ ] **AI Assistant System** ([l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md)) [L1]
 - [ ] **Plugin Distribution** ([l1-plugin-distribution.md](specifications/l1-plugin-distribution.md)) [L1] `[Bootstrap]`
 - [ ] **AI API Plugin** ([l1-ai-api-plugin.md](specifications/l1-ai-api-plugin.md)) [L1] `[Bootstrap]`
 - [ ] **Visual Graph System** ([l1-visual-graph-system.md](specifications/l1-visual-graph-system.md)) [L1] `[Bootstrap]`
+- [ ] **Visual Graph Editor Bridge (Go)** ([l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md)) [L2] `[Bootstrap]`
 - [ ] **Examples Framework** ([l1-examples-framework.md](specifications/l1-examples-framework.md)) [L1]
 - [ ] **Compatibility Policy** ([l1-compatibility-policy.md](specifications/l1-compatibility-policy.md)) [L1]
 - [ ] **Error Core** ([l1-error-core.md](specifications/l1-error-core.md)) [L1]

@@ -43,8 +43,8 @@ func BenchmarkIter1(b *testing.B) {
 		b.Fatalf("NewQuery1: %v", err)
 	}
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+	
+	for b.Loop() {
 		for _, p := range q.All(w) {
 			_ = p.X
 		}

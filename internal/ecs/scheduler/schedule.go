@@ -19,11 +19,11 @@ var ErrUnknownSystem = errors.New("ecs: unknown system referenced in ordering co
 // component access (T-1E01), run conditions, and set memberships (both
 // added in T-1E03).
 type SystemNode struct {
-	id         SystemNodeID
 	system     System
-	access     query.Access
 	conditions []RunCondition
 	sets       []SystemSet
+	access     query.Access
+	id         SystemNodeID
 }
 
 // ID returns the node's index in the schedule.
@@ -59,13 +59,13 @@ func (n *SystemNode) Sets() []SystemSet { return n.sets }
 //  3. Self-loops (from == to) are rejected as cycles, surfacing as
 //     [ErrScheduleCycle].
 type Schedule struct {
+	dag        *DAG
+	nameToID   map[string]SystemNodeID
+	setConfigs map[SystemSet]*systemSetConfig
 	name       string
 	nodes      []SystemNode
-	nameToID   map[string]SystemNodeID
 	beforeRefs []orderingRef
 	afterRefs  []orderingRef
-	setConfigs map[SystemSet]*systemSetConfig
-	dag        *DAG
 	order      []SystemNodeID
 	built      bool
 }
@@ -75,8 +75,8 @@ type Schedule struct {
 // time so users can declare constraints in any order, including against
 // systems added later.
 type orderingRef struct {
-	source SystemNodeID
 	target string
+	source SystemNodeID
 }
 
 // NewSchedule creates an empty schedule.
@@ -256,8 +256,8 @@ func (s *Schedule) ConfigureSet(set SystemSet) *SystemSetBuilder {
 // [Schedule.Build].
 type SystemNodeBuilder struct {
 	sched *Schedule
-	id    SystemNodeID
 	err   error
+	id    SystemNodeID
 }
 
 // ID returns the assigned [SystemNodeID]. Returns the zero value if the

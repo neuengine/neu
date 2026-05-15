@@ -6,8 +6,8 @@ package entity
 // Implementation: dense slice + sparse map[EntityID]int. Removal uses
 // swap-and-pop on the dense slice to keep iteration contiguous.
 type EntitySet struct {
-	dense  []Entity
 	sparse map[EntityID]int
+	dense  []Entity
 }
 
 // NewEntitySet creates an empty EntitySet.

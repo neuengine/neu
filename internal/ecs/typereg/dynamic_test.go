@@ -320,13 +320,13 @@ func TestDynamicObject_Set_AllFieldTypes(t *testing.T) {
 	d, _ := typereg.NewDynamicObject(r, ps)
 
 	tests := []struct {
-		field string
 		value any
+		field string
 	}{
-		{"HP", 42},
-		{"Speed", float32(3.14)},
-		{"Name", "warrior"},
-		{"Hidden", true},
+		{field: "HP", value: 42},
+		{field: "Speed", value: float32(3.14)},
+		{field: "Name", value: "warrior"},
+		{field: "Hidden", value: true},
 	}
 	for _, tc := range tests {
 		if err := d.Set(tc.field, tc.value); err != nil {

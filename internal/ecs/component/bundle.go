@@ -6,8 +6,8 @@ import "reflect"
 // transport unit between [Bundle.Components] and the World's spawn / insert
 // machinery. A Data with ID == 0 is the zero / invalid sentinel.
 type Data struct {
-	ID    ID
 	Value any
+	ID    ID
 }
 
 // IsValid reports whether the Data carries a registered component ID.

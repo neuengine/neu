@@ -2,7 +2,7 @@ package scheduler
 
 import (
 	"errors"
-	"sort"
+	"slices"
 )
 
 // SystemNodeID indexes a node within a [DAG]. IDs are dense, contiguous
@@ -23,11 +23,11 @@ var ErrScheduleCycle = errors.New("ecs: cycle detected in schedule DAG")
 // access metadata, or run conditions. Higher layers ([Schedule]) translate
 // scheduler concerns into edges and read back the order.
 type DAG struct {
-	nodeCount int
 	edges     map[edge]struct{}
 	adj       [][]SystemNodeID
 	inDegree  []int
 	sorted    []SystemNodeID
+	nodeCount int
 	built     bool
 }
 
@@ -92,7 +92,7 @@ func (d *DAG) Build() error {
 		d.inDegree[e.to]++
 	}
 	for i := range d.adj {
-		sort.Slice(d.adj[i], func(a, b int) bool { return d.adj[i][a] < d.adj[i][b] })
+		slices.Sort(d.adj[i])
 	}
 
 	// Use a sorted slice as the "ready" frontier so output ordering is
@@ -114,10 +114,8 @@ func (d *DAG) Build() error {
 			d.inDegree[dst]--
 			if d.inDegree[dst] == 0 {
 				// Insert keeping ready sorted ascending.
-				i := sort.Search(len(ready), func(i int) bool { return ready[i] >= dst })
-				ready = append(ready, 0)
-				copy(ready[i+1:], ready[i:])
-				ready[i] = dst
+				i, _ := slices.BinarySearch(ready, dst)
+				ready = slices.Insert(ready, i, dst)
 			}
 		}
 	}

@@ -58,8 +58,8 @@ func (c *Commands) Add(cmd Command) {
 // EntityCommands provides a fluent API for mutating a single entity via
 // queued commands. All methods enqueue commands; none apply them immediately.
 type EntityCommands struct {
-	entity entity.Entity
 	buffer *CommandBuffer
+	entity entity.Entity
 }
 
 // Entity returns the target entity.
@@ -99,8 +99,8 @@ func (ec *EntityCommands) WithChildren(fn func(spawner *ChildSpawner)) *EntityCo
 // The ChildOf component link is injected in Track I; for Phase 1 the
 // spawner enqueues plain SpawnCommands without the parent link.
 type ChildSpawner struct {
-	parent entity.Entity
 	buffer *CommandBuffer
+	parent entity.Entity
 }
 
 // Parent returns the owner entity this spawner is scoped to.

@@ -9,19 +9,17 @@ import (
 // type. Field offsets, tags, and type-level attributes are computed once at
 // registration so subsequent lookups never call into reflect.
 type TypeRegistration struct {
-	ID     TypeID
-	Name   string
-	Type   reflect.Type
-	Fields []FieldInfo
-	Hooks  TypeHooks
-	Tags   TypeTags
-	Size   uintptr
-	Align  uintptr
-
-	// fieldByName is built lazily on first Field lookup so types that are
-	// only iterated by index pay no map cost. Nil until populated.
+	Hooks       TypeHooks
+	Type        reflect.Type
+	Name        string
 	fieldByName map[string]int
+	Fields      []FieldInfo
+	Align       uintptr
+	Size        uintptr
+	ID          TypeID
+	Tags        TypeTags
 }
+
 
 // FieldByName returns the [FieldInfo] for the field named name, or nil when
 // the field is absent. The lookup map is built lazily on first call.

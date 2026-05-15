@@ -2,7 +2,7 @@ package world
 
 import (
 	"encoding/binary"
-	"sort"
+	"slices"
 
 	"github.com/teratron/boltengine/internal/ecs/component"
 	"github.com/teratron/boltengine/internal/ecs/entity"
@@ -29,11 +29,11 @@ type ArchetypeEdge struct {
 // entities tracks which entity occupies each row; len(entities) is always
 // equal to the table's row count when table != nil.
 type Archetype struct {
-	id           ArchetypeID
-	componentIDs []component.ID
-	table        *component.Table
-	entities     []entity.Entity
 	edges        map[component.ID]ArchetypeEdge
+	table        *component.Table
+	componentIDs []component.ID
+	entities     []entity.Entity
+	id           ArchetypeID
 }
 
 // ID returns the archetype's identifier.
@@ -57,12 +57,7 @@ func (a *Archetype) Table() *component.Table { return a.table }
 
 // Has reports whether the archetype includes the given component ID.
 func (a *Archetype) Has(id component.ID) bool {
-	for _, cid := range a.componentIDs {
-		if cid == id {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(a.componentIDs, id)
 }
 
 // entityRecord locates a live entity inside the World: which archetype it
@@ -81,15 +76,11 @@ type ListenerID uint32
 // (no components, ID 0) is created at construction so SpawnEmpty has a
 // well-defined home for its entities.
 type ArchetypeStore struct {
-	archetypes []Archetype
-	index      map[string]ArchetypeID
-
-	// listeners receive a callback whenever findOrCreate produces a new
-	// archetype. Used by [view.View] (Track I) and observers (Track G/T-1G02)
-	// to react to graph deltas without polling.
+	index          map[string]ArchetypeID
 	listeners      map[ListenerID]func(*Archetype)
-	generation     uint32
+	archetypes     []Archetype
 	nextListenerID ListenerID
+	generation     uint32
 }
 
 // newArchetypeStore creates a store seeded with the empty archetype.
@@ -231,22 +222,20 @@ func componentSetKey(sortedIDs []component.ID) string {
 // sortIDsAscending returns a sorted copy of ids.
 func sortIDsAscending(ids []component.ID) []component.ID {
 	out := append([]component.ID(nil), ids...)
-	sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
+	slices.Sort(out)
 	return out
 }
 
 // withID returns a sorted copy of `sorted` with `id` inserted (no-op if
 // already present).
 func withID(sorted []component.ID, id component.ID) []component.ID {
-	for _, v := range sorted {
-		if v == id {
-			return append([]component.ID(nil), sorted...)
-		}
+	if slices.Contains(sorted, id) {
+		return append([]component.ID(nil), sorted...)
 	}
 	out := make([]component.ID, len(sorted)+1)
 	copy(out, sorted)
 	out[len(sorted)] = id
-	sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
+	slices.Sort(out)
 	return out
 }
 

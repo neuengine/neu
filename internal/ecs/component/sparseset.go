@@ -19,10 +19,10 @@ import (
 // Removal uses swap-and-pop on the dense arrays so iteration stays
 // contiguous. The set is NOT safe for concurrent mutation.
 type SparseSet struct {
-	spec     ColumnSpec
 	sparse   []uint32        // entity index -> dense+1 (0 means absent)
 	entities []entity.Entity // dense, length == n
 	data     []byte          // dense, length == n*size (nil if zero-size)
+	spec     ColumnSpec
 }
 
 // NewSparseSet creates an empty SparseSet for the given column spec.

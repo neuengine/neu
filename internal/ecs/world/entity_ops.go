@@ -1,6 +1,7 @@
 package world
 
 import (
+	"maps"
 	"reflect"
 
 	"github.com/teratron/boltengine/internal/ecs/component"
@@ -147,9 +148,7 @@ func (w *World) Insert(e entity.Entity, data ...component.Data) error {
 			}
 		}
 	}
-	for id, v := range newValues {
-		mergedValues[id] = v
-	}
+	maps.Copy(mergedValues, newValues)
 
 	w.removeEntityFromArchetype(oldArch, e, rec.row, false)
 	// SparseSet components shared with the new archetype stay in the global

@@ -40,9 +40,9 @@ type World struct {
 	archetypes       *ArchetypeStore
 	sparseSets       map[component.ID]*component.SparseSet
 	records          map[entity.EntityID]entityRecord
+	deferredFlushers []func(*World) // T-1F02: registered command-buffer flushers
 	changeTick       Tick
 	lastChangeTick   Tick
-	deferredFlushers []func(*World) // T-1F02: registered command-buffer flushers
 }
 
 // NewWorld creates a World with default initial capacities.

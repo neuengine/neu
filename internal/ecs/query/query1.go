@@ -28,10 +28,10 @@ var ErrQueryMultipleMatches = errors.New("ecs: query matched more than one entit
 // described in [QueryState].
 type Query1[T any] struct {
 	state    *QueryState
-	id       component.ID
 	perRow   []tickFilterRecord
 	matched  []world.ArchetypeID
 	nextScan int
+	id       component.ID
 }
 
 // NewQuery1 builds a single-component query, auto-registering T as a

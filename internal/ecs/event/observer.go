@@ -53,11 +53,11 @@ type ObserverCallback func(ctx *ObserverContext)
 // An ObserverContext is valid only for the duration of the callback invocation.
 // Do not retain a pointer to it after the callback returns.
 type ObserverContext struct {
-	dw              *world.DeferredWorld
 	trigEvent       any
+	dw              *world.DeferredWorld
+	buf             *command.CommandBuffer
 	target          entity.Entity
 	propagationStop bool
-	buf             *command.CommandBuffer
 }
 
 // ObserverContextEvent returns the trigger event payload type-asserted to T.
@@ -89,8 +89,8 @@ func (ctx *ObserverContext) Commands() *command.Commands {
 
 // observer is the internal registration record for a single callback.
 type observer struct {
-	id       ObserverID
 	callback ObserverCallback
+	id       ObserverID
 }
 
 // ObserverRegistry stores all registered observers indexed by trigger type.

@@ -1,19 +1,22 @@
 package component
 
 import (
+	"cmp"
 	"reflect"
-	"sort"
+	"slices"
 )
 
 // ColumnSpec describes a single column inside a [Table] or [SparseSet]. It is
 // the minimum set of metadata required for raw-memory storage: the component
 // ID for routing, and the size/alignment for layout math.
 type ColumnSpec struct {
-	ID    ID
-	Size  uintptr
-	Align uintptr
 	Type  reflect.Type
+	Align uintptr
+	Size  uintptr
+	ID    ID
 }
+
+
 
 // IsZeroSized reports whether the column carries no payload (a tag).
 func (c ColumnSpec) IsZeroSized() bool { return c.Size == 0 }
@@ -49,17 +52,17 @@ func sortColumnsByAlignDesc(cols []ColumnSpec) (sorted []ColumnSpec, originalInd
 	for i, c := range cols {
 		tmp[i] = indexed{c, i}
 	}
-	sort.SliceStable(tmp, func(i, j int) bool {
-		ai, aj := tmp[i].col, tmp[j].col
-		switch {
-		case ai.Align != aj.Align:
-			return ai.Align > aj.Align
-		case ai.Size != aj.Size:
-			return ai.Size > aj.Size
-		default:
-			return ai.ID < aj.ID
+
+	slices.SortStableFunc(tmp, func(a, b indexed) int {
+		if a.col.Align != b.col.Align {
+			return cmp.Compare(b.col.Align, a.col.Align) // desc
 		}
+		if a.col.Size != b.col.Size {
+			return cmp.Compare(b.col.Size, a.col.Size) // desc
+		}
+		return cmp.Compare(a.col.ID, b.col.ID) // asc tie-break
 	})
+
 	sorted = make([]ColumnSpec, len(cols))
 	originalIndex = make([]int, len(cols))
 	for i, t := range tmp {

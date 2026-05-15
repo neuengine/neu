@@ -19,10 +19,10 @@ var errSameTypeInQuery = errors.New("ecs: query type parameters must be distinct
 // [Query3.All].
 type Query3[A, B, C any] struct {
 	state    *QueryState
-	ids      [3]component.ID
 	perRow   []tickFilterRecord
 	matched  []world.ArchetypeID
 	nextScan int
+	ids      [3]component.ID
 }
 
 // NewQuery3 builds a three-component query, auto-registering A, B, and C as

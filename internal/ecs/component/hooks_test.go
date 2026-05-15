@@ -20,13 +20,13 @@ func TestHooksAnyReportsPresence(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		name string
 		hook func() Hooks
+		name string
 	}{
-		{"only_add", func() Hooks { return Hooks{OnAdd: func(HookContext, entity.Entity) {}} }},
-		{"only_insert", func() Hooks { return Hooks{OnInsert: func(HookContext, entity.Entity) {}} }},
-		{"only_replace", func() Hooks { return Hooks{OnReplace: func(HookContext, entity.Entity) {}} }},
-		{"only_remove", func() Hooks { return Hooks{OnRemove: func(HookContext, entity.Entity) {}} }},
+		{name: "only_add", hook: func() Hooks { return Hooks{OnAdd: func(HookContext, entity.Entity) {}} }},
+		{name: "only_insert", hook: func() Hooks { return Hooks{OnInsert: func(HookContext, entity.Entity) {}} }},
+		{name: "only_replace", hook: func() Hooks { return Hooks{OnReplace: func(HookContext, entity.Entity) {}} }},
+		{name: "only_remove", hook: func() Hooks { return Hooks{OnRemove: func(HookContext, entity.Entity) {}} }},
 	}
 	for _, tc := range cases {
 		tc := tc

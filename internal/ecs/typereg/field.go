@@ -46,19 +46,14 @@ type TypeTags struct {
 // namespaces are `ecs:"..."`, `editor:"..."`, and `range:"min,max"`. Any
 // unparsed tag string is preserved verbatim in [FieldTags.Raw].
 type FieldTags struct {
-	Label string
+	Label    string
+	Raw      reflect.StructTag
 	RangeMax float64
 	RangeMin float64
-	// Raw is the original [reflect.StructTag] for callers that need to read
-	// custom user namespaces not handled by this package.
-	Raw reflect.StructTag
-	// ECS namespace.
-	Storage StorageStrategy
-	// Range namespace.
+	Storage  StorageStrategy
 	HasRange bool
-	// Editor namespace.
-	Hidden bool
-	Ignore bool
+	Hidden   bool
+	Ignore   bool
 	ReadOnly bool
 }
 
@@ -67,12 +62,12 @@ type FieldTags struct {
 // types are populated once at registration so hot-path access avoids reflect
 // scans of the parent type.
 type FieldInfo struct {
-	Name     string       // Go field name
 	Type     reflect.Type // field's reflect.Type
-	TypeID   TypeID       // late-bound TypeID (0 if the field's type is not registered)
+	Name     string       // Go field name
+	Tags     FieldTags    // parsed struct tag attributes
 	Offset   uintptr      // byte offset within the parent struct
 	Index    int          // field's zero-based index in the parent struct
-	Tags     FieldTags    // parsed struct tag attributes
+	TypeID   TypeID       // late-bound TypeID (0 if the field's type is not registered)
 	Exported bool         // whether the field is exported (Go's PkgPath rule)
 }
 

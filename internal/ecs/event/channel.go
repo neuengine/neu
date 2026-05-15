@@ -20,10 +20,10 @@ const defaultMessageChannelCap = 64
 // shared backing array in place. Readers cannot rewind. Construct via
 // [RegisterMessage] and obtain typed reader handles via [NewMessageReader].
 type MessageChannel[T any] struct {
+	readers  map[uint32]uint64 // readerID -> monotonic cursor
 	buffer   []T
 	capacity int
-	head     uint64            // monotonic global write position
-	readers  map[uint32]uint64 // readerID -> monotonic cursor
+	head     uint64 // monotonic global write position
 	nextID   uint32
 }
 

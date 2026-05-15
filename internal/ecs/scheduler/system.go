@@ -49,8 +49,8 @@ func systemAccess(s System) query.Access {
 // most common way to register systems before the function-injection
 // machinery from T-1E03 is wired in.
 type FuncSystem struct {
-	name   string
 	run    func(*world.World)
+	name   string
 	access query.Access
 	hasAcc bool
 }

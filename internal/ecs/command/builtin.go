@@ -21,8 +21,8 @@ func (c *SpawnEmptyCommand) Apply(w *world.World) {
 // component data. The entity must have been reserved via
 // [CommandBuffer.ReserveEntity] before this command was pushed.
 type SpawnCommand struct {
-	entity entity.Entity
 	data   []component.Data
+	entity entity.Entity
 }
 
 func (c *SpawnCommand) Apply(w *world.World) {
@@ -45,8 +45,8 @@ func (c *DespawnCommand) Apply(w *world.World) {
 // InsertCommand adds or overwrites a component on an entity.
 // No-op when the entity is not alive.
 type InsertCommand struct {
-	entity entity.Entity
 	data   component.Data
+	entity entity.Entity
 }
 
 func (c *InsertCommand) Apply(w *world.World) {

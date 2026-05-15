@@ -13,10 +13,10 @@ import (
 // [Query2.All].
 type Query2[A, B any] struct {
 	state    *QueryState
-	ids      [2]component.ID
 	perRow   []tickFilterRecord
 	matched  []world.ArchetypeID
 	nextScan int
+	ids      [2]component.ID
 }
 
 // NewQuery2 builds a two-component query, auto-registering A and B as

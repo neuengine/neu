@@ -8,8 +8,8 @@ import (
 )
 
 type payload struct {
-	ID   uint32
 	Data []byte
+	ID   uint32
 }
 
 // ---- Pool[T] basics ---------------------------------------------------------

@@ -10,8 +10,8 @@ import (
 // mutable references via Resource[T] and SetResource[T].
 // Read methods (get, contains, Len) are safe for concurrent use.
 type ResourceMap struct {
-	mu    sync.RWMutex
 	store map[reflect.Type]any
+	mu    sync.RWMutex
 }
 
 // NewResourceMap returns an empty ResourceMap.

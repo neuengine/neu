@@ -9,10 +9,10 @@ import "sync"
 // Reads (IsAlive, Len, Cap) take the read lock; mutations (Allocate,
 // AllocateMany, Free, Reserve) take the write lock.
 type EntityAllocator struct {
-	generations []uint32     // generation counter per slot index
-	freeList    []uint32     // LIFO stack of available indices
 	mu          sync.RWMutex
-	alive       uint32       // number of currently alive entities
+	freeList    []uint32 // LIFO stack of available indices
+	generations []uint32 // generation counter per slot index
+	alive       uint32   // number of currently alive entities
 }
 
 // NewEntityAllocator creates an allocator with pre-allocated capacity for

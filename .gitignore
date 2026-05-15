@@ -65,6 +65,11 @@ copilot-instructions.md
 *.log
 cache/
 
+# Misc
+*.txt
+*.tgz
+*.zip
+
 # OS
 .DS_Store
 Thumbs.db

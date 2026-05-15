@@ -15,9 +15,9 @@ import "github.com/teratron/boltengine/internal/ecs/component"
 // on the wrapper because it depends on archetype layout, which the query
 // package does not import.
 type QueryState struct {
-	required Mask
-	excluded Mask
 	access   Access
+	excluded Mask
+	required Mask
 }
 
 // NewQueryState builds a [QueryState] from required / excluded component IDs

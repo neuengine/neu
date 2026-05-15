@@ -33,8 +33,8 @@ import "sync"
 // value re-enters the pool, useful for clearing fields that should not hold
 // GC-rooted references across recycle cycles.
 type Pool[T any] struct {
-	inner sync.Pool
 	reset func(*T)
+	inner sync.Pool
 }
 
 // New returns a Pool whose New function returns a fresh zero-valued *T.

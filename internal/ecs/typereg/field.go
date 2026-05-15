@@ -57,7 +57,6 @@ type FieldTags struct {
 	ReadOnly bool
 }
 
-
 // FieldInfo stores cached metadata for a single struct field. Offsets and
 // types are populated once at registration so hot-path access avoids reflect
 // scans of the parent type.

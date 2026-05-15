@@ -10,10 +10,10 @@ import (
 // ---- fixtures ----------------------------------------------------------------
 
 type playerStats struct {
-	Name string
-	HP int `editor:"label:Hit Points" range:"0,100"`
-	Speed float32 `editor:"label:Speed"`
-	Hidden bool `editor:"hidden"`
+	Name   string
+	HP     int     `editor:"label:Hit Points" range:"0,100"`
+	Speed  float32 `editor:"label:Speed"`
+	Hidden bool    `editor:"hidden"`
 }
 
 // ---- TypeHooks ---------------------------------------------------------------

@@ -46,8 +46,15 @@ const (
 // Info holds metadata for a single registered component type. It is owned
 // by the [Registry] and indexed by [ID].
 type Info struct {
+	// CloneBehavior controls duplication during entity cloning.
+	CloneBehavior CloneBehavior
 	// Hooks holds optional lifecycle callbacks (T-1B03).
 	Hooks Hooks
+	// ID is the registry-assigned identifier. Set by Registry.Register; the
+	// caller-supplied value is ignored.
+	ID ID
+	// Storage is the storage backend selected for this component (T-1B02).
+	Storage StorageType
 	// Type is the runtime type of the component value.
 	Type reflect.Type
 	// Name is the fully qualified Go type name (PkgPath.TypeName) used for
@@ -57,17 +64,10 @@ type Info struct {
 	// RequiredBy lists components that must be present whenever this one is.
 	// Resolved transitively at registration in T-1B03.
 	RequiredBy []ID
-	// Size is the size in bytes of a single component instance.
-	Size uintptr
 	// Alignment is the alignment requirement in bytes.
 	Alignment uintptr
-	// ID is the registry-assigned identifier. Set by Registry.Register; the
-	// caller-supplied value is ignored.
-	ID ID
-	// Storage is the storage backend selected for this component (T-1B02).
-	Storage StorageType
-	// CloneBehavior controls duplication during entity cloning.
-	CloneBehavior CloneBehavior
+	// Size is the size in bytes of a single component instance.
+	Size uintptr
 	// Immutable forbids mutable query access to this component when true.
 	Immutable bool
 }

@@ -79,8 +79,8 @@ type ArchetypeStore struct {
 	index          map[string]ArchetypeID
 	listeners      map[ListenerID]func(*Archetype)
 	archetypes     []Archetype
-	nextListenerID ListenerID
 	generation     uint32
+	nextListenerID ListenerID
 }
 
 // newArchetypeStore creates a store seeded with the empty archetype.

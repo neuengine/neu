@@ -15,9 +15,9 @@ type SystemSet string
 // consumed at [Schedule.Build] time to derive per-member conditions and
 // pairwise ordering edges.
 type systemSetConfig struct {
-	conditions  []RunCondition
-	beforeSets  []SystemSet
-	afterSets   []SystemSet
+	conditions []RunCondition
+	beforeSets []SystemSet
+	afterSets  []SystemSet
 }
 
 // SystemSetBuilder is returned by [Schedule.ConfigureSet] for declaring

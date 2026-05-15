@@ -1,5 +1,5 @@
 ---
-name: boltengine-reference
+name: neuengine-reference
 description: Architectural reference for the ECS game engine project. Use when creating or reviewing specifications.
 ---
 

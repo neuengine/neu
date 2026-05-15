@@ -10,13 +10,11 @@ import (
 // the minimum set of metadata required for raw-memory storage: the component
 // ID for routing, and the size/alignment for layout math.
 type ColumnSpec struct {
+	ID    ID
 	Type  reflect.Type
 	Align uintptr
 	Size  uintptr
-	ID    ID
 }
-
-
 
 // IsZeroSized reports whether the column carries no payload (a tag).
 func (c ColumnSpec) IsZeroSized() bool { return c.Size == 0 }

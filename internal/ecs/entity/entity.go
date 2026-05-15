@@ -7,8 +7,8 @@
 package entity
 
 const (
-	indexBits  = 32
-	indexMask  = (1 << indexBits) - 1
+	indexBits       = 32
+	indexMask       = (1 << indexBits) - 1
 	generationShift = indexBits
 )
 

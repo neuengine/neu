@@ -35,6 +35,7 @@
 - **Profiling**: Use `pprof` to identify bottlenecks (CPU, Memory, Block).
 - **Memory**: Minimize heap allocations; use `sync.Pool` for object reuse where applicable.
 - **Preallocation**: Preallocate slices and maps if the size is known.
+- **Struct Optimization**: Periodically run `python .agents/skills/go-struct-optimizer/scripts/analyze.py` or use the `go-struct-optimizer` skill to optimize memory layout (padding and GC scan range) of critical ECS structures.
 
 ### 2.5 Integration & Architecture
 
@@ -64,3 +65,4 @@ Before finishing any task, the agent MUST verify the following:
 - [ ] **Code Quality**:
   - [ ] All new Go files have at least 80% test coverage.
   - [ ] Code is formatted with `gofmt` and follows standard linting rules.
+  - [ ] **Struct Optimization**: Memory layouts of new/modified structs are optimized (via `go-struct-optimizer`).

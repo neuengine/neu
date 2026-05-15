@@ -1,4 +1,4 @@
-# ECS Engine
+# Bolt Engine
 
 ![Engine Version](https://img.shields.io/badge/engine-v1.5.206-blue)
 ![Go Version](https://img.shields.io/badge/go-1.26.3-00ADD8)
@@ -9,7 +9,7 @@ Spec-first ECS game engine project in Go and a deliberate challenge for [Magic S
 
 ## The Battle Test
 
-This repository is both an engine project and a stress test for specification-driven development in a performance-sensitive domain. The goal is not just to build an ECS engine, but to prove that a large, ambitious Go codebase can be shaped coherently from a strong specification layer first.
+This repository is both an engine project and a stress test for specification-driven development in a performance-sensitive domain. The goal is not just to build an Bolt engine, but to prove that a large, ambitious Go codebase can be shaped coherently from a strong specification layer first.
 
 The challenge is intentionally uncompromising: ECS architecture, subsystem boundaries, performance constraints, and long-horizon design pressure are exactly the kind of forces that expose weak specifications. If Magic Spec can carry a project like this without collapsing into drift, ambiguity, or documentation theater, then it is proving something real.
 
@@ -26,7 +26,7 @@ The repository is intentionally being built from architecture outward. The activ
 
 The project studies data-oriented ECS patterns proven in modern engines and translates the useful architectural ideas into a standalone, idiomatic Go engine. External engines are treated as research input and comparison points, not as a compatibility target or branding layer.
 
-In that sense, the repository is intentionally a "battle test" for Magic Spec: if the specification workflow can survive an ECS engine with demanding architecture, evolving subsystem boundaries, and strict validation requirements, it can likely scale to other serious systems as well.
+In that sense, the repository is intentionally a "battle test" for Magic Spec: if the specification workflow can survive an Bolt engine with demanding architecture, evolving subsystem boundaries, and strict validation requirements, it can likely scale to other serious systems as well.
 
 ## Key Goals
 

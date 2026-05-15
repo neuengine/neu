@@ -6,7 +6,7 @@
 
 ## Overview
 
-This specification defines the versioning strategy for the ECS engine and its relationship with the Go toolchain. As a high-performance engine, we often utilize bleeding-edge compiler and runtime features, necessitating a clear policy on Go version support and backwards compatibility.
+This specification defines the versioning strategy for the Bolt engine and its relationship with the Go toolchain. As a high-performance engine, we often utilize bleeding-edge compiler and runtime features, necessitating a clear policy on Go version support and backwards compatibility.
 
 ## Related Specifications
 

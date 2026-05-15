@@ -1,5 +1,5 @@
-module github.com/teratron/ecs-engine/examples/diagnostic
+module github.com/teratron/boltengine/examples/diagnostic
 
 go 1.26.3
 
-replace github.com/teratron/ecs-engine => ../..
+replace github.com/teratron/boltengine => ../..

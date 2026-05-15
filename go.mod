@@ -1,3 +1,3 @@
-module github.com/teratron/ecs-engine
+module github.com/teratron/boltengine
 
 go 1.26.3

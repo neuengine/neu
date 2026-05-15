@@ -191,4 +191,4 @@ To support robust movement, systems can perform **Predictive Look-ahead** querie
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — ray cast, shape cast, overlap, point test, contact query, batch API | [examples/physics](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — ray cast, shape cast, overlap, point test, contact query, batch API | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |

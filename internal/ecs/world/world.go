@@ -5,8 +5,8 @@ package world
 import (
 	"errors"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
 )
 
 // Tick is a monotonically increasing counter used for change detection.
@@ -29,7 +29,7 @@ const (
 	defaultComponentCapacity = 64
 )
 
-// World is the central data store of the ECS engine. It owns all entities,
+// World is the central data store of the Bolt engine. It owns all entities,
 // component registrations, resources, archetypes, sparse-set storage, and
 // the global change tick. Not thread-safe — concurrent access must be
 // coordinated by the schedule executor.

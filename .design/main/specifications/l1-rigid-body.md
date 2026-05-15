@@ -238,4 +238,4 @@ PhysicsSettings (additions)
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — component fields, body types, mass properties, axis locks, sleep, dominance, lifecycle hooks | [examples/physics](file:///d:/Projects/src/github.com/teratron/ecs-engine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — component fields, body types, mass properties, axis locks, sleep, dominance, lifecycle hooks | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |

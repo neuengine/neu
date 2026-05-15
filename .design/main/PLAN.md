@@ -1,4 +1,4 @@
-# Implementation Plan — ECS Engine
+# Implementation Plan — Bolt Engine
 
 **Version:** 1.2.0
 **Generated:** 2026-05-14

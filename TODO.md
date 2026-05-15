@@ -6,7 +6,7 @@
 ## Tasks
 
 - [x] спросить ИИ, что нужно скачать из ресурсов для проекта, самостоятельно: шрифты, текстуры, звуки, модели и т.д.
-- [ ] придумать название проекта
+- [x] придумать название проекта
   - Atoma Engine
   - Atomaton Engine
   - Nexus Engine
@@ -37,5 +37,5 @@
   type WeightSampler[T utils.Float] func(fanIn, fanOut int) T
   ```
 
-- [ ] сделать ecs-engine skills для разработчиков: Use our ecs-engine skills with your AI tools to generate high-performance ecs-engine code that follows best practices.
+- [ ] сделать boltengine skills для разработчиков: Use our boltengine skills with your AI tools to generate high-performance boltengine code that follows best practices.
 - [ ]

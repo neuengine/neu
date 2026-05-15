@@ -1,5 +1,5 @@
-module github.com/teratron/ecs-engine/examples/3d
+module github.com/teratron/boltengine/examples/3d
 
 go 1.26.3
 
-replace github.com/teratron/ecs-engine => ../..
+replace github.com/teratron/boltengine => ../..

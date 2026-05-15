@@ -9,7 +9,7 @@
 
 ## Overview
 
-The Visual Graph System provides engine-side infrastructure for **node-based visual programming** — the runtime data model, interpreter, and public API that enable a GUI editor (in the external `ecs-editor` repository) to offer a Blueprint-style graph editing experience. The engine does not implement the visual editor itself; it exposes the "door" — the graph data model, execution engine, serialization format, and `pkg/editor/` interfaces — so that the editor (or any other consumer of the public API) can build a full node-graph UI on top.
+The Visual Graph System provides engine-side infrastructure for **node-based visual programming** — the runtime data model, interpreter, and public API that enable a GUI editor (in the external `bolteditor` repository) to offer a Blueprint-style graph editing experience. The engine does not implement the visual editor itself; it exposes the "door" — the graph data model, execution engine, serialization format, and `pkg/editor/` interfaces — so that the editor (or any other consumer of the public API) can build a full node-graph UI on top.
 
 Visual graphs are a new definition type (`"graph"`) in the [Definition System](l1-definition-system.md). A graph file is a JSON document describing nodes, pins, connections, and subgraph references. The engine loads these files as assets, interprets them at runtime within the ECS schedule, and supports hot-reload for instant iteration.
 
@@ -19,7 +19,7 @@ This is a higher-level authoring mechanism complementary to the deferred [Script
 
 Every modern game engine offers some form of visual scripting: Unreal Engine's Blueprints, Unity's Visual Scripting (Bolt), Godot's VisualScript. The pattern is proven — it dramatically lowers the barrier for non-programmers to author gameplay logic, AI behaviors, UI interactions, and event handling.
 
-The ECS engine's existing stack provides:
+The Bolt engine's existing stack provides:
 
 | Workflow | Mechanism | Gap |
 | :--- | :--- | :--- |
@@ -359,7 +359,7 @@ Visual graphs are serialized as a new definition type in the Definition System:
 
 ### 4.7 Engine-Side Extension Points ("The Door")
 
-The engine exposes interfaces under `pkg/editor/` that the external `ecs-editor` repository implements. These are the "door" — the editor has no other way to interact with the graph system.
+The engine exposes interfaces under `pkg/editor/` that the external `bolteditor` repository implements. These are the "door" — the editor has no other way to interact with the graph system.
 
 #### 4.7.1 GraphEditorPlugin Interface
 

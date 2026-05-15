@@ -215,7 +215,7 @@ Agents can be discovered from multiple sources:
 AgentRegistry
   sources:
     - Local directory: project_root/.agents/         // project-specific agents
-    - User directory:  ~/.config/ecs-engine/agents/  // user-wide agents
+    - User directory:  ~/.config/boltengine/agents/  // user-wide agents
     - Remote catalog:  configurable URL               // community agent catalog (future)
 
 AgentManifest (per agent, manifest.json)

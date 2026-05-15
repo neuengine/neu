@@ -1,17 +1,17 @@
-// Package ecs is the public API surface of the ECS engine.
+// Package ecs is the public API surface of the Bolt engine.
 // It re-exports key types from the internal sub-packages behind a stable,
 // minimal façade. Internal packages remain the canonical implementation;
 // this package is the intended import path for application code and examples.
 package ecs
 
 import (
-	"github.com/teratron/ecs-engine/internal/ecs/command"
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/event"
-	"github.com/teratron/ecs-engine/internal/ecs/query"
-	"github.com/teratron/ecs-engine/internal/ecs/scheduler"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/command"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/event"
+	"github.com/teratron/boltengine/internal/ecs/query"
+	"github.com/teratron/boltengine/internal/ecs/scheduler"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // ── Core ──────────────────────────────────────────────────────────────────────

@@ -69,7 +69,7 @@ type Tick uint32
 ### World
 
 ```go
-// World is the central data store of the ECS engine. It owns all entities,
+// World is the central data store of the Bolt engine. It owns all entities,
 // component storage, resources, and schedules. Not thread-safe — concurrent
 // access must be coordinated by the schedule executor.
 type World struct {

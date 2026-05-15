@@ -225,7 +225,7 @@ To minimize redundant resource usage and improve performance, the agent may opti
 
 When creating, reviewing, or amending any specification (L1 or L2), the agent MUST:
 
-1. **Load Skill**: Read `.agents/skills/ecs-engine-reference/SKILL.md` before starting spec work to ensure full architectural context is loaded.
+1. **Load Skill**: Read `.agents/skills/boltengine-reference/SKILL.md` before starting spec work to ensure full architectural context is loaded.
 2. **Cross-Reference**: Verify that new specs are consistent with the module map, dependency graph, and Go conventions defined in the skill.
 
 ### C26 — Specification-Example Correlation

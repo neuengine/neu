@@ -170,7 +170,7 @@ graph LR
 Sources, in order of precedence (later overrides earlier on ID collision, with a warning):
 
 1. **Compile-time registered**: in-process plugins added via the host app's `main.go` calling `app.AddPlugins(...)`. Always discovered first; cannot be disabled at runtime (they are part of the binary).
-2. **User directory**: `${XDG_CONFIG_HOME:-~/.config}/ecs-engine/plugins/<plugin-id>/` (Linux/macOS) or `%APPDATA%\ecs-engine\plugins\<plugin-id>\` (Windows). User-wide plugins.
+2. **User directory**: `${XDG_CONFIG_HOME:-~/.config}/boltengine/plugins/<plugin-id>/` (Linux/macOS) or `%APPDATA%\boltengine\plugins\<plugin-id>\` (Windows). User-wide plugins.
 3. **Project directory**: `<project-root>/.plugins/<plugin-id>/`. Project-specific plugins, version-controlled with the project.
 4. **Configured paths**: additional directories listed in the project's `ecs.toml` (engine config) under `[plugins.search_paths]`.
 

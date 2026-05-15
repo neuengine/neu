@@ -3,6 +3,7 @@ package scheduler
 import (
 	"errors"
 	"slices"
+	"strings"
 )
 
 // SystemNodeID indexes a node within a [DAG]. IDs are dense, contiguous
@@ -159,14 +160,15 @@ func (e *dagCycleError) Error() string {
 	if len(e.nodes) == 0 {
 		return ErrScheduleCycle.Error()
 	}
-	out := ErrScheduleCycle.Error() + " (nodes: "
+	var out strings.Builder
+	out.WriteString(ErrScheduleCycle.Error() + " (nodes: ")
 	for i, n := range e.nodes {
 		if i > 0 {
-			out += ", "
+			out.WriteString(", ")
 		}
-		out += systemNodeIDString(n)
+		out.WriteString(systemNodeIDString(n))
 	}
-	return out + ")"
+	return out.String() + ")"
 }
 
 func (e *dagCycleError) Unwrap() error { return ErrScheduleCycle }

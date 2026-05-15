@@ -24,7 +24,6 @@ func TestEntityIDPackUnpack(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			id := NewEntityID(tc.index, tc.generation)
@@ -93,7 +92,6 @@ func TestEntityAccessors(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			e := NewEntity(tc.index, tc.generation)

@@ -26,6 +26,7 @@ package view
 
 import (
 	"iter"
+	"slices"
 
 	"github.com/teratron/boltengine/internal/ecs/component"
 	"github.com/teratron/boltengine/internal/ecs/entity"
@@ -137,10 +138,5 @@ func (v *View) Contains(w *world.World, e entity.Entity) bool {
 	if !ok {
 		return false
 	}
-	for _, id := range v.matched {
-		if id == archID {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(v.matched, archID)
 }

@@ -126,7 +126,6 @@ func TestInfoPanicsOnInvalidID(t *testing.T) {
 		{"out_of_range", 99},
 	}
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			r := NewRegistry()
@@ -225,8 +224,7 @@ func TestQualifiedTypeNameForAnonymous(t *testing.T) {
 	t.Parallel()
 
 	r := NewRegistry()
-	anon := struct{ X int }{}
-	id := r.Register(Info{Type: reflect.TypeOf(anon)})
+	id := r.Register(Info{Type: reflect.TypeFor[struct{ X int }]()})
 	if r.Info(id).Name == "" {
 		t.Fatal("anonymous type must still receive a non-empty Name")
 	}
@@ -240,10 +238,8 @@ func TestConcurrentReadsAfterRegistrationAreSafe(t *testing.T) {
 	idV := RegisterType[Velocity](r)
 
 	var wg sync.WaitGroup
-	for i := 0; i < 32; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+	for range 32 {
+		wg.Go(func() {
 			if got, _ := r.Lookup(reflect.TypeFor[Position]()); got != idP {
 				t.Errorf("concurrent Lookup(Position) = %d, want %d", got, idP)
 			}
@@ -253,7 +249,7 @@ func TestConcurrentReadsAfterRegistrationAreSafe(t *testing.T) {
 			if r.Len() != 2 {
 				t.Errorf("concurrent Len = %d, want 2", r.Len())
 			}
-		}()
+		})
 	}
 	wg.Wait()
 }

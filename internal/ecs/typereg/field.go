@@ -107,8 +107,7 @@ func extractTypeTags(t reflect.Type) TypeTags {
 	if t.Kind() != reflect.Struct {
 		return TypeTags{}
 	}
-	for i := range t.NumField() {
-		f := t.Field(i)
+	for f := range t.Fields() {
 		if f.Name != "_" || f.Tag == "" {
 			continue
 		}

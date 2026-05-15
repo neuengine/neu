@@ -87,7 +87,7 @@ func TestSequentialExecutorSchedulRunConvenience(t *testing.T) {
 	if err := s.Build(); err != nil {
 		t.Fatal(err)
 	}
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		if err := s.Run(w); err != nil {
 			t.Fatal(err)
 		}
@@ -140,7 +140,7 @@ func TestSequentialExecutorPropagatesWorldMutation(t *testing.T) {
 		t.Fatal(err)
 	}
 	startTick := w.ChangeTick()
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		if err := s.Run(w); err != nil {
 			t.Fatal(err)
 		}

@@ -49,7 +49,7 @@ func TestNullEntityIsNeverProduced(t *testing.T) {
 	t.Parallel()
 
 	a := NewEntityAllocator(0)
-	for i := 0; i < 16; i++ {
+	for i := range 16 {
 		e := a.Allocate()
 		if !e.IsValid() {
 			t.Fatalf("Allocate() returned the null sentinel on iteration %d", i)
@@ -242,7 +242,7 @@ func TestAllocFreeChurnInvariant(t *testing.T) {
 	const n = 1000
 	live := make([]Entity, 0, n)
 
-	for i := 0; i < n; i++ {
+	for range n {
 		live = append(live, a.Allocate())
 	}
 	for i := 0; i < n; i += 2 {
@@ -251,7 +251,7 @@ func TestAllocFreeChurnInvariant(t *testing.T) {
 	if a.Len() != n/2 {
 		t.Fatalf("Len() after half-free = %d, want %d", a.Len(), n/2)
 	}
-	for i := 0; i < n; i++ {
+	for i := range n {
 		want := i%2 == 1
 		if a.IsAlive(live[i]) != want {
 			t.Fatalf("entity %d alive=%v, want %v", i, a.IsAlive(live[i]), want)

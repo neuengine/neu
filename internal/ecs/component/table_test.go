@@ -185,13 +185,13 @@ func TestTableMultiChunkAllocation(t *testing.T) {
 	}
 
 	const N = 10
-	for i := 0; i < N; i++ {
+	for i := range N {
 		tbl.AddRow(map[ID]any{1: Position{X: float32(i)}})
 	}
 	if tbl.Capacity() < N {
 		t.Fatalf("Capacity %d < N %d", tbl.Capacity(), N)
 	}
-	for i := 0; i < N; i++ {
+	for i := range N {
 		got := *(*Position)(tbl.CellPtr(0, i))
 		if got.X != float32(i) {
 			t.Fatalf("row %d X = %v, want %d", i, got.X, i)
@@ -208,7 +208,7 @@ func TestTableTagOnlyHasNoChunks(t *testing.T) {
 		t.Fatalf("tag-only stride must be 0; got %d", tbl.RowStride())
 	}
 
-	for i := 0; i < 100; i++ {
+	for range 100 {
 		tbl.AddRow(nil)
 	}
 	if tbl.Len() != 100 {
@@ -269,7 +269,6 @@ func TestTableSetCellOutOfRangePanics(t *testing.T) {
 		{"row_overflow", 0, 5},
 	}
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			defer func() {
@@ -287,7 +286,7 @@ func TestTableResetKeepsCapacity(t *testing.T) {
 
 	specs := []ColumnSpec{newSpec[Position](t, 1)}
 	tbl := NewTable(specs, DefaultChunkSize)
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		tbl.AddRow(nil)
 	}
 	capBefore := tbl.Capacity()
@@ -346,7 +345,7 @@ func TestTableRemoveRowReleasesEmptyChunk(t *testing.T) {
 	tbl := NewTable(specs, chunkSize)
 
 	// Fill exactly two chunks.
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		tbl.AddRow(map[ID]any{1: Position{X: float32(i)}})
 	}
 	capBefore := tbl.Capacity()
@@ -373,7 +372,7 @@ func BenchmarkTableAddRow(b *testing.B) {
 func BenchmarkTableCellPtr(b *testing.B) {
 	specs := []ColumnSpec{newSpec[Position](nil, 1)}
 	tbl := NewTable(specs, DefaultChunkSize)
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		tbl.AddRow(map[ID]any{1: Position{X: float32(i)}})
 	}
 	b.ReportAllocs()

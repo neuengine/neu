@@ -67,7 +67,6 @@ func TestCommandBuffer_FIFOOrder(t *testing.T) {
 	buf := command.NewCommandBuffer(w.Entities(), 8)
 	var order []int
 	for i := range 5 {
-		i := i
 		buf.Push(command.NewCustomCommand(func(_ *world.World) { order = append(order, i) }))
 	}
 	buf.Apply(w)

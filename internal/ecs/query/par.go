@@ -46,10 +46,7 @@ func (q *Query1[T]) ParIter(w *world.World, fn func(entity.Entity, *T)) {
 			continue
 		}
 		for start := 0; start < n; start += chunkSize {
-			end := start + chunkSize
-			if end > n {
-				end = n
-			}
+			end := min(start+chunkSize, n)
 			if end-start < MinChunkSize && start == 0 && n < MinChunkSize {
 				// Tiny archetype: run inline to skip goroutine overhead.
 				q.runChunk(w, arch, start, end, fn)

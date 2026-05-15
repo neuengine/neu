@@ -186,10 +186,7 @@ func NewEventReaderAt[T any](w *world.World) *EventReader[T] {
 func (r *EventReader[T]) Len() int {
 	prevIdx := 1 - r.bus.current
 	oldest := r.bus.baseCount - len(r.bus.buffers[prevIdx])
-	c := r.cursor
-	if c < oldest {
-		c = oldest
-	}
+	c := max(r.cursor, oldest)
 	return r.bus.sentCount - c
 }
 

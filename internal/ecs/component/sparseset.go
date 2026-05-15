@@ -183,10 +183,7 @@ func (s *SparseSet) ensureSparseLen(n int) {
 
 // growCap is a doubling growth strategy clamped to required capacity.
 func growCap(have, want int) int {
-	c := have
-	if c < 8 {
-		c = 8
-	}
+	c := max(have, 8)
 	for c < want {
 		c *= 2
 	}

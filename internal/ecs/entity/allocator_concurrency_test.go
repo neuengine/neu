@@ -95,9 +95,7 @@ func TestEntityAllocator_ConcurrentReadsDuringWrites(t *testing.T) {
 
 	// Reader goroutines hammer IsAlive.
 	for range 4 {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			for {
 				select {
 				case <-stop:
@@ -108,7 +106,7 @@ func TestEntityAllocator_ConcurrentReadsDuringWrites(t *testing.T) {
 					}
 				}
 			}
-		}()
+		})
 	}
 
 	// Writer goroutine adds and removes entities.

@@ -2,7 +2,7 @@ package component
 
 import (
 	"reflect"
-	"sort"
+	"slices"
 	"testing"
 	"unsafe"
 
@@ -185,7 +185,7 @@ func TestSparseSetIterCoversAllInDenseOrder(t *testing.T) {
 	}
 	// Iteration order is dense-insertion order, but check via sort to be
 	// resilient to swap-and-pop reordering after future Removes.
-	sort.Slice(visited, func(i, j int) bool { return visited[i] < visited[j] })
+	slices.Sort(visited)
 	for i, idx := range visited {
 		if idx != uint32(i+1) {
 			t.Fatalf("visited[%d] = %d, want %d", i, idx, i+1)

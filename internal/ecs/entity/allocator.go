@@ -66,11 +66,8 @@ func (a *EntityAllocator) AllocateMany(n int) []Entity {
 
 	out := make([]Entity, 0, n)
 
-	reuse := len(a.freeList)
-	if reuse > n {
-		reuse = n
-	}
-	for i := 0; i < reuse; i++ {
+	reuse := min(len(a.freeList), n)
+	for range reuse {
 		idx := a.freeList[len(a.freeList)-1]
 		a.freeList = a.freeList[:len(a.freeList)-1]
 		out = append(out, NewEntity(idx, a.generations[idx]))
@@ -85,7 +82,7 @@ func (a *EntityAllocator) AllocateMany(n int) []Entity {
 			copy(grown, a.generations)
 			a.generations = grown
 		}
-		for i := 0; i < remaining; i++ {
+		for i := range remaining {
 			a.generations = append(a.generations, 1)
 			out = append(out, NewEntity(base+uint32(i), 1))
 		}

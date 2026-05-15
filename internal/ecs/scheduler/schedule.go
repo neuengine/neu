@@ -3,6 +3,7 @@ package scheduler
 import (
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/teratron/boltengine/internal/ecs/query"
 )
@@ -312,10 +313,8 @@ func (b *SystemNodeBuilder) InSet(set SystemSet) *SystemNodeBuilder {
 	if b.err != nil {
 		return b
 	}
-	for _, existing := range b.sched.nodes[b.id].sets {
-		if existing == set {
-			return b
-		}
+	if slices.Contains(b.sched.nodes[b.id].sets, set) {
+		return b
 	}
 	b.sched.nodes[b.id].sets = append(b.sched.nodes[b.id].sets, set)
 	b.sched.built = false

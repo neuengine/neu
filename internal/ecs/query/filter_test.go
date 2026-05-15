@@ -194,10 +194,10 @@ func TestFilterCountMatchesIteration(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
-	for i := 0; i < 10; i++ {
+	for i := range 10 {
 		w.Spawn(component.Data{Value: fPos{X: float64(i)}}, component.Data{Value: fVel{}})
 	}
-	for i := 0; i < 7; i++ {
+	for i := range 7 {
 		w.Spawn(component.Data{Value: fPos{X: float64(100 + i)}})
 	}
 
@@ -225,7 +225,7 @@ func TestParIterVisitsEveryEntityOnce(t *testing.T) {
 
 	const total = 5_000
 	w := world.NewWorld()
-	for i := 0; i < total; i++ {
+	for i := range total {
 		w.Spawn(component.Data{Value: fPos{X: float64(i)}})
 	}
 
@@ -268,7 +268,7 @@ func TestParIterTinyArchetypeRunsInline(t *testing.T) {
 
 	w := world.NewWorld()
 	const small = 5
-	for i := 0; i < small; i++ {
+	for i := range small {
 		w.Spawn(component.Data{Value: fPos{X: float64(i)}})
 	}
 
@@ -290,7 +290,7 @@ func TestQuery2CountWithPerRowFilter(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		w.Spawn(component.Data{Value: fPos{X: float64(i)}}, component.Data{Value: fVel{}})
 	}
 	q, err := query.NewQuery2[fPos, fVel](w, query.Added[fHP]{})
@@ -303,7 +303,7 @@ func TestQuery2CountWithPerRowFilter(t *testing.T) {
 	}
 
 	// Now spawn entities with fHP — Phase 1 scaffold: all rows pass.
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		w.Spawn(
 			component.Data{Value: fPos{}},
 			component.Data{Value: fVel{}},
@@ -344,10 +344,10 @@ func TestParIterAcrossArchetypes(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		w.Spawn(component.Data{Value: fPos{X: float64(i)}})
 	}
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		w.Spawn(component.Data{Value: fPos{X: float64(i)}}, component.Data{Value: fVel{}})
 	}
 

@@ -155,7 +155,7 @@ func TestQuery1EarlyStop(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		w.Spawn(component.Data{Value: Position{X: float64(i)}})
 	}
 	q, err := query.NewQuery1[Position](w)
@@ -264,7 +264,7 @@ func TestQuery2EarlyStop(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		w.Spawn(component.Data{Value: Position{X: float64(i)}}, component.Data{Value: Velocity{}})
 	}
 	q, err := query.NewQuery2[Position, Velocity](w)
@@ -324,7 +324,7 @@ func TestQuery3EarlyStop(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		w.Spawn(
 			component.Data{Value: Position{X: float64(i)}},
 			component.Data{Value: Velocity{}},

@@ -1,5 +1,7 @@
 package scheduler
 
+import "slices"
+
 // SystemSet is a named group of systems. A system joins a set via
 // [SystemNodeBuilder.InSet]; the set's configuration (run conditions,
 // before/after edges relative to other sets) is declared once via
@@ -81,11 +83,8 @@ func (s *Schedule) setConfig(set SystemSet) *systemSetConfig {
 func (s *Schedule) membersOf(set SystemSet) []SystemNodeID {
 	var out []SystemNodeID
 	for i, n := range s.nodes {
-		for _, m := range n.sets {
-			if m == set {
-				out = append(out, SystemNodeID(i))
-				break
-			}
+		if slices.Contains(n.sets, set) {
+			out = append(out, SystemNodeID(i))
 		}
 	}
 	return out

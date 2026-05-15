@@ -29,7 +29,6 @@ func TestHooksAnyReportsPresence(t *testing.T) {
 		{name: "only_remove", hook: func() Hooks { return Hooks{OnRemove: func(HookContext, entity.Entity) {}} }},
 	}
 	for _, tc := range cases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 			if !tc.hook().Any() {

@@ -52,9 +52,7 @@ func flatten(v reflect.Value, out *[]Data) {
 		v = v.Elem()
 	}
 	if b, ok := tryBundle(v); ok {
-		for _, d := range b.Components() {
-			*out = append(*out, d)
-		}
+		*out = append(*out, b.Components()...)
 		return
 	}
 	// Non-bundle value: nothing to flatten further. The caller is expected

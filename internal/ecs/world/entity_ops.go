@@ -327,7 +327,7 @@ func (w *World) addEntityToArchetype(arch *Archetype, e entity.Entity, values ma
 func (w *World) removeEntityFromArchetype(arch *Archetype, e entity.Entity, row int, evictSparse bool) {
 	last := len(arch.entities) - 1
 
-	var movedFrom int = -1
+	movedFrom := -1
 	if arch.table != nil {
 		movedFrom = arch.table.RemoveRow(row)
 	} else if row != last {

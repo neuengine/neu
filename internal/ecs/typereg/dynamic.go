@@ -96,7 +96,7 @@ func NewDynamicObject(r *TypeRegistry, ptr any) (*DynamicObject, error) {
 		return nil, ErrNotPointer
 	}
 	rv := reflect.ValueOf(ptr)
-	if rv.Kind() != reflect.Ptr {
+	if rv.Kind() != reflect.Pointer {
 		return nil, ErrNotPointer
 	}
 	reg := r.Resolve(rv.Type().Elem())

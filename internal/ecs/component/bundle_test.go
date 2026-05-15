@@ -23,7 +23,7 @@ type nestedBundle struct {
 }
 
 func (n nestedBundle) Components() []Data {
-	inner := flatPair{registry: n.registry}
+	inner := flatPair(n)
 	out := []Data{NewData(n.registry, Health{HP: 99})}
 	out = append(out, inner.Components()...)
 	return out

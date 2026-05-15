@@ -87,6 +87,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-benchmark-spec.md](specifications/l2-benchmark-spec.md) | Standardized performance tests and comparisons | Draft | test | 0.2.0 |
 | [l1-build-tooling.md](specifications/l1-build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.4.0 |
 | [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
+| [l1-code-documentation.md](specifications/l1-code-documentation.md) | AI-readable symbol metadata (AI-Meta) + workflow-artifact hygiene for code/docs | Draft | concept | 0.1.0 |
+| [l2-code-documentation-go.md](specifications/l2-code-documentation-go.md) | Go impl: `AI-Meta:` godoc grammar, stability vocab, scope tiers, ci detection | Draft | go | 0.1.0 |
 | [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.2.0 |
 | [l1-platform-system.md](specifications/l1-platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Draft | concept | 0.1.0 |
 | [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.2.0 |
@@ -129,6 +131,6 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-05-14
-- **Total Specifications**: 79 (63 L1 concept + 14 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 79
+- **Last Updated**: 2026-05-15
+- **Total Specifications**: 81 (64 L1 concept + 15 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 81
 - **Engine Version:** 2.1.27

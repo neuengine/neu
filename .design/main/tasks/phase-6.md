@@ -220,7 +220,7 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 
 ### [T-6P04] Editor Gateway
 
-- **Spec:** [l1-visual-graph-system.md](../specifications/l1-visual-graph-system.md) §5.0
+- **Spec:** [l2-visual-graph-editor-bridge.md](../specifications/l2-visual-graph-editor-bridge.md) §4.1–§4.4 (extracted from l1-visual-graph-system §4.7–§4.8)
 - **Status:** Todo `[Bootstrap]`
 - **Handoff:** Closes Track P. Blocks multi-repo external editor integration logic.
 - **Notes:** Must provide JSON/Protobuf-serializable boundary across `pkg/editor/`.

@@ -1,8 +1,9 @@
 # Code Generation Tools Specification
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** tool
+**Implements:** l1-build-tooling.md
 
 ## Overview
 
@@ -104,3 +105,4 @@ Generate specialized storage accessors that bypass the generic `[]byte` path for
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-27 | Initial draft |
+| 0.2.0 | 2026-05-15 | Added `Implements: l1-build-tooling.md` parent link (resolves MISSING_IMPLEMENTS layer-integrity gap flagged by `/magic-analyze`) |

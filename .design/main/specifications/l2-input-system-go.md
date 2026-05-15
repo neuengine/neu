@@ -1,6 +1,6 @@
 # Input System — Go Implementation
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Layer:** go
 **Implements:** [input-system.md](l1-input-system.md)
@@ -12,6 +12,7 @@ This specification defines the Go implementation of the input system described i
 ## Related Specifications
 
 - [input-system.md](l1-input-system.md) — L1 concept specification (parent)
+- [l2-input-system-go-codes.md](l2-input-system-go-codes.md) — sibling L2: KeyCode/Gamepad/Touch reference type tables (extracted §Type Definitions)
 
 ## 1. Motivation
 
@@ -135,108 +136,10 @@ func (a *AxisInput[T]) Reset()
 
 ### KeyCode
 
-```go
-// KeyCode represents physical keyboard key codes.
-type KeyCode uint16
-
-const (
-    KeyA KeyCode = iota
-    KeyB
-    KeyC
-    KeyD
-    KeyE
-    KeyF
-    KeyG
-    KeyH
-    KeyI
-    KeyJ
-    KeyK
-    KeyL
-    KeyM
-    KeyN
-    KeyO
-    KeyP
-    KeyQ
-    KeyR
-    KeyS
-    KeyT
-    KeyU
-    KeyV
-    KeyW
-    KeyX
-    KeyY
-    KeyZ
-
-    KeyDigit0
-    KeyDigit1
-    KeyDigit2
-    KeyDigit3
-    KeyDigit4
-    KeyDigit5
-    KeyDigit6
-    KeyDigit7
-    KeyDigit8
-    KeyDigit9
-
-    KeyF1
-    KeyF2
-    KeyF3
-    KeyF4
-    KeyF5
-    KeyF6
-    KeyF7
-    KeyF8
-    KeyF9
-    KeyF10
-    KeyF11
-    KeyF12
-
-    KeyEscape
-    KeyEnter
-    KeySpace
-    KeyBackspace
-    KeyTab
-    KeyDelete
-    KeyInsert
-    KeyHome
-    KeyEnd
-    KeyPageUp
-    KeyPageDown
-
-    KeyArrowUp
-    KeyArrowDown
-    KeyArrowLeft
-    KeyArrowRight
-
-    KeyShiftLeft
-    KeyShiftRight
-    KeyControlLeft
-    KeyControlRight
-    KeyAltLeft
-    KeyAltRight
-    KeySuperLeft
-    KeySuperRight
-
-    KeyMinus
-    KeyEqual
-    KeyBracketLeft
-    KeyBracketRight
-    KeyBackslash
-    KeySemicolon
-    KeyQuote
-    KeyBackquote
-    KeyComma
-    KeyPeriod
-    KeySlash
-    KeyCapsLock
-    KeyNumLock
-    KeyScrollLock
-    KeyPrintScreen
-    KeyPause
-
-    KeyCodeCount // sentinel — total number of key codes
-)
-```
+> **→ [l2-input-system-go-codes.md](l2-input-system-go-codes.md) §3** — full
+> `KeyCode uint16` enum (alphanumerics, function keys, navigation, modifiers,
+> punctuation, `KeyCodeCount` sentinel). Extracted as a reference table to keep
+> this spec focused on input state logic.
 
 ### MouseButton
 
@@ -283,80 +186,11 @@ type CursorPosition struct {
 }
 ```
 
-### GamepadButton
+### Gamepad & Touch Types
 
-```go
-// GamepadButton represents gamepad button identifiers.
-type GamepadButton uint8
-
-const (
-    GamepadButtonSouth GamepadButton = iota // A / Cross
-    GamepadButtonEast                       // B / Circle
-    GamepadButtonNorth                      // Y / Triangle
-    GamepadButtonWest                       // X / Square
-    GamepadButtonLeftBumper
-    GamepadButtonRightBumper
-    GamepadButtonLeftTrigger
-    GamepadButtonRightTrigger
-    GamepadButtonSelect
-    GamepadButtonStart
-    GamepadButtonLeftStick
-    GamepadButtonRightStick
-    GamepadButtonDPadUp
-    GamepadButtonDPadDown
-    GamepadButtonDPadLeft
-    GamepadButtonDPadRight
-)
-```
-
-### GamepadAxis
-
-```go
-// GamepadAxis represents analog gamepad axes.
-type GamepadAxis uint8
-
-const (
-    GamepadAxisLeftStickX GamepadAxis = iota
-    GamepadAxisLeftStickY
-    GamepadAxisRightStickX
-    GamepadAxisRightStickY
-    GamepadAxisLeftTrigger
-    GamepadAxisRightTrigger
-)
-```
-
-### GamepadID
-
-```go
-// GamepadID identifies a connected gamepad.
-type GamepadID uint8
-```
-
-### TouchPhase
-
-```go
-// TouchPhase represents the phase of a touch event.
-type TouchPhase uint8
-
-const (
-    TouchPhaseStarted   TouchPhase = iota
-    TouchPhaseMoved
-    TouchPhaseEnded
-    TouchPhaseCancelled
-)
-```
-
-### TouchInput
-
-```go
-// TouchInput represents a single touch event with multi-touch support.
-type TouchInput struct {
-    Phase    TouchPhase
-    ID       uint64    // unique identifier per finger/pointer
-    Position math.Vec2 // screen position
-    Force    float64   // pressure (0.0 to 1.0, if available)
-}
-```
+> **→ [l2-input-system-go-codes.md](l2-input-system-go-codes.md) §3** — full
+> `GamepadButton`, `GamepadAxis`, `GamepadID`, `TouchPhase`, and `TouchInput`
+> definitions. Extracted as reference tables alongside `KeyCode`.
 
 ### Input Events
 
@@ -529,3 +363,4 @@ func (p InputPlugin) Build(app *app.App)
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial L2 draft |
+| 0.2.0 | 2026-05-15 | Extracted `KeyCode`/`Gamepad*`/`Touch*` type tables into `l2-input-system-go-codes.md` to clear SPEC_DECOMPOSE (531→364 lines); §Type Definitions now references the codes spec |

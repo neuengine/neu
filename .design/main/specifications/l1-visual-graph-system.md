@@ -4,8 +4,8 @@
 | :--- | :--- |
 | **Layer** | 1 (concept) |
 | **Status** | Draft |
-| **Version** | 0.1.0 |
-| **Related Specifications** | [definition-system.md](l1-definition-system.md), [scripting-system.md](l1-scripting-system.md), [multi-repo-architecture.md](l1-multi-repo-architecture.md), [type-registry.md](l1-type-registry.md), [event-system.md](l1-event-system.md), [command-system.md](l1-command-system.md), [query-system.md](l1-query-system.md), [component-system.md](l1-component-system.md), [system-scheduling.md](l1-system-scheduling.md), [app-framework.md](l1-app-framework.md) |
+| **Version** | 0.2.0 |
+| **Related Specifications** | [l2-visual-graph-editor-bridge.md](l2-visual-graph-editor-bridge.md) (L2 editor/IPC contract), [definition-system.md](l1-definition-system.md), [scripting-system.md](l1-scripting-system.md), [multi-repo-architecture.md](l1-multi-repo-architecture.md), [type-registry.md](l1-type-registry.md), [event-system.md](l1-event-system.md), [command-system.md](l1-command-system.md), [query-system.md](l1-query-system.md), [component-system.md](l1-component-system.md), [system-scheduling.md](l1-system-scheduling.md), [app-framework.md](l1-app-framework.md) |
 
 ## Overview
 
@@ -359,135 +359,27 @@ Visual graphs are serialized as a new definition type in the Definition System:
 
 ### 4.7 Engine-Side Extension Points ("The Door")
 
-The engine exposes interfaces under `pkg/editor/` that the external `bolteditor` repository implements. These are the "door" — the editor has no other way to interact with the graph system.
+The engine exposes interfaces under `pkg/editor/` that the external `bolteditor`
+repository implements (`GraphEditorPlugin`, `NodeRegistryQuery`,
+`GraphDebugger`). These are the "door" — the editor has no other way to interact
+with the graph system. The concrete Go interface contracts are specified in the
+implementation spec:
 
-#### 4.7.1 GraphEditorPlugin Interface
+> **→ [l2-visual-graph-editor-bridge.md](l2-visual-graph-editor-bridge.md) §4.1–§4.3** — full `pkg/editor/graph.go` interface definitions, `NodeInspection`/`ConnectionChange`/`ValidationResult` shapes, and the `GraphExecutionFrame` model.
 
-```plaintext
-// pkg/editor/graph.go
-
-GraphEditorPlugin (interface)
-  OnGraphOpened(graph: GraphDefinition)
-    // Called when the editor opens a graph for editing.
-    // Allows the engine to prepare debugging state.
-
-  OnGraphClosed(graphID: string)
-    // Called when the editor closes a graph.
-    // Engine cleans up debug state.
-
-  OnNodeSelected(graphID: string, nodeID: string) -> NodeInspection
-    // Called when the editor selects a node.
-    // Returns current runtime values for inspection.
-
-  OnConnectionChanged(graphID: string, change: ConnectionChange) -> ValidationResult
-    // Called when the editor adds/removes a connection.
-    // Engine validates type compatibility and returns errors or warnings.
-
-  OnPropertyChanged(graphID: string, nodeID: string, property: string, value: any) -> ValidationResult
-    // Called when the editor changes a node property.
-    // Engine validates the value.
-
-NodeInspection
-  node_id:       string
-  node_type:     string
-  pin_values:    map[string]any          // current runtime values at each pin
-  execution_count: uint64                // how many times this node has executed
-  last_error:    string                  // last error if any
-
-ConnectionChange
-  action:       Add | Remove
-  connection:   Connection
-
-ValidationResult
-  valid:        bool
-  errors:       []string
-  warnings:     []string
-```
-
-#### 4.7.2 NodeRegistryQuery Interface
-
-```plaintext
-// pkg/editor/graph.go
-
-NodeRegistryQuery (interface)
-  ListAllNodes() -> []NodeDescriptor
-    // Returns all registered node types for the editor's node palette.
-
-  SearchNodes(query: string, category: string) -> []NodeDescriptor
-    // Filtered search for the "add node" context menu.
-
-  GetNodeDescriptor(typeName: string) -> Option[NodeDescriptor]
-    // Full descriptor for a specific node type.
-
-  GetCompatibleNodes(pinType: string, pinDirection: Direction) -> []NodeDescriptor
-    // Given a pin the user is dragging from, return nodes with compatible pins.
-    // This powers the "drag a wire and release" → context menu workflow.
-
-  GetTypeHierarchy(typeName: string) -> []string
-    // Returns assignable types (e.g., Vec3 is assignable to any, float32 is assignable to float64).
-    // Used for connection validation and smart suggestions.
-```
-
-#### 4.7.3 GraphDebugger Interface
-
-```plaintext
-// pkg/editor/graph.go
-
-GraphDebugger (interface)
-  SetBreakpoint(graphID: string, nodeID: string) -> error
-  RemoveBreakpoint(graphID: string, nodeID: string) -> error
-  ListBreakpoints(graphID: string) -> []string
-
-  StepOver(graphID: string) -> GraphExecutionFrame
-  StepInto(graphID: string) -> GraphExecutionFrame     // enters subgraph
-  Continue(graphID: string) -> error
-
-  GetExecutionTrace(graphID: string, maxFrames: int) -> []GraphExecutionFrame
-  GetVariableValues(graphID: string, entityID: Entity) -> map[string]any
-  GetPinValue(graphID: string, nodeID: string, pinID: string, entityID: Entity) -> any
-
-GraphExecutionFrame
-  node_id:       string
-  node_type:     string
-  pin_values:    map[string]any
-  step_index:    uint32
-  timestamp:     int64
-```
+Conceptually the door guarantees: (a) the editor's only access path is these
+interfaces, (b) every editor-driven mutation is validated before it is applied,
+and (c) debugging is opt-in and never alters runtime behavior when no editor is
+attached.
 
 ### 4.8 IPC Protocol Extensions
 
-The graph debugging protocol extends `pkg/protocol/` for editor-engine communication:
+The graph debugging protocol extends `pkg/protocol/` for out-of-process
+editor↔engine communication (breakpoint hits, execution traces, runtime errors,
+and live graph updates). The concrete message shapes are specified in the
+implementation spec:
 
-```plaintext
-// pkg/protocol/graph.go
-
-GraphBreakpointHit
-  // Engine → Editor. Execution paused at a breakpoint.
-  graph_id:     string
-  node_id:      string
-  entity_id:    uint64
-  frame:        GraphExecutionFrame
-
-GraphExecutionTraceEvent
-  // Engine → Editor. Real-time execution trace (when tracing is enabled).
-  graph_id:     string
-  entity_id:    uint64
-  frames:       []GraphExecutionFrame
-
-GraphRuntimeError
-  // Engine → Editor. A graph encountered a runtime error.
-  graph_id:     string
-  node_id:      string
-  entity_id:    uint64
-  error:        string
-  pin_values:   map[string]any
-
-GraphLiveUpdate
-  // Editor → Engine. Push a graph modification for immediate preview.
-  graph_id:       string
-  change_type:    NodeAdded | NodeRemoved | ConnectionAdded | ConnectionRemoved | PropertyChanged
-  payload:        any                    // change-specific data
-```
+> **→ [l2-visual-graph-editor-bridge.md](l2-visual-graph-editor-bridge.md) §4.4** — full `pkg/protocol/graph.go` message extensions.
 
 ### 4.9 Integration with Existing Systems
 
@@ -589,3 +481,4 @@ AIGraphNodesPlugin (implements Plugin)
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-01 | Initial draft: graph data model, node taxonomy, execution model, serialization format, pkg/editor/ interfaces ("the door"), IPC protocol extensions, integration map |
+| 0.2.0 | 2026-05-15 | Extracted §4.7–§4.8 (Door interfaces + IPC protocol) into `l2-visual-graph-editor-bridge.md` to clear SPEC_DECOMPOSE and restore L1 Purity (591→483 lines); §4.7/§4.8 now conceptual pointers |

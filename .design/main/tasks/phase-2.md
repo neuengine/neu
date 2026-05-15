@@ -31,7 +31,7 @@ bootstrap: true
 
 - [ ] [T-2A] Hierarchy: `ChildOf`, `Children`, `Transform`, `GlobalTransform`, propagation system. ([l1-hierarchy-system.md](../specifications/l1-hierarchy-system.md), [l2-hierarchy-system-go.md](../specifications/l2-hierarchy-system-go.md))
 - [ ] [T-2B] Time: `gametime` package, `Time`, `RealTime`, `VirtualTime`, `FixedTime`, `Timer`, `Stopwatch`. ([l1-time-system.md](../specifications/l1-time-system.md), [l2-time-system-go.md](../specifications/l2-time-system-go.md))
-- [ ] [T-2C] Input: `ButtonInput[T]`, `AxisInput[T]`, `KeyCode`, `MouseButton`, `GamepadButton`, picking. ([l1-input-system.md](../specifications/l1-input-system.md), [l2-input-system-go.md](../specifications/l2-input-system-go.md))
+- [ ] [T-2C] Input: `ButtonInput[T]`, `AxisInput[T]`, `KeyCode`, `MouseButton`, `GamepadButton`, picking. ([l1-input-system.md](../specifications/l1-input-system.md), [l2-input-system-go.md](../specifications/l2-input-system-go.md), [l2-input-system-go-codes.md](../specifications/l2-input-system-go-codes.md))
 - [ ] [T-2D] State: `State[S]`, `NextState[S]`, `SubState`, `ComputedState`, `DespawnOnExit`. ([l1-state-system.md](../specifications/l1-state-system.md), [l2-state-system-go.md](../specifications/l2-state-system-go.md))
 - [ ] [T-2E] Change Detection: `Tick`, `ComponentTicks`, `Ref[T]`, `Mut[T]`, `RemovedComponents[T]`. ([l1-change-detection.md](../specifications/l1-change-detection.md), [l2-change-detection-go.md](../specifications/l2-change-detection-go.md))
 - [ ] [T-2F] App / Plugin / SubApp / RunMode / DefaultPlugins. ([l1-app-framework.md](../specifications/l1-app-framework.md), [l2-app-framework-go.md](../specifications/l2-app-framework-go.md))

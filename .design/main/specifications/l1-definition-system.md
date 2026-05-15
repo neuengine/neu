@@ -1,6 +1,6 @@
 # Definition System
 
-**Version:** 0.4.0
+**Version:** 0.5.0
 **Status:** Draft
 **Layer:** concept
 
@@ -22,6 +22,7 @@ This is the foundation for data-driven game development: **code defines capabili
 - [hierarchy-system.md](l1-hierarchy-system.md) — Parent-child trees expressed in nested JSON structure
 - [ai-assistant-system.md](l1-ai-assistant-system.md) — AI agents read and write definition files
 - [visual-graph-system.md](l1-visual-graph-system.md) — Visual graphs are a definition type ("graph") loaded by this system
+- [definition-integration.md](l1-definition-integration.md) — Editor integration, network boundary & serialization contract (extracted §4.9–§4.13)
 
 ## 1. Motivation
 
@@ -367,114 +368,23 @@ Because definitions are assets, they participate in the standard hot-reload pipe
 
 This enables the core workflow: **edit JSON in editor → save → see changes in running game**.
 
-### 4.9 Editor Integration Points
+### 4.9 Editor, Network & Serialization Integration
 
-The Definition System is designed as the data format a GUI editor reads and writes:
+The editor-integration surface, network-transmission boundary, and the
+deterministic serialization contract (order-based field serialization, custom
+entity serialization hooks) are specified separately to keep this spec focused
+on the definition content model:
 
-- **Editor → Engine**: Editor saves JSON files. Engine hot-reloads them.
-- **Engine → Editor**: Engine can export current World state as definition files (via DynamicScene + UI tree serialization).
-- **Schema as contract**: JSON Schema files generated from TypeRegistry define what the editor can offer as autocomplete and validation.
-- **Live preview**: Editor connects to a running engine instance and pushes definition updates for immediate preview.
+> **→ [l1-definition-integration.md](l1-definition-integration.md)** —
+> §4.1 Editor Integration Points · §4.2 Editor Plugin Integration
+> (`DefinitionEditorInterface`, `handles()` dispatch, property revert/default,
+> dynamic property list) · §4.3 Network Boundary (definitions are
+> process-local) · §4.4 Order-Based Field Serialization · §4.5 Custom Entity
+> Serialization Hooks.
 
-The editor itself is a future specification. The Definition System provides the data contract the editor will consume.
-
-### 4.10 Editor Plugin Integration
-
-The definition system provides a stable interface for editor plugins to interact with definitions without coupling to internal interpreter complexity.
-
-**Stable editor API**: A `DefinitionEditorInterface` exposes only the operations editor plugins need:
-
-```plaintext
-DefinitionEditorInterface
-  GetDefinitionType(asset: Handle) -> DefinitionType
-  GetPropertyList(node: DefinitionNode) -> []PropertyInfo
-  GetPropertyValue(node: DefinitionNode, name: string) -> any
-  SetPropertyValue(node: DefinitionNode, name: string, value: any)
-  ValidateDefinition(asset: Handle) -> []ValidationError
-```
-
-Internal interpreter complexity is hidden behind this interface. Even as the interpreter evolves, editor plugins only depend on the stable surface.
-
-**handles() dispatch**: Editor plugins declare which definition types they can edit:
-
-```plaintext
-DefinitionEditorPlugin interface:
-  Handles(defType DefinitionType) -> bool
-  Edit(definition: DefinitionNode)
-  GetInspectorProperties(node: DefinitionNode) -> []EditorProperty
-```
-
-The editor iterates registered plugins and asks each `Handles()` — first responder wins. This allows custom editors per definition type (UI editor, flow graph editor, scene editor) without central knowledge of all types.
-
-**Property revert/default system**: Any property in a definition can report its default value for the editor's "reset to default" button:
-
-```plaintext
-DefinitionNode
-  CanRevert(property: string) -> bool
-  GetRevertValue(property: string) -> any
-```
-
-When `CanRevert` returns true, the editor displays a reset indicator next to the property. Clicking it restores the value from `GetRevertValue`. Defaults are derived from the TypeRegistry's default initialization hooks.
-
-**Dynamic property list notification**: A definition node can signal that its available properties have changed:
-
-```plaintext
-DefinitionNode
-  NotifyPropertyListChanged()
-```
-
-This fires when a property value change causes other properties to appear or disappear. For example, changing a node's `type` from `"Button"` to `"ScrollView"` reveals scroll-related properties and hides button-specific ones. The editor refreshes its inspector panel in response.
-
-### 4.11 Network Boundary
-
-Definitions operate strictly within a single engine process. They are **never transmitted over the network** as part of the game loop. A definition file is loaded from local storage (or an asset CDN during development), interpreted into ECS commands, and the resulting entities live in the local World.
-
-Backend services (matchmaking, persistence, analytics) communicate with the game via typed network messages — not via definition files. If a server needs to describe a scene to a client, it sends a compact binary protocol; the client may then load a locally cached definition file referenced by that protocol. The definition system does not serialize or deserialize across network boundaries at runtime.
-
-This constraint preserves the engine's monolithic performance model (see [app-framework.md, Section 4.10](l1-app-framework.md)).
-
-### 4.12 Order-Based Field Serialization
-
-Component and definition fields are serialized in a deterministic, explicit order rather than relying on struct field declaration order:
-
-```plaintext
-SerializationField
-  name:       string
-  order:      int              // explicit serialization order (e.g., -10, 0, 100)
-  mode:       SerializationMode
-  type_hint:  string           // optional type discriminator for polymorphic fields
-
-SerializationMode:
-  Default    // serialize normally (value types by value, reference types by reference)
-  Content    // serialize the contents, not the reference (inline expansion)
-  Ignore     // skip this field entirely
-  Always     // serialize even if value equals default
-```
-
-**Why explicit order matters**: When fields are added, removed, or reordered across engine versions, order-based serialization ensures backward compatibility. A field with `order: 100` added in v2 doesn't break v1 files that lack it — the deserializer simply applies the default value for missing ordered fields.
-
-**Mode: Content vs Default**: `Content` mode inlines the full object graph (e.g., a component's sub-struct is written in-place). `Default` mode writes a reference or handle. This controls serialization depth — preventing accidental serialization of the entire world when a component holds a reference to a shared resource.
-
-### 4.13 Custom Entity Serialization Hooks
-
-Entities support custom serialization behavior through pre/post hooks:
-
-```plaintext
-EntitySerializer
-  PreSerialize(entity: *Entity, mode: SerializeMode)
-    // Called before field serialization begins
-    // Mode: Serialize → prepare entity for writing
-    // Mode: Deserialize → construct entity without default components
-    //   (e.g., skip auto-creating Transform during deserialization)
-
-  PostDeserialize(entity: *Entity)
-    // Called after all fields are deserialized
-    // Resolve cross-references, validate component set, fire hooks
-```
-
-**Construction control**: During deserialization, `PreSerialize` creates the entity with a special flag that suppresses default component auto-insertion (e.g., Transform). This prevents the deserializer from creating a Transform that will immediately be overwritten by the serialized data. After all components are deserialized, `PostDeserialize` validates the entity's component set and fires any deferred lifecycle hooks.
-
-**Component clearing on re-deserialize**: When deserializing into an existing entity (e.g., hot-reload), `PreSerialize` clears the entity's component collection before repopulating. This ensures no stale components survive a reload.
+Conceptual guarantees retained here: definitions are a data contract a future
+GUI editor consumes, they never cross a network boundary at runtime, and their
+serialization order is version-stable.
 
 ## 5. Open Questions
 
@@ -504,4 +414,5 @@ EntitySerializer
 | 0.2.0 | 2026-03-26 | Added network boundary section — definitions are local-only, no cross-process transmission |
 | 0.3.0 | 2026-03-26 | Added editor plugin integration: stable API, handles() dispatch, property revert/default, dynamic property list |
 | 0.4.0 | 2026-03-26 | Added order-based field serialization, custom entity serialization hooks |
+| 0.5.0 | 2026-05-15 | Extracted §4.9–§4.13 (editor/network/serialization) into `l1-definition-integration.md` to clear SPEC_DECOMPOSE (507→~400 lines); §4.9 now a pointer subsection |
 | — | — | Planned examples: `examples/config/` |

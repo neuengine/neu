@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.23.0
+**Version:** 2.24.0
 **Status:** Active
 
 ## Overview
@@ -38,7 +38,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-time-system.md](specifications/l1-time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Draft | concept | 0.2.0 |
 | [l2-time-system-go.md](specifications/l2-time-system-go.md) | Go impl: gametime package, Time/RealTime/VirtualTime/FixedTime, Timer, Stopwatch | Draft | go | 0.1.0 |
 | [l1-input-system.md](specifications/l1-input-system.md) | Keyboard, mouse, gamepad, touch; polling + events; picking | Draft | concept | 0.3.0 |
-| [l2-input-system-go.md](specifications/l2-input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], KeyCode, MouseButton, GamepadButton | Draft | go | 0.1.0 |
+| [l2-input-system-go.md](specifications/l2-input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], input state systems, plugin | Draft | go | 0.2.0 |
+| [l2-input-system-go-codes.md](specifications/l2-input-system-go-codes.md) | Go impl: KeyCode/GamepadButton/GamepadAxis/Touch reference type tables (Implements: l1-input-system) | Draft | go | 0.1.0 |
 | [l1-state-system.md](specifications/l1-state-system.md) | Hierarchical state machines, transitions, computed states | Draft | concept | 0.1.0 |
 | [l2-state-system-go.md](specifications/l2-state-system-go.md) | Go impl: State[S], NextState[S], SubState, ComputedState, DespawnOnExit | Draft | go | 0.1.0 |
 | [l1-change-detection.md](specifications/l1-change-detection.md) | Tick-based change tracking, Added/Changed filters, Ref/Mut wrappers | Draft | concept | 0.1.0 |
@@ -80,13 +81,14 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-definition-system.md](specifications/l1-definition-system.md) | JSON declarative layer: UI, scenes, flows, templates — data-driven bridge | Draft | concept | 0.4.0 |
+| [l1-definition-system.md](specifications/l1-definition-system.md) | JSON declarative layer: UI, scenes, flows, templates — data-driven bridge | Draft | concept | 0.5.0 |
+| [l1-definition-integration.md](specifications/l1-definition-integration.md) | Definition editor integration, network boundary & serialization contract (extracted from l1-definition-system §4.9–§4.13) | Draft | concept | 0.1.0 |
 | [l1-window-system.md](specifications/l1-window-system.md) | Window management, multi-window, platform abstraction | Draft | concept | 0.1.0 |
 | [l1-diagnostic-system.md](specifications/l1-diagnostic-system.md) | Diagnostics, profiling, gizmos, error codes, debug overlay | Draft | concept | 0.1.0 |
 | [l1-ui-system.md](specifications/l1-ui-system.md) | Layout engine, interaction, text, widgets, styling | Draft | concept | 0.2.0 |
 | [l2-benchmark-spec.md](specifications/l2-benchmark-spec.md) | Standardized performance tests and comparisons | Draft | test | 0.2.0 |
 | [l1-build-tooling.md](specifications/l1-build-tooling.md) | CI pipeline, golden file testing, benchmarks, migration/release doc formats | Draft | concept | 0.4.0 |
-| [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers | Draft | tool | 0.1.0 |
+| [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers (Implements: l1-build-tooling) | Draft | tool | 0.2.0 |
 | [l1-code-documentation.md](specifications/l1-code-documentation.md) | AI-readable symbol metadata (AI-Meta) + workflow-artifact hygiene for code/docs | Draft | concept | 0.1.0 |
 | [l2-code-documentation-go.md](specifications/l2-code-documentation-go.md) | Go impl: `AI-Meta:` godoc grammar, stability vocab, scope tiers, ci detection | Draft | go | 0.1.0 |
 | [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.2.0 |
@@ -97,7 +99,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle | Draft | concept | 0.4.0 |
 | [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix | Draft | concept | 0.3.0 |
 | [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Draft | concept | 0.2.0 |
-| [l1-visual-graph-system.md](specifications/l1-visual-graph-system.md) | Blueprint-style visual graph programming: node model, execution engine, editor "door" interfaces | Draft | concept | 0.1.0 |
+| [l1-visual-graph-system.md](specifications/l1-visual-graph-system.md) | Blueprint-style visual graph programming: node model, execution engine, editor "door" interfaces | Draft | concept | 0.2.0 |
+| [l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md) | Go impl: `pkg/editor/graph.go` interfaces (GraphEditorPlugin/NodeRegistryQuery/GraphDebugger) + `pkg/protocol/graph.go` IPC (Implements: l1-visual-graph-system) | Draft | go | 0.1.0 |
 
 ## P7 — Advanced Core
 
@@ -132,5 +135,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-15
-- **Total Specifications**: 81 (64 L1 concept + 15 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 81
+- **Total Specifications**: 84 (65 L1 concept + 17 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 84
 - **Engine Version:** 2.1.27

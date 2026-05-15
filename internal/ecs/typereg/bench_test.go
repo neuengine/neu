@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/typereg"
+	"github.com/teratron/boltengine/internal/ecs/typereg"
 )
 
 // BenchmarkResolveByID measures dense-slice lookup. Pure index access; no

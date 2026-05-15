@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	ecs "github.com/teratron/ecs-engine/pkg/ecs"
+	ecs "github.com/teratron/boltengine/pkg/ecs"
 )
 
 // TestPOCDeterminism runs two identical worlds through the full tick loop and
@@ -147,9 +147,9 @@ func TestPOCScheduleDAG(t *testing.T) {
 // ── helpers ───────────────────────────────────────────────────────────────────
 
 type pocResult struct {
-	ticks       int
-	moved       int
-	eventsRecv  int
+	ticks      int
+	moved      int
+	eventsRecv int
 }
 
 func runPOC(t *testing.T) pocResult {

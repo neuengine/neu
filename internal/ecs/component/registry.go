@@ -20,9 +20,9 @@ import (
 // produce identical IDs — a property the archetype-hashing layer (T-1C03)
 // relies on.
 type Registry struct {
-	infosByID []Info // index 0 reserved as the invalid sentinel
 	typeToID  map[reflect.Type]ID
 	nameToID  map[string]ID
+	infosByID []Info // index 0 reserved as the invalid sentinel
 }
 
 // NewRegistry creates an empty Registry.

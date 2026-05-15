@@ -3,9 +3,9 @@ package view
 import (
 	"reflect"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/query"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/query"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // TagOf resolves the [component.ID] for type T against the world's component

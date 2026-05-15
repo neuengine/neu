@@ -21,23 +21,25 @@ const DefaultChunkSize = 16 * 1024
 // Removal uses swap-and-pop on the dense row arrays so iteration stays
 // contiguous. Tables are NOT safe for concurrent mutation.
 type Table struct {
-	chunkSize int
+	// Pointer-containing fields — kept together to minimise GC scan range.
 
 	// Public-API ordering: same as the spec slice supplied to NewTable.
-	cols       []ColumnSpec
-	colByID    map[ID]int
+	cols             []ColumnSpec
+	colByID          map[ID]int
 	publicToOriginal []int // identity in the simple case; kept for clarity
 
 	// Internal layout (sorted by alignment desc, then size desc, then ID asc).
-	sortedCols   []ColumnSpec
-	sortedOffset []uintptr // byte offset within a chunk where each sorted column starts
-	publicToSorted []int   // public index → index in sortedCols
-
-	chunkRows int   // rows per chunk (>= 1)
-	rowStride uintptr
+	sortedCols     []ColumnSpec
+	sortedOffset   []uintptr // byte offset within a chunk where each sorted column starts
+	publicToSorted []int     // public index → index in sortedCols
 
 	chunks [][]byte
-	nRows  int
+
+	// Non-pointer scalar fields — outside GC scan range.
+	chunkSize int
+	chunkRows int // rows per chunk (>= 1)
+	rowStride uintptr
+	nRows     int
 }
 
 // NewTable creates a Table for the given column spec. The chunkSize argument

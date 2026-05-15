@@ -1,8 +1,8 @@
 package world
 
 import (
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
 )
 
 // DeferredWorld is a restricted view of the World for use inside component

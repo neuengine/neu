@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/component"
 )
 
 func TestNewQueryStateAutoRead(t *testing.T) {

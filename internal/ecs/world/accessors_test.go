@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/component"
 )
 
 type accPos struct{ X int }

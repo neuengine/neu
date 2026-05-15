@@ -3,8 +3,8 @@ package command_test
 import (
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/command"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/command"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // noopCmd implements command.Command without any work or allocation. Used as

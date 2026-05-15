@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/component"
 )
 
 // Access describes the component access requirements of a query or system.

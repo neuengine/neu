@@ -27,10 +27,10 @@ package view
 import (
 	"iter"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/query"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/query"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // View is a cached set of [world.ArchetypeID]s matching a fixed

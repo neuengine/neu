@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"sort"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
 )
 
 // ArchetypeID uniquely identifies an archetype within an [ArchetypeStore].
@@ -83,12 +83,12 @@ type ListenerID uint32
 type ArchetypeStore struct {
 	archetypes []Archetype
 	index      map[string]ArchetypeID
-	generation uint32
 
 	// listeners receive a callback whenever findOrCreate produces a new
 	// archetype. Used by [view.View] (Track I) and observers (Track G/T-1G02)
 	// to react to graph deltas without polling.
 	listeners      map[ListenerID]func(*Archetype)
+	generation     uint32
 	nextListenerID ListenerID
 }
 

@@ -4,9 +4,9 @@ import (
 	"errors"
 	"iter"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // ErrQueryNoMatch is returned by Single-style helpers when zero entities

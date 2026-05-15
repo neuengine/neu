@@ -3,7 +3,7 @@ package query
 import (
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/component"
 )
 
 func TestMaskZeroValue(t *testing.T) {

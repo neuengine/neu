@@ -46,24 +46,22 @@ type TypeTags struct {
 // namespaces are `ecs:"..."`, `editor:"..."`, and `range:"min,max"`. Any
 // unparsed tag string is preserved verbatim in [FieldTags.Raw].
 type FieldTags struct {
-	// ECS namespace.
-	Storage StorageStrategy
-	Ignore  bool
-
-	// Editor namespace.
-	Hidden   bool
-	ReadOnly bool
-	Label    string
-
-	// Range namespace.
-	HasRange bool
-	RangeMin float64
+	Label string
 	RangeMax float64
-
+	RangeMin float64
 	// Raw is the original [reflect.StructTag] for callers that need to read
 	// custom user namespaces not handled by this package.
 	Raw reflect.StructTag
+	// ECS namespace.
+	Storage StorageStrategy
+	// Range namespace.
+	HasRange bool
+	// Editor namespace.
+	Hidden bool
+	Ignore bool
+	ReadOnly bool
 }
+
 
 // FieldInfo stores cached metadata for a single struct field. Offsets and
 // types are populated once at registration so hot-path access avoids reflect

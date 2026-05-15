@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/scheduler"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/scheduler"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 func TestRunIfSkipsSystemWhenFalse(t *testing.T) {

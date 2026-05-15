@@ -4,9 +4,9 @@ import (
 	"errors"
 	"iter"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // errSameTypeInQuery is returned when a multi-arity query is constructed

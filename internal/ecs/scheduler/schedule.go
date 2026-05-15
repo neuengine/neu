@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teratron/ecs-engine/internal/ecs/query"
+	"github.com/teratron/boltengine/internal/ecs/query"
 )
 
 // ErrDuplicateSystem is returned by [Schedule.AddSystem] when a name is

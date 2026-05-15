@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // componentIDFor registers (if needed) and returns the [component.ID] for T

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/entity"
 )
 
 // SparseSet is the storage backend used for components tagged with

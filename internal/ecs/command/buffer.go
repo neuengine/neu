@@ -3,8 +3,8 @@ package command
 import (
 	"sync"
 
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 const defaultCommandBufferCap = 64
@@ -26,8 +26,8 @@ var bufPool = sync.Pool{
 // CommandBuffer is not thread-safe; each system must own its buffer
 // exclusively during execution.
 type CommandBuffer struct {
-	commands []Command
 	entities *entity.EntityAllocator
+	commands []Command
 }
 
 // NewCommandBuffer allocates a CommandBuffer with the given initial capacity.

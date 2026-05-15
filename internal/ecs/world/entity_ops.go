@@ -3,8 +3,8 @@ package world
 import (
 	"reflect"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
 )
 
 // SpawnWithEntity parks a pre-allocated entity in the empty archetype.

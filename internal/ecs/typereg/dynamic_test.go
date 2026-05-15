@@ -4,19 +4,17 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/typereg"
+	"github.com/teratron/boltengine/internal/ecs/typereg"
 )
 
 // ---- fixtures ----------------------------------------------------------------
 
 type playerStats struct {
-	HP     int     `editor:"label:Hit Points" range:"0,100"`
-	Speed  float32 `editor:"label:Speed"`
-	Name   string
+	Name string
+	HP int `editor:"label:Hit Points" range:"0,100"`
+	Speed float32 `editor:"label:Speed"`
 	Hidden bool `editor:"hidden"`
 }
-
-type emptyStruct struct{}
 
 // ---- TypeHooks ---------------------------------------------------------------
 
@@ -351,7 +349,7 @@ func TestDynamicObject_Fields_IteratesAll(t *testing.T) {
 	d, _ := typereg.NewDynamicObject(r, ps)
 
 	names := make(map[string]bool)
-	for fi, _ := range d.Fields() {
+	for fi := range d.Fields() {
 		names[fi.Name] = true
 	}
 	for _, want := range []string{"HP", "Speed", "Name", "Hidden"} {

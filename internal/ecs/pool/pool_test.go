@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/pool"
+	"github.com/teratron/boltengine/internal/ecs/pool"
 )
 
 type payload struct {

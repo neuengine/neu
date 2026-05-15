@@ -1,6 +1,6 @@
 package component
 
-import "github.com/teratron/ecs-engine/internal/ecs/entity"
+import "github.com/teratron/boltengine/internal/ecs/entity"
 
 // HookContext is the opaque object passed to a [Hook] when the World fires a
 // component lifecycle event. It is intentionally an empty interface: the
@@ -11,7 +11,7 @@ import "github.com/teratron/ecs-engine/internal/ecs/entity"
 // Forward declaration only — the World package will publish a richer
 // interface once available; this type is a placeholder that keeps the hook
 // signatures stable.
-type HookContext interface{}
+type HookContext any
 
 // Hook fires on a component lifecycle event for a single entity.
 //

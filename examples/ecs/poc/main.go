@@ -12,7 +12,7 @@ package main
 import (
 	"fmt"
 
-	ecs "github.com/teratron/ecs-engine/pkg/ecs"
+	ecs "github.com/teratron/boltengine/pkg/ecs"
 )
 
 // ── component types ───────────────────────────────────────────────────────────
@@ -28,11 +28,11 @@ type MoveEvent struct{ Count int }
 // ── state shared across systems (stored as World resource) ───────────────────
 
 type Stats struct {
-	Ticks        int
-	Moved        int
-	Damaged      int
-	EventsRecv   int
-	Spawned      int
+	Ticks      int
+	Moved      int
+	Damaged    int
+	EventsRecv int
+	Spawned    int
 }
 
 func main() {

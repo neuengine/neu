@@ -4,10 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/query"
-	"github.com/teratron/ecs-engine/internal/ecs/scheduler"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/query"
+	"github.com/teratron/boltengine/internal/ecs/scheduler"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // fixture component for access declarations.
@@ -377,8 +377,8 @@ func TestComplexScheduleBuild(t *testing.T) {
 // fallback-to-zero-Access path.
 type plainSystem struct{ name string }
 
-func (p plainSystem) Name() string             { return p.name }
-func (p plainSystem) Run(_ *world.World)       {}
+func (p plainSystem) Name() string       { return p.name }
+func (p plainSystem) Run(_ *world.World) {}
 
 func TestPlainSystemFallsBackToZeroAccess(t *testing.T) {
 	t.Parallel()

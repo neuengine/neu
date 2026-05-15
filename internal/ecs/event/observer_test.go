@@ -3,11 +3,11 @@ package event_test
 import (
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/command"
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/event"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/command"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/event"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // ---- helpers -----------------------------------------------------------------

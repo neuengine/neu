@@ -23,7 +23,7 @@ package event
 import (
 	"reflect"
 
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // swapper is implemented by [EventBus] for type-erased frame swap.

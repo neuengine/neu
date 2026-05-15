@@ -1,8 +1,8 @@
 package query
 
 import (
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // QueryFilter narrows which archetypes (and, for tick-based filters, which

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // ErrSystemPanic is returned when a [System.Run] panics. The wrapped

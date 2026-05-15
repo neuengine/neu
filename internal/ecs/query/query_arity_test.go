@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/component"
-	"github.com/teratron/ecs-engine/internal/ecs/query"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/teratron/boltengine/internal/ecs/query"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // Test fixtures — kept in this _test package so they don't leak into the

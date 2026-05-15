@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/teratron/ecs-engine/internal/ecs/entity"
-	"github.com/teratron/ecs-engine/internal/ecs/world"
+	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/teratron/boltengine/internal/ecs/world"
 )
 
 // MinChunkSize is the smallest row count [Query1.ParIter] dispatches to a

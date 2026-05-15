@@ -174,7 +174,7 @@ These modules form the heart of the engine. Every game built on the engine depen
 
 #### Input
 
-- **ButtonInput[T]**: Generic pressed/just_pressed/released state tracking
+- **`ButtonInput[T]`**: Generic pressed/just_pressed/released state tracking
 - **Devices**: Keyboard (`KeyCode`), Mouse (`MouseButton`, `MouseMotion`), Gamepad, Touch
 - **Go Mapping**: Polling model via `type InputState struct{}`
 

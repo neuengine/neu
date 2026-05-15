@@ -5,8 +5,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/teratron/ecs-engine/internal/ecs/event"
-	ecs "github.com/teratron/ecs-engine/pkg/ecs"
+	"github.com/teratron/boltengine/internal/ecs/event"
+	ecs "github.com/teratron/boltengine/pkg/ecs"
 )
 
 // ── component fixtures ────────────────────────────────────────────────────────

@@ -3,5 +3,5 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("ecs-engine cli — not yet implemented")
+	fmt.Println("boltengine cli — not yet implemented")
 }

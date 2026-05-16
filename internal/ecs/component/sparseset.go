@@ -20,12 +20,12 @@ import (
 // Removal uses swap-and-pop on the dense arrays so iteration stays
 // contiguous. The set is NOT safe for concurrent mutation.
 type SparseSet struct {
-	sparse   []uint32                      // entity index -> dense+1 (0 means absent)
-	entities []entity.Entity               // dense, length == n
-	data     []byte                        // dense, length == n*size (nil if zero-size)
-	ticks    []changedetect.ComponentTicks // dense, length == n (parallel to entities)
-	agg      changedetect.ColumnTicks      // running max for O(1) column skip
 	spec     ColumnSpec
+	sparse   []uint32
+	entities []entity.Entity
+	data     []byte
+	ticks    []changedetect.ComponentTicks
+	agg      changedetect.ColumnTicks
 }
 
 // NewSparseSet creates an empty SparseSet for the given column spec.

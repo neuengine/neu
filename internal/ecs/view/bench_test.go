@@ -22,8 +22,8 @@ func BenchmarkView_Entities(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		var sum uint32
 		for e := range v.Entities(w) {
 			sum += e.Index()
@@ -54,8 +54,8 @@ func BenchmarkView_Count(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = v.Count(w)
 	}
 }
@@ -74,8 +74,8 @@ func BenchmarkView_Contains(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = v.Contains(w, pivot)
 	}
 }
@@ -87,8 +87,8 @@ func BenchmarkTagger_MaskOf(b *testing.B) {
 	_ = view.MaskOf[pos](w) // warm
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = view.MaskOf[pos](w)
 	}
 }
@@ -104,8 +104,8 @@ func BenchmarkArchetypeStore_Listener(b *testing.B) {
 	// listener — measuring the hot-path cost when the listener list isn't
 	// touched per spawn.
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		w.Spawn(component.Data{Value: pos{}})
 	}
 }

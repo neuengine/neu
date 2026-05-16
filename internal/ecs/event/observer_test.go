@@ -473,8 +473,8 @@ func TestTriggerObservers_RaceClean(t *testing.T) {
 func BenchmarkAddObserver(b *testing.B) {
 	w := newTestWorld()
 	cb := func(*event.ObserverContext) {}
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		event.AddObserver(w, testTrigger, cb)
 	}
 }
@@ -484,8 +484,8 @@ func BenchmarkTriggerObservers_NoHierarchy(b *testing.B) {
 	e := spawnEntity(w)
 	event.AddObserver(w, testTrigger, func(*event.ObserverContext) {})
 	dw := w.NewDeferred()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		event.TriggerObservers(dw, testTrigger, e, nil)
 	}
 }
@@ -500,8 +500,8 @@ func BenchmarkTriggerObservers_WithCommands(b *testing.B) {
 	buf := command.NewCommandBuffer(w.Entities(), 16)
 	buf.RegisterWith(w)
 	dw := w.NewDeferred()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		event.TriggerObservers(dw, testTrigger, e, nil)
 	}
 }

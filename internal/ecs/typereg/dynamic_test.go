@@ -410,8 +410,8 @@ func BenchmarkDynamicObjectGet(b *testing.B) {
 	typereg.RegisterType[playerStats](r)
 	ps := &playerStats{HP: 1}
 	d, _ := typereg.NewDynamicObject(r, ps)
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_, _ = d.Get("HP")
 	}
 }
@@ -421,8 +421,8 @@ func BenchmarkDynamicObjectSet(b *testing.B) {
 	typereg.RegisterType[playerStats](r)
 	ps := &playerStats{}
 	d, _ := typereg.NewDynamicObject(r, ps)
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = d.Set("HP", 42)
 	}
 }
@@ -432,8 +432,8 @@ func BenchmarkDynamicObjectFieldIteration(b *testing.B) {
 	typereg.RegisterType[playerStats](r)
 	ps := &playerStats{HP: 1, Speed: 1.0}
 	d, _ := typereg.NewDynamicObject(r, ps)
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		for range d.Fields() {
 		}
 	}
@@ -442,8 +442,8 @@ func BenchmarkDynamicObjectFieldIteration(b *testing.B) {
 func BenchmarkNewDynamicObjectByID(b *testing.B) {
 	r := typereg.NewTypeRegistry()
 	reg := typereg.RegisterType[playerStats](r)
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_, _ = typereg.NewDynamicObjectByID(r, reg.ID)
 	}
 }

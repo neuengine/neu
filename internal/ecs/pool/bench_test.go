@@ -15,8 +15,8 @@ func BenchmarkPool_GetPut(b *testing.B) {
 	p.Put(p.Get())
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		v := p.Get()
 		p.Put(v)
 	}
@@ -36,8 +36,8 @@ func BenchmarkPool_GetPut_WithReset(b *testing.B) {
 	p.Put(first)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		v := p.Get()
 		v.ID = 1
 		p.Put(v)
@@ -66,8 +66,8 @@ func BenchmarkSlicePool_GetPut_LargeFill(b *testing.B) {
 	p.Put(p.Get())
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		buf := p.Get()
 		for j := range 200 {
 			buf.Data = append(buf.Data, j)
@@ -80,8 +80,8 @@ func BenchmarkSlicePool_GetPut_LargeFill(b *testing.B) {
 // slice every iteration. Used for comparison against BenchmarkSlicePool_*.
 func BenchmarkBaseline_MakeSlice(b *testing.B) {
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		s := make([]int, 0, 64)
 		s = append(s, 1, 2, 3, 4, 5)
 		_ = s

@@ -14,8 +14,8 @@ func BenchmarkResolveByID(b *testing.B) {
 	reg := typereg.RegisterType[position](r)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = r.ResolveByID(reg.ID)
 	}
 }
@@ -28,8 +28,8 @@ func BenchmarkResolveByType(b *testing.B) {
 	t := reflect.TypeFor[position]()
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = r.Resolve(t)
 	}
 }
@@ -41,8 +41,8 @@ func BenchmarkResolveByName(b *testing.B) {
 	reg := typereg.RegisterType[position](r)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = r.ResolveByName(reg.Name)
 	}
 }
@@ -56,8 +56,8 @@ func BenchmarkFieldByName(b *testing.B) {
 	_ = reg.FieldByName("X")
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		_ = reg.FieldByName("Y")
 	}
 }
@@ -71,8 +71,8 @@ type benchType3 struct{ A, B, C int }
 
 func BenchmarkRegisterFour(b *testing.B) {
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		r := typereg.NewTypeRegistry()
 		typereg.RegisterType[benchType0](r)
 		typereg.RegisterType[benchType1](r)

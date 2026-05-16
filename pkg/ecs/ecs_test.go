@@ -26,8 +26,7 @@ type Tag struct{} // zero-size tag component
 func BenchmarkSpawn(b *testing.B) {
 	w := ecs.NewWorld()
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		_ = w.Spawn(ecs.Data{Value: Position{}})
 	}
 }
@@ -43,7 +42,6 @@ func BenchmarkIter1(b *testing.B) {
 		b.Fatalf("NewQuery1: %v", err)
 	}
 	b.ReportAllocs()
-
 	for b.Loop() {
 		for _, p := range q.All(w) {
 			_ = p.X
@@ -66,8 +64,7 @@ func BenchmarkIter3(b *testing.B) {
 		b.Fatalf("NewQuery3: %v", err)
 	}
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		for _, tup := range q.All(w) {
 			_ = tup.A.X
 		}

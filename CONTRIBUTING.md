@@ -60,7 +60,7 @@ neuengine/                 # Root of the engine project
 │   ├── app/                # Application framework and plugin orchestrator
 │   ├── asset/              # Asynchronous asset server and hot-reloader
 │   ├── hotreload/          # Engine hot-swap orchestrator, state snapshots, VFS watchers
-│   │                       # NOTE: hot-reload *orchestration* lives in neueditor/internal/orchestrator/
+│   │                       # NOTE: hot-reload *orchestration* lives in editor/internal/orchestrator/
 │   │                       # This package handles the engine-side: snapshot serialization,
 │   │                       # IPC signal handling, and state restore (l1-hot-reload §4.2–4.4)
 │   ├── scene/              # DynamicScene, StaticScene, entity remapping, prefabs
@@ -128,7 +128,7 @@ neuengine/                 # Root of the engine project
     │   ├── profiling/      # Span API, Tracy/pprof/chrome exporters
     │   └── error/          # EngineError, E-series codes, localization registry
     ├── codegen/            # ecs-gen: code generation for components/queries
-    ├── editor/             # Stable interfaces consumed by neueditor (l1-multi-repo §4.3)
+    ├── editor/             # Stable interfaces consumed by editor (l1-multi-repo §4.3)
     │   ├── plugin.go       # EditorPlugin interface (Build)
     │   ├── inspector.go    # InspectorPlugin interface (Handles, Render, PropertyInfo)
     │   ├── gizmo.go        # GizmoPlugin interface (Draw, Interact)
@@ -138,7 +138,7 @@ neuengine/                 # Root of the engine project
         └── diagnostics.go  # NetworkAlert, DiagnosticSnapshot
 ```
 
-## Target Editor Repository Structure (`neueditor`)
+## Target Editor Repository Structure (`editor`)
 
 This section describes the planned companion repository boundary used by the multi-repo architecture specs:
 
@@ -148,7 +148,7 @@ for the full rationale and versioning contract.
 
 ```mermaid
 graph TD
-    subgraph "Repository: neueditor"
+    subgraph "Repository: editor"
         ED_CMD[cmd/editor]
         ED_AI[internal/ai]
         ED_ORCH[internal/orchestrator]
@@ -174,7 +174,7 @@ graph TD
 ```
 
 ```plaintext
-neueditor/
+editor/
 ├── cmd/
 │   ├── editor/             # Main editor binary
 │   │   └── main.go         # NewApp() + DefaultPlugins + EditorPlugin{}
@@ -252,13 +252,13 @@ neueditor/
 │   └── default.flow.json   # Starter flow definition for new projects
 │
 ├── go.mod
-│   # module github.com/org/neueditor
+│   # module github.com/neuengine/editor
 │   #
-│   # require github.com/org/neuengine v0.x.0
+│   # require github.com/neuengine/neu v0.x.0
 │   #
 │   # The line below is ONLY for local co-development.
 │   # It MUST be removed before tagging any release (enforced by CI).
-│   # replace github.com/org/neuengine => ../neuengine
+│   # replace github.com/neuengine/neu => ../neu
 │
 ├── go.sum
 └── CONTRIBUTING.md
@@ -308,24 +308,24 @@ remain in `internal/window/backend/`.
 cross-dependency.
 
 `pkg/editor/` and `pkg/protocol/` define the stable architectural boundary for communication with
-the `neueditor` repository. These packages contain **only interfaces, data types, and constants** —
+the `editor` repository. These packages contain **only interfaces, data types, and constants** —
 no business logic, no World access, no ECS system registration. Any breaking change to these
-packages requires a SemVer major bump in `neuengine` and a forced upgrade in `neueditor`.
+packages requires a SemVer major bump in `neuengine` and a forced upgrade in `editor`.
 
 ### Multi-Repo Architecture
 
-The GUI editor resides in a separate `neueditor` repository. The engine never imports the editor.
+The GUI editor resides in a separate `editor` repository. The engine never imports the editor.
 The editor never imports `internal/` packages from the engine — Go module semantics enforce this
 structurally. See `l1-multi-repo-architecture` for the versioning contract, CI strategy, and
 local development workflow.
 
-`neueditor` constructs the engine via the same `NewApp() + DefaultPlugins` builder pattern as any
+`editor` constructs the engine via the same `NewApp() + DefaultPlugins` builder pattern as any
 game. This ensures the editor **dogfoods** the engine's public API surface continuously.
 
 ### AI Assistant System
 
 `l1-ai-assistant-system` defines the AI plugin architecture for the **editor only**. All AI code
-lives in `neueditor/internal/ai/` and is excluded from engine builds via `//go:build editor`.
+lives in `editor/internal/ai/` and is excluded from engine builds via `//go:build editor`.
 The engine itself contains no AI integration — it exports the `pkg/editor/` interfaces that the
 editor implements. The engine never depends on any AI service or model.
 
@@ -334,9 +334,9 @@ editor implements. The engine never depends on any AI service or model.
 | Concern | Repository | Package |
 | :--- | :--- | :--- |
 | Engine-side: pause loop, write snapshot, restore state | `neuengine` | `internal/hotreload/` |
-| Orchestrator: file watching, `go build`, launch new binary | `neueditor` | `internal/orchestrator/` |
+| Orchestrator: file watching, `go build`, launch new binary | `editor` | `internal/orchestrator/` |
 | IPC wire format: messages exchanged between both sides | `neuengine` | `pkg/protocol/` |
-| IPC client (editor connects to engine socket) | `neueditor` | `internal/ipc/` |
+| IPC client (editor connects to engine socket) | `editor` | `internal/ipc/` |
 
 The file watcher must survive engine process restarts, which is why orchestration lives in the
 editor process. The engine-side `internal/hotreload/` only knows how to serialize/restore state

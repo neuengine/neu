@@ -9,7 +9,7 @@
 
 ## Overview
 
-The engine ecosystem is split across two independent Git repositories: **`neuengine`** (the core runtime) and **`neueditor`** (the GUI editor application). The engine repository is the single source of truth for all runtime behaviour, ECS kernel, asset pipeline, rendering, physics, audio, and networking. The editor repository is a consumer of the engine's public API — it is architecturally identical to any third-party game that happens to implement tooling rather than gameplay.
+The engine ecosystem is split across two independent Git repositories: **`neuengine`** (the core runtime) and **`editor`** (the GUI editor application). The engine repository is the single source of truth for all runtime behaviour, ECS kernel, asset pipeline, rendering, physics, audio, and networking. The editor repository is a consumer of the engine's public API — it is architecturally identical to any third-party game that happens to implement tooling rather than gameplay.
 
 Communication between the two repositories occurs at three distinct levels: **compile-time** (Go module dependency), **runtime extension** (plugin interface contracts exported from the engine), and **process IPC** (hot-reload and live debugging protocol). Each level has a clearly defined boundary. The engine never imports the editor. The editor never imports `internal/` packages of the engine.
 
@@ -28,18 +28,18 @@ The specifications already anticipated this boundary. `app-framework.md §4.10` 
 ## 2. Constraints & Assumptions
 
 - The engine repository (`neuengine`) MUST compile, test, and pass benchmarks with zero knowledge of the editor repository.
-- The editor repository (`neueditor`) MUST depend on `neuengine` as a standard Go module. No `internal/` imports, no `replace` directives in production releases.
+- The editor repository (`editor`) MUST depend on `neuengine` as a standard Go module. No `internal/` imports, no `replace` directives in production releases.
 - During active co-development, a `replace` directive in the editor's `go.mod` is permitted for local iteration only. It MUST NOT appear in tagged release commits.
 - All editor-facing extension points in the engine are placed under `pkg/editor/`. This package is compiled unconditionally — it contains only interfaces and data types, no implementation.
 - The IPC protocol types shared between both repositories are placed under `pkg/protocol/` in the engine repository. The editor imports this package to speak the hot-reload and diagnostics wire format.
 - Build tag `//go:build editor` is used in the engine only to gate the registration of editor-level plugin hooks in `app/` and `definition/`. No other `internal/` package uses this tag.
-- Versioning follows SemVer. A breaking change to any type in `pkg/editor/` or `pkg/protocol/` triggers a major version bump in `neuengine` and a corresponding forced upgrade in `neueditor`.
+- Versioning follows SemVer. A breaking change to any type in `pkg/editor/` or `pkg/protocol/` triggers a major version bump in `neuengine` and a corresponding forced upgrade in `editor`.
 - The editor CI pipeline runs a job against the `@latest` published engine tag to detect drift within 24 hours of an engine release.
 
 ## 3. Core Invariants
 
-- **INV-1**: `neuengine` has zero import paths pointing to `neueditor`. This is verifiable with `go list -deps` and enforced in engine CI.
-- **INV-2**: `neueditor` has zero import paths pointing to any `internal/` package of `neuengine`. Enforced by Go module semantics — `internal/` is not exported across module boundaries.
+- **INV-1**: `neuengine` has zero import paths pointing to `editor`. This is verifiable with `go list -deps` and enforced in engine CI.
+- **INV-2**: `editor` has zero import paths pointing to any `internal/` package of `neuengine`. Enforced by Go module semantics — `internal/` is not exported across module boundaries.
 - **INV-3**: `pkg/editor/` contains only interfaces, data types, and constants. No business logic, no ECS system registration, no direct World access.
 - **INV-4**: `pkg/protocol/` contains only message types and their serialisation helpers. It has no dependency on any other engine package.
 - **INV-5**: A game that does not import `pkg/editor/` or `pkg/protocol/` incurs zero overhead from the existence of either package.
@@ -51,14 +51,14 @@ The specifications already anticipated this boundary. `app-framework.md §4.10` 
 
 ```mermaid
 graph TD
-    subgraph "Repository: neueditor"
+    subgraph "Repository: editor"
         ED_CMD[cmd/editor]
         ED_AI[internal/ai]
         ED_ORCH[internal/orchestrator]
         ED_UI[internal/panels]
     end
 
-    subgraph "Repository: neuengine"
+    subgraph "Repository: neu"
         ENG_CORE[internal/ecs]
         ENG_HOT[internal/hotreload]
         ENG_PKG[pkg/editor & pkg/protocol]
@@ -79,7 +79,7 @@ graph TD
 ### 4.2 Repository Structure Overview
 
 ```plaintext
-neuengine/                         neueditor/
+neu/                               editor/
 ─────────────────────────────       ──────────────────────────────
 internal/                           internal/
   ecs/                                panels/
@@ -96,8 +96,8 @@ pkg/                                  viewport/
     inspector.go    (interfaces)         main.go
     gizmo.go        (interfaces)
     property.go     (data types)     go.mod
-  protocol/       ◄── imported         require neuengine v0.x.0
-    hotreload.go    (wire messages)     replace neuengine => ../neuengine
+  protocol/       ◄── imported         require github.com/neuengine/neu v0.x.0
+    hotreload.go    (wire messages)     replace github.com/neuengine/neu => ../neu
     diagnostics.go  (wire messages)
   codegen/
 ```
@@ -107,15 +107,15 @@ pkg/                                  viewport/
 The editor depends on the engine as a versioned Go module. This is the only structural coupling between the two repositories.
 
 ```
-// neueditor/go.mod (development)
-module github.com/org/neueditor
+// editor/go.mod (development)
+module github.com/neuengine/editor
 
 go 1.26.3
 
-require github.com/org/neuengine v0.3.0
+require github.com/neuengine/neu v0.3.0
 
 // Local override during co-development only:
-replace github.com/org/neuengine => ../neuengine
+replace github.com/neuengine/neu => ../neu
 ```
 
 The `replace` directive MUST be removed before tagging any editor release. A CI gate in the editor repository checks that no `replace` directive targeting `neuengine` exists in `go.mod` on the `main` branch.
@@ -319,32 +319,32 @@ If the engine process exits unexpectedly before sending `HotReloadReady`, the ed
 ### 4.5 Package Topology Summary
 
 ```plaintext
-neuengine/pkg/math/           — pure math, no engine deps
-neuengine/pkg/platform/       — capability interfaces
-neuengine/pkg/diagnostic/     — observability interfaces and store
-neuengine/pkg/editor/         — extension interfaces (InspectorPlugin, GizmoPlugin, ...)
-neuengine/pkg/protocol/       — IPC message types (no engine deps, only stdlib)
-neuengine/pkg/codegen/        — code generation tool
+neu/pkg/math/           — pure math, no engine deps
+neu/pkg/platform/       — capability interfaces
+neu/pkg/diagnostic/     — observability interfaces and store
+neu/pkg/editor/         — extension interfaces (InspectorPlugin, GizmoPlugin, ...)
+neu/pkg/protocol/       — IPC message types (no engine deps, only stdlib)
+neu/pkg/codegen/        — code generation tool
 
-neueditor/                    — imports all of the above, none of internal/
+editor/                    — imports all of the above, none of internal/
 ```
 
 Dependency rules expressed as a DAG (arrows = "imports"):
 
 ```plaintext
 pkg/protocol  ←  internal/hotreload  ←  internal/app
-pkg/protocol  ←  neueditor (orchestrator)
+pkg/protocol  ←  editor (orchestrator)
 
 pkg/editor    ←  internal/app (registers EditorInterface service)
-pkg/editor    ←  neueditor (implements interfaces)
+pkg/editor    ←  editor (implements interfaces)
 
 pkg/math
 pkg/platform
 pkg/diagnostic  ←  internal/{render,physics,audio,...}
-                ←  neueditor (reads DiagnosticsStore via service)
+                ←  editor (reads DiagnosticsStore via service)
 ```
 
-No arrows point from `neuengine/internal/` toward `neueditor/`. This is structurally enforced by Go.
+No arrows point from `neu/internal/` toward `editor/`. This is structurally enforced by Go.
 
 ### 4.6 Versioning Contract
 
@@ -367,7 +367,7 @@ The engine uses SemVer. The contracts for each package tier are:
 - go test ./...  -race
 - go vet ./...
 - go build ./...                         # ensures no import of editor packages
-- grep -r 'neueditor' go.mod go.sum    # must find nothing
+- grep -r 'neuengine/editor' go.mod go.sum    # must find nothing
 - go test ./pkg/editor/...               # interface compilation tests
 - go test ./pkg/protocol/...             # serialisation roundtrip tests
 - benchmarks (BenchmarkSpawn, BenchmarkIter, ...)
@@ -379,10 +379,10 @@ The engine uses SemVer. The contracts for each package tier are:
 # Standard build
 - go test ./...  -race
 - go vet ./...
-- grep 'replace.*neuengine' go.mod      # must find nothing on main branch
+- grep 'replace.*neuengine/neu' go.mod      # must find nothing on main branch
 
 # Drift detection (nightly job)
-- go get github.com/org/neuengine@latest
+- go get github.com/neuengine/neu@latest
 - go build ./...
 - go test ./...
 # If this job fails, file an issue and notify maintainers.
@@ -396,20 +396,20 @@ During periods of simultaneous engine and editor development, the `replace` dire
 
 ```plaintext
 workspace/
-├── neuengine/     # local clone of engine repo
-└── neueditor/     # local clone of editor repo
+├── neu/           # local clone of engine repo
+└── editor/     # local clone of editor repo
     └── go.mod
-          replace github.com/org/neuengine => ../neuengine
+          replace github.com/neuengine/neu => ../neu
 ```
 
-Before opening a PR in `neueditor`, the developer removes the `replace` directive, runs `go get github.com/org/neuengine@<target-sha>` to pin the engine version, and verifies the build against the published module. This workflow is documented in the editor repository's `CONTRIBUTING.md`.
+Before opening a PR in `editor`, the developer removes the `replace` directive, runs `go get github.com/neuengine/neu@<target-sha>` to pin the engine version, and verifies the build against the published module. This workflow is documented in the editor repository's `CONTRIBUTING.md`.
 
 ## 5. Open Questions
 
 - [RESOLVED v1.1.0] Should `pkg/protocol/` live in a third, dedicated mini-repository? **Decision**: No. Variant A (engine repo) is chosen for operational simplicity. See §4.4.3.
-- [DEFERRED — Phase 4, neueditor kickoff] Should the IPC transport support WebSocket in addition to Unix sockets, to allow remote debugging of an engine process running on a different machine (e.g., Android device)? `pkg/protocol/` is transport-agnostic; adding WebSocket is a non-breaking additive change.
-- [DEFERRED — Phase 4, neueditor kickoff] Should the editor have its own separate versioning scheme (independent SemVer), or should its version be coupled to the engine version it targets (e.g., `editor v0.3.x` requires `engine v0.3.x`)?
-- [DEFERRED — Phase 4, neueditor kickoff] Should `pkg/editor/` provide default no-op implementations of all interfaces to reduce boilerplate for minimal editor plugins? Lean toward yes; defer to when the first `EditorPlugin` is implemented.
+- [DEFERRED — Phase 4, editor kickoff] Should the IPC transport support WebSocket in addition to Unix sockets, to allow remote debugging of an engine process running on a different machine (e.g., Android device)? `pkg/protocol/` is transport-agnostic; adding WebSocket is a non-breaking additive change.
+- [DEFERRED — Phase 4, editor kickoff] Should the editor have its own separate versioning scheme (independent SemVer), or should its version be coupled to the engine version it targets (e.g., `editor v0.3.x` requires `engine v0.3.x`)?
+- [DEFERRED — Phase 4, editor kickoff] Should `pkg/editor/` provide default no-op implementations of all interfaces to reduce boilerplate for minimal editor plugins? Lean toward yes; defer to when the first `EditorPlugin` is implemented.
 
 ## Canonical References
 
@@ -433,4 +433,4 @@ Before opening a PR in `neueditor`, the developer removes the `replace` directiv
 | 1.2.0 | 2026-03-29 | Demoted Stable → RFC: open questions unresolved, no validating code (C29), architecture may evolve. |
 | 1.3.0 | 2026-03-30 | Added C26 example correlation placeholder for the planned multi-repository boundary stub |
 | — | — | Planned examples: `examples/app/multi_repo_boundary/` |
-| 1.4.0 | 2026-04-26 | Demoted RFC → Draft: architecture agreed (Variant A resolved, three-level model stable), open questions 2–4 deferred to Phase 4 (neueditor kickoff); not blocking Phase 1–3 |
+| 1.4.0 | 2026-04-26 | Demoted RFC → Draft: architecture agreed (Variant A resolved, three-level model stable), open questions 2–4 deferred to Phase 4 (editor kickoff); not blocking Phase 1–3 |

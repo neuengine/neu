@@ -36,8 +36,8 @@ func BenchmarkEventReadDrain(b *testing.B) {
 	rd := event.NewEventReader[damageEvent](w)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		for range 100 {
 			wr.Send(damageEvent{Amount: 1})
 		}
@@ -73,8 +73,8 @@ func BenchmarkMessageReadDrain(b *testing.B) {
 	rd := event.NewMessageReader[pingMsg](w)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		for j := range 100 {
 			wr.Write(pingMsg{Seq: j})
 		}
@@ -96,8 +96,8 @@ func BenchmarkSwapAll(b *testing.B) {
 	event.RegisterEvent[pongMsg](w)
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for range b.N {
+
+	for b.Loop() {
 		event.SwapAll(w)
 	}
 }

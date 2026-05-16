@@ -38,4 +38,4 @@
   ```
 
 - [ ] сделать neuengine skills для разработчиков: Use our neuengine skills with your AI tools to generate high-performance neuengine code that follows best practices.
-- [ ]
+- [ ] сделать расширения для ide vscode, jetbrains, zed и т.д.

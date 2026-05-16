@@ -63,7 +63,7 @@ copilot-instructions.md
 
 # Logs
 *.log
-cache/
+*cache/
 
 # Misc
 *.txt

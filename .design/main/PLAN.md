@@ -1,15 +1,15 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.3.0
-**Generated:** 2026-05-15
+**Version:** 1.4.0
+**Generated:** 2026-05-16
 **Based on:** .design/main/INDEX.md v2.24.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
-**Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until C29 unblock via `examples/ecs/poc/`.
+**Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until each phase's `examples/` gate is satisfied (Phase 1: `examples/ecs/poc/` ✓; Phase 2: `examples/ecs/framework/` pending).
 
 ## Overview
 
-Force-Bootstrap regeneration of the implementation plan. Every registered specification (79 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
+Force-Bootstrap regeneration of the implementation plan. Every registered specification (84 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
 
 - **STOP FACTOR**: phases ≥ 4 are frozen (`Hold`) until Phase 1 (POC) is validated by code in `examples/ecs/poc/` (C29).
 - **Layer Order**: every L1 concept spec is scheduled before its L2 Go implementation within the same phase.
@@ -20,9 +20,9 @@ Dependency analysis (Implements: chains):
 - 14 hard L2→L1 edges, all 1:1, no chains, no cycles.
 - 62 L1 specs are roots. `Related Specifications` cycles within a single phase are non-blocking (Circular Guard Semantic Split — Soft).
 
-## Phase 1 — ECS Core POC (Active) `[Bootstrap]`
+## Phase 1 — ECS Core POC (Done) `[Bootstrap]`
 
-*Foundation runtime: world, entities, components, queries, scheduler. Outcome: a runnable POC in `examples/ecs/poc/` that exercises the full data path and unblocks C29.*
+*Foundation runtime: world, entities, components, queries, scheduler. Outcome: a runnable POC in `examples/ecs/poc/` that exercises the full data path and unblocks C29. **Complete — 27/27 atomic tasks Done.***
 
 - [ ] **World System** ([l1-world-system.md](specifications/l1-world-system.md)) [L1] `[Bootstrap]`
 - [ ] **World System (Go)** ([l2-world-system-go.md](specifications/l2-world-system-go.md)) [L2] `[Bootstrap]`
@@ -42,9 +42,9 @@ Dependency analysis (Implements: chains):
 - [ ] **Type Registry (Go)** ([l2-type-registry-go.md](specifications/l2-type-registry-go.md)) [L2] `[Bootstrap]`
 - [ ] **ECS Lifecycle Patterns** ([l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md)) [L1] `[Bootstrap]`
 
-## Phase 2 — Framework Primitives `[Bootstrap]`
+## Phase 2 — Framework Primitives (Active) `[Bootstrap]`
 
-*Hierarchy, time, input, state, change-detection, app/plugin assembly. Targets `pkg/` extension points and prepares the plugin surface for editor/tooling. Multi-repo architecture (RFC) gate.*
+*Hierarchy, time, input, state, change-detection, app/plugin assembly. Targets `pkg/` extension points and prepares the plugin surface for editor/tooling. Multi-repo architecture (RFC) gate. **Atomic decomposition complete — 24 tasks across Tracks A–G + Validation T (see [tasks/phase-2.md](tasks/phase-2.md)). Critical path: E → F.***
 
 - [ ] **Hierarchy System** ([l1-hierarchy-system.md](specifications/l1-hierarchy-system.md)) [L1] `[Bootstrap]`
 - [ ] **Hierarchy System (Go)** ([l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md)) [L2] `[Bootstrap]`
@@ -152,8 +152,8 @@ Dependency analysis (Implements: chains):
 
 | Phase | Status | Unfreezes when |
 | :--- | :--- | :--- |
-| 1 — ECS Core POC | Active | — (current) |
-| 2 — Framework | Todo | Phase 1 ≥ 80% Done |
+| 1 — ECS Core POC | Done | — (27/27 complete) |
+| 2 — Framework | Active | — (current; Phase 1 100% Done) |
 | 3 — Assets, Math & Concurrency | Todo | Phase 1 Done; Phase 2 ≥ 50% |
 | 4 — Render Pipeline | Hold | C29 unblocked (POC validated) AND App Framework Stable |
 | 5 — Content Systems | Hold | Render Core Stable |
@@ -163,10 +163,11 @@ Dependency analysis (Implements: chains):
 
 ## Planning Audit (`@role:planner`)
 
-- **Optimism Bias**: Phase 1 sized at 27 atomic tasks across 9 tracks. Conservative estimate: ~2–3 weeks of focused work; track effort with `duration_minutes` per phase frontmatter.
-- **Hidden Dependencies**: World ↔ Component ↔ Query form a tight triangle — Tracks B, C, D cannot run fully parallel; Track C blocks on B ≥ 50% (storage), Track D blocks on B+C signature contracts.
-- **Cascade Risk**: If Component System (Track B) slips, Phase 1 entirely stalls (10 dependent tasks across 5 tracks). Mitigation: Track B is the critical path; allocate strongest track first.
-- **C29 Cascade Risk**: Phase 4–8 are blocked on `examples/ecs/poc/`; if POC slips, the entire upper plan freezes. Mitigation: a Validation Track (T-1T*) explicitly scopes the minimal POC.
+- **Phase 1 (Done)**: 27 atomic tasks across 9 tracks; critical path B → C → D held. Retained for historical audit.
+- **Phase 2 Optimism Bias**: 24 atomic tasks across 8 tracks (A–G + T). Tracks A–D file-independent and parallelizable; Track E is small but highest-risk (reaches into Phase 1 `query/filter.go`).
+- **Phase 2 Hidden Dependencies**: Track E (Change Detection) is the critical path — T-2E02 replaces the Phase 1 `T-1D03` accept-all stub and unblocks every `Changed`-filtered system. Track F's `DefaultPlugins` (T-2F03) joins on A03/B03/C03/D03/E03.
+- **Phase 2 Cascade Risk**: If Track E slips, the framework example (T-2T04) cannot prove its `Changed`-filter acceptance → Phase 2 gate stays closed → Phases 4–8 remain `Hold` (C-002). Mitigation: schedule Track E first; strongest contributor owns it.
+- **C29 Cascade Risk (standing)**: Phases 4–8 are blocked on per-phase `examples/` gates; if a gate slips, the upper plan freezes. Each phase carries an explicit Validation Track (T-*) scoping the minimal gate.
 
 ## Document History
 
@@ -175,3 +176,5 @@ Dependency analysis (Implements: chains):
 | 1.0.0 | 2026-04-25 | Force-Bootstrap regeneration; 76 specs mapped across 8 phases |
 | 1.1.0 | 2026-05-01 | Added `l1-plugin-distribution` + `l1-ai-api-plugin` to Phase 6 (UI, Tooling & Quality); INDEX v2.22.0 |
 | 1.2.0 | 2026-05-14 | Added `l1-visual-graph-system` to Phase 6 (Track P already decomposed in `tasks/phase-6.md` as T-6P01..04); INDEX v2.23.0 |
+| 1.3.0 | 2026-05-15 | Registry sync to INDEX v2.24.0 (84 specs); 5 orphan specs placed; full Draft cohort re-mapped |
+| 1.4.0 | 2026-05-16 | Phase 1 → Done (27/27); Phase 2 promoted Active with 24-task atomic decomposition (Tracks A–G + T); corrected stale spec count (79 → 84) |

@@ -1,7 +1,7 @@
-module github.com/teratron/boltengine/examples/ecs
+module github.com/neuengine/neu/examples/ecs
 
 go 1.26.3
 
-replace github.com/teratron/boltengine => ../..
+replace github.com/neuengine/neu => ../..
 
-require github.com/teratron/boltengine v0.0.0-00010101000000-000000000000
+require github.com/neuengine/neu v0.0.0-00010101000000-000000000000

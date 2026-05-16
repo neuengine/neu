@@ -3,9 +3,9 @@ package view_test
 import (
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/view"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/view"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 // BenchmarkView_Entities measures range-over-func iteration over a view of

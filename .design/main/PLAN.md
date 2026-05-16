@@ -1,4 +1,4 @@
-# Implementation Plan — Bolt Engine
+# Implementation Plan — Neu Engine
 
 **Version:** 1.3.0
 **Generated:** 2026-05-15

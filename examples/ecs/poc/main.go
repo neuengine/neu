@@ -12,7 +12,7 @@ package main
 import (
 	"fmt"
 
-	ecs "github.com/teratron/boltengine/pkg/ecs"
+	ecs "github.com/neuengine/neu/pkg/ecs"
 )
 
 // ── component types ───────────────────────────────────────────────────────────

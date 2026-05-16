@@ -6,7 +6,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/entity"
 )
 
 func newPositionSpec(t *testing.T) ColumnSpec {

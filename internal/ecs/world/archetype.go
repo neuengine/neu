@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"slices"
 
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/entity"
 )
 
 // ArchetypeID uniquely identifies an archetype within an [ArchetypeStore].

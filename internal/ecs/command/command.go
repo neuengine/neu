@@ -15,7 +15,7 @@
 //     system owns its buffer exclusively during execution.
 package command
 
-import "github.com/teratron/boltengine/internal/ecs/world"
+import "github.com/neuengine/neu/internal/ecs/world"
 
 // Command is a single deferred mutation to a [world.World].
 // Apply is invoked by [CommandBuffer.Apply] in FIFO order at the flush point.

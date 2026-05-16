@@ -105,13 +105,13 @@ The plugin is organised so that adding a new provider means writing one `provide
 
 ```toml
 [plugin]
-id          = "io.teratron.boltengine.aiapi"
+id          = "io.teratron.neuengine.aiapi"
 version     = "0.1.0"
 name        = "AI API Plugin"
 description = "Connect the engine's AI Assistant System to OpenAI-compatible providers."
-authors     = ["Bolt Engine Core Team"]
+authors     = ["Neu Engine Core Team"]
 license     = "MIT"
-homepage    = "https://github.com/teratron/boltengine"
+homepage    = "https://github.com/neuengine/neu"
 mode        = "in-process"
 
 [compatibility]
@@ -135,7 +135,7 @@ items = [
 ]
 
 [entry.in_process]
-package_path = "github.com/teratron/boltengine/pkg/plugins/aiapi"
+package_path = "github.com/neuengine/neu/pkg/plugins/aiapi"
 factory      = "New"
 
 [config.schema]

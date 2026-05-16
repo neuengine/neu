@@ -3,8 +3,8 @@ package scheduler_test
 import (
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/scheduler"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/scheduler"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 func boolCond(v bool) scheduler.RunCondition {

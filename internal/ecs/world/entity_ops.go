@@ -4,8 +4,8 @@ import (
 	"maps"
 	"reflect"
 
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/entity"
 )
 
 // SpawnWithEntity parks a pre-allocated entity in the empty archetype.

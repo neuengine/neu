@@ -7,7 +7,7 @@
 
 ## Overview
 
-Go-level contract for the engine-side "door" that the external `bolteditor`
+Go-level contract for the engine-side "door" that the external `neueditor`
 repository implements to drive a Blueprint-style graph UI. This spec covers the
 `pkg/editor/graph.go` interfaces (`GraphEditorPlugin`, `NodeRegistryQuery`,
 `GraphDebugger`) and the `pkg/protocol/graph.go` IPC message extensions used for
@@ -25,7 +25,7 @@ editor-integration surface its own versionable contract.
 
 ## 1. Motivation
 
-The visual graph editor lives in a separate repository (`bolteditor`) and must
+The visual graph editor lives in a separate repository (`neueditor`) and must
 not depend on engine internals. The engine therefore exposes a narrow,
 Go-typed interface set under `pkg/editor/` plus a versioned IPC protocol under
 `pkg/protocol/`. This is the only sanctioned interaction path between the editor

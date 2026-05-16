@@ -4,8 +4,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/event"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/event"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 type damageEvent struct{ Amount int }

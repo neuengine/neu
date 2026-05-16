@@ -1,17 +1,17 @@
-// Package ecs is the public API surface of the Bolt engine.
+// Package ecs is the public API surface of the Neu engine.
 // It re-exports key types from the internal sub-packages behind a stable,
 // minimal façade. Internal packages remain the canonical implementation;
 // this package is the intended import path for application code and examples.
 package ecs
 
 import (
-	"github.com/teratron/boltengine/internal/ecs/command"
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/entity"
-	"github.com/teratron/boltengine/internal/ecs/event"
-	"github.com/teratron/boltengine/internal/ecs/query"
-	"github.com/teratron/boltengine/internal/ecs/scheduler"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/command"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/event"
+	"github.com/neuengine/neu/internal/ecs/query"
+	"github.com/neuengine/neu/internal/ecs/scheduler"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 // ── Core ──────────────────────────────────────────────────────────────────────

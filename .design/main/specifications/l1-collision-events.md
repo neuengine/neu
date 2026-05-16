@@ -101,4 +101,4 @@ To provide actionable data for systems that resolve collisions (like the `Charac
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — contact/trigger/force events, state machine, deferred despawn | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — contact/trigger/force events, state machine, deferred despawn | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |

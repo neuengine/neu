@@ -1,9 +1,9 @@
 package command
 
 import (
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/entity"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 // SpawnEmptyCommand parks a pre-reserved entity into the World with no

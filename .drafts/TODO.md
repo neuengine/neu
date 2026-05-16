@@ -12,7 +12,7 @@
   - Nexus Engine
   - Neu Engine
   - Nux Engine
-  - Bolt Engine
+  - Neu Engine
   - Pulse Engine
   - Zest Engine
   - Koda Engine
@@ -37,5 +37,5 @@
   type WeightSampler[T utils.Float] func(fanIn, fanOut int) T
   ```
 
-- [ ] сделать boltengine skills для разработчиков: Use our boltengine skills with your AI tools to generate high-performance boltengine code that follows best practices.
+- [ ] сделать neuengine skills для разработчиков: Use our neuengine skills with your AI tools to generate high-performance neuengine code that follows best practices.
 - [ ]

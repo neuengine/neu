@@ -18,7 +18,7 @@ Global registry aggregating all project specifications across workspaces.
 | :--- | :--- |
 | [main](main/INDEX.md) | Primary engine workspace (ECS core, render pipeline, systems) |
 
-> **Editor workspace** was extracted to `.design-editor/` for migration to the `bolteditor` repository. Engine extension points for the editor are defined in `l1-multi-repo-architecture.md` (`pkg/editor/`, `pkg/protocol/`).
+> **Editor workspace** was extracted to `.design-editor/` for migration to the `neueditor` repository. Engine extension points for the editor are defined in `l1-multi-repo-architecture.md` (`pkg/editor/`, `pkg/protocol/`).
 
 ## Meta Information
 

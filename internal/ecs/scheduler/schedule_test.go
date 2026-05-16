@@ -4,10 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/query"
-	"github.com/teratron/boltengine/internal/ecs/scheduler"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/query"
+	"github.com/neuengine/neu/internal/ecs/scheduler"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 // fixture component for access declarations.

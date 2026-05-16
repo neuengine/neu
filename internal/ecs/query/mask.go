@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/component"
 )
 
 // MaskBits is the maximum number of distinct components a [Mask] can address.

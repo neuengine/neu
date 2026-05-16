@@ -16,7 +16,7 @@ Defines the structure, commands, and rollout of the internal command-line interf
 
 ## 1. Motivation
 
-A dedicated CLI provides a unified entry point for developers using the Bolt engine. It replaces fragmented scripts by standardizing common project tasks.
+A dedicated CLI provides a unified entry point for developers using the Neu engine. It replaces fragmented scripts by standardizing common project tasks.
 
 At the current stage, the CLI also serves as a controlled expansion point: new commands should appear only when the underlying subsystems are real enough to support them.
 
@@ -39,7 +39,7 @@ At the current stage, the CLI also serves as a controlled expansion point: new c
 
 The current repository state is a bootstrap binary that confirms the CLI entry point exists. In this phase:
 
-- `boltengine` without subcommands prints status/help.
+- `neuengine` without subcommands prints status/help.
 - The binary may point the user to specs or contribution docs.
 - No filesystem-mutating commands are required yet.
 
@@ -50,12 +50,12 @@ This keeps `cmd/cli/` real without pretending that scaffolding, asset management
 The CLI expands in narrow, implementation-backed layers:
 
 ```plaintext
-boltengine help
-boltengine scaffold {target}
-boltengine doctor [--json]
-boltengine example list
-boltengine example run {name}
-boltengine codegen {target}
+neuengine help
+neuengine scaffold {target}
+neuengine doctor [--json]
+neuengine example list
+neuengine example run {name}
+neuengine codegen {target}
 ```
 
 - `help` is always available.
@@ -69,7 +69,7 @@ boltengine codegen {target}
 Human-oriented output is the default. Structured output is available only where automation needs it:
 
 ```plaintext
-boltengine doctor --json
+neuengine doctor --json
 ```
 
 - Plain-text output prioritizes clarity and next steps.

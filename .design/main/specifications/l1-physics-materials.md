@@ -105,4 +105,4 @@ Modification of a `.phymat.json` file triggers an asset reload. The Physics Sync
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — inline vs asset, combine rules, presets, surface tags | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — inline vs asset, combine rules, presets, surface tags | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |

@@ -3,9 +3,9 @@ name: neuengine-reference
 description: Architectural reference for the ECS game engine project. Use when creating or reviewing specifications.
 ---
 
-# Bolt Engine Architecture Reference
+# Neu Engine Architecture Reference
 
-Use this skill when working on Bolt engine specifications. It provides the complete
+Use this skill when working on Neu engine specifications. It provides the complete
 architectural map of the engine's ECS system and its Go implementation guidelines.
 
 ## When to Use
@@ -15,7 +15,7 @@ architectural map of the engine's ECS system and its Go implementation guideline
 - Understanding how engine modules map to Go packages
 - Resolving architectural questions about ECS design
 
-## Bolt Engine Architecture
+## Neu Engine Architecture
 
 ### Layer 1: ECS Core
 

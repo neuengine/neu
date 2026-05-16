@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/typereg"
+	"github.com/neuengine/neu/internal/ecs/typereg"
 )
 
 // ---- fixtures ----------------------------------------------------------------

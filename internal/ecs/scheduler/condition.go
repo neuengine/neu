@@ -1,6 +1,6 @@
 package scheduler
 
-import "github.com/teratron/boltengine/internal/ecs/world"
+import "github.com/neuengine/neu/internal/ecs/world"
 
 // RunCondition is a predicate evaluated before a system runs. When the
 // predicate returns false the system (and any deferred work it would have

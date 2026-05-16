@@ -112,4 +112,4 @@ Setting `body_b = Entity::PLACEHOLDER` anchors `body_a` to a fixed world point. 
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — joint types (6), motors, soft limits, world anchor | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — joint types (6), motors, soft limits, world anchor | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |

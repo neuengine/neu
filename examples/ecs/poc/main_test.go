@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	ecs "github.com/teratron/boltengine/pkg/ecs"
+	ecs "github.com/neuengine/neu/pkg/ecs"
 )
 
 // TestPOCDeterminism runs two identical worlds through the full tick loop and

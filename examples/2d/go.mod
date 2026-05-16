@@ -1,5 +1,5 @@
-module github.com/teratron/boltengine/examples/2d
+module github.com/neuengine/neu/examples/2d
 
 go 1.26.3
 
-replace github.com/teratron/boltengine => ../..
+replace github.com/neuengine/neu => ../..

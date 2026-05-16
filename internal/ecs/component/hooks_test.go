@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/entity"
 )
 
 func TestHooksZeroValueIsNoOp(t *testing.T) {

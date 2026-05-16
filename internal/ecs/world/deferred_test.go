@@ -3,7 +3,7 @@ package world
 import (
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/component"
 )
 
 // Compile-time: *DeferredWorld must satisfy component.HookContext.

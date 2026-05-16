@@ -1,6 +1,6 @@
 package component
 
-import "github.com/teratron/boltengine/internal/ecs/entity"
+import "github.com/neuengine/neu/internal/ecs/entity"
 
 // HookContext is the opaque object passed to a [Hook] when the World fires a
 // component lifecycle event. It is intentionally an empty interface: the

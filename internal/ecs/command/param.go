@@ -1,8 +1,8 @@
 package command
 
 import (
-	"github.com/teratron/boltengine/internal/ecs/component"
-	"github.com/teratron/boltengine/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/entity"
 )
 
 // Commands is the system-parameter facade over a [CommandBuffer].

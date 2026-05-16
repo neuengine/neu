@@ -7,8 +7,8 @@
 package scheduler
 
 import (
-	"github.com/teratron/boltengine/internal/ecs/query"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/query"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 // System is the unit of work the scheduler dispatches each tick. Names are

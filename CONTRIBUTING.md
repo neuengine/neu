@@ -7,7 +7,7 @@ The project is currently in **Phase 1: ECS Core POC**. The repository already co
 Current implementation snapshot:
 
 ```plaintext
-boltengine/
+neuengine/
 ├── .design/main/specifications/    # Active architecture and implementation specs
 ├── cmd/cli/main.go                 # Bootstrap CLI stub
 ├── internal/ecs/.../.gitkeep       # Planned ECS package layout
@@ -17,12 +17,12 @@ boltengine/
 
 When implementation lands, update this file together with the affected specs so that the documented tree stays synchronized with the actual repository.
 
-## Target Engine Repository Structure (`boltengine`)
+## Target Engine Repository Structure (`neuengine`)
 
 The tree below describes the intended target architecture, not the current completed implementation:
 
 ```plaintext
-boltengine/                 # Root of the engine project
+neuengine/                 # Root of the engine project
 ├── cmd/                    # CLI tools and standalone executables (Go 1.26.3)
 │   ├── cli/                # Scaffolding and project management tool
 │   ├── ci/                 # CI automation tool (l1-build-tooling §4.1)
@@ -60,7 +60,7 @@ boltengine/                 # Root of the engine project
 │   ├── app/                # Application framework and plugin orchestrator
 │   ├── asset/              # Asynchronous asset server and hot-reloader
 │   ├── hotreload/          # Engine hot-swap orchestrator, state snapshots, VFS watchers
-│   │                       # NOTE: hot-reload *orchestration* lives in bolteditor/internal/orchestrator/
+│   │                       # NOTE: hot-reload *orchestration* lives in neueditor/internal/orchestrator/
 │   │                       # This package handles the engine-side: snapshot serialization,
 │   │                       # IPC signal handling, and state restore (l1-hot-reload §4.2–4.4)
 │   ├── scene/              # DynamicScene, StaticScene, entity remapping, prefabs
@@ -128,7 +128,7 @@ boltengine/                 # Root of the engine project
     │   ├── profiling/      # Span API, Tracy/pprof/chrome exporters
     │   └── error/          # EngineError, E-series codes, localization registry
     ├── codegen/            # ecs-gen: code generation for components/queries
-    ├── editor/             # Stable interfaces consumed by bolteditor (l1-multi-repo §4.3)
+    ├── editor/             # Stable interfaces consumed by neueditor (l1-multi-repo §4.3)
     │   ├── plugin.go       # EditorPlugin interface (Build)
     │   ├── inspector.go    # InspectorPlugin interface (Handles, Render, PropertyInfo)
     │   ├── gizmo.go        # GizmoPlugin interface (Draw, Interact)
@@ -138,24 +138,24 @@ boltengine/                 # Root of the engine project
         └── diagnostics.go  # NetworkAlert, DiagnosticSnapshot
 ```
 
-## Target Editor Repository Structure (`bolteditor`)
+## Target Editor Repository Structure (`neueditor`)
 
 This section describes the planned companion repository boundary used by the multi-repo architecture specs:
 
-The editor is a **separate Git repository** that depends on `boltengine` as a standard Go module.
+The editor is a **separate Git repository** that depends on `neuengine` as a standard Go module.
 It never imports `internal/` packages from the engine — only `pkg/`. See `l1-multi-repo-architecture`
 for the full rationale and versioning contract.
 
 ```mermaid
 graph TD
-    subgraph "Repository: bolteditor"
+    subgraph "Repository: neueditor"
         ED_CMD[cmd/editor]
         ED_AI[internal/ai]
         ED_ORCH[internal/orchestrator]
         ED_UI[internal/panels]
     end
 
-    subgraph "Repository: boltengine"
+    subgraph "Repository: neuengine"
         ENG_CORE[internal/ecs]
         ENG_HOT[internal/hotreload]
         ENG_PKG[pkg/editor & pkg/protocol]
@@ -174,7 +174,7 @@ graph TD
 ```
 
 ```plaintext
-bolteditor/
+neueditor/
 ├── cmd/
 │   ├── editor/             # Main editor binary
 │   │   └── main.go         # NewApp() + DefaultPlugins + EditorPlugin{}
@@ -252,13 +252,13 @@ bolteditor/
 │   └── default.flow.json   # Starter flow definition for new projects
 │
 ├── go.mod
-│   # module github.com/org/bolteditor
+│   # module github.com/org/neueditor
 │   #
-│   # require github.com/org/boltengine v0.x.0
+│   # require github.com/org/neuengine v0.x.0
 │   #
 │   # The line below is ONLY for local co-development.
 │   # It MUST be removed before tagging any release (enforced by CI).
-│   # replace github.com/org/boltengine => ../boltengine
+│   # replace github.com/org/neuengine => ../neuengine
 │
 ├── go.sum
 └── CONTRIBUTING.md
@@ -308,24 +308,24 @@ remain in `internal/window/backend/`.
 cross-dependency.
 
 `pkg/editor/` and `pkg/protocol/` define the stable architectural boundary for communication with
-the `bolteditor` repository. These packages contain **only interfaces, data types, and constants** —
+the `neueditor` repository. These packages contain **only interfaces, data types, and constants** —
 no business logic, no World access, no ECS system registration. Any breaking change to these
-packages requires a SemVer major bump in `boltengine` and a forced upgrade in `bolteditor`.
+packages requires a SemVer major bump in `neuengine` and a forced upgrade in `neueditor`.
 
 ### Multi-Repo Architecture
 
-The GUI editor resides in a separate `bolteditor` repository. The engine never imports the editor.
+The GUI editor resides in a separate `neueditor` repository. The engine never imports the editor.
 The editor never imports `internal/` packages from the engine — Go module semantics enforce this
 structurally. See `l1-multi-repo-architecture` for the versioning contract, CI strategy, and
 local development workflow.
 
-`bolteditor` constructs the engine via the same `NewApp() + DefaultPlugins` builder pattern as any
+`neueditor` constructs the engine via the same `NewApp() + DefaultPlugins` builder pattern as any
 game. This ensures the editor **dogfoods** the engine's public API surface continuously.
 
 ### AI Assistant System
 
 `l1-ai-assistant-system` defines the AI plugin architecture for the **editor only**. All AI code
-lives in `bolteditor/internal/ai/` and is excluded from engine builds via `//go:build editor`.
+lives in `neueditor/internal/ai/` and is excluded from engine builds via `//go:build editor`.
 The engine itself contains no AI integration — it exports the `pkg/editor/` interfaces that the
 editor implements. The engine never depends on any AI service or model.
 
@@ -333,10 +333,10 @@ editor implements. The engine never depends on any AI service or model.
 
 | Concern | Repository | Package |
 | :--- | :--- | :--- |
-| Engine-side: pause loop, write snapshot, restore state | `boltengine` | `internal/hotreload/` |
-| Orchestrator: file watching, `go build`, launch new binary | `bolteditor` | `internal/orchestrator/` |
-| IPC wire format: messages exchanged between both sides | `boltengine` | `pkg/protocol/` |
-| IPC client (editor connects to engine socket) | `bolteditor` | `internal/ipc/` |
+| Engine-side: pause loop, write snapshot, restore state | `neuengine` | `internal/hotreload/` |
+| Orchestrator: file watching, `go build`, launch new binary | `neueditor` | `internal/orchestrator/` |
+| IPC wire format: messages exchanged between both sides | `neuengine` | `pkg/protocol/` |
+| IPC client (editor connects to engine socket) | `neueditor` | `internal/ipc/` |
 
 The file watcher must survive engine process restarts, which is why orchestration lives in the
 editor process. The engine-side `internal/hotreload/` only knows how to serialize/restore state
@@ -345,7 +345,7 @@ and respond to IPC signals — it does not spawn processes or watch the filesyst
 ## 🏗️ Game Project Structure (User Project)
 
 ```plaintext
-my-game/                    # Typical project using boltengine
+my-game/                    # Typical project using neuengine
 ├── assets/                 # Raw assets (glTF, images, audio, scenes)
 ├── cmd/
 │   └── game/
@@ -354,5 +354,5 @@ my-game/                    # Typical project using boltengine
 │   ├── component/          # Custom components
 │   └── system/             # Custom systems
 ├── config/                 # Declarative definitions (UI, logic flows, templates)
-└── go.mod                  # module my-game; require github.com/teratron/boltengine
+└── go.mod                  # module my-game; require github.com/neuengine/neu
 ```

@@ -4,7 +4,7 @@ import (
 	"iter"
 	"reflect"
 
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 const defaultEventBusCap = 64

@@ -381,5 +381,5 @@ Entities may require complex physical representation that a single primitive can
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — architectural model B (child entity), shape set, collision groups, lifecycle hooks | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
-| 0.1.1 | 2026-03-27 | Added Collision Interaction Matrix and Composite Collider patterns | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — architectural model B (child entity), shape set, collision groups, lifecycle hooks | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |
+| 0.1.1 | 2026-03-27 | Added Collision Interaction Matrix and Composite Collider patterns | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |

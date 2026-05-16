@@ -3,8 +3,8 @@ package event_test
 import (
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/event"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/event"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 // BenchmarkEventSend measures Send into a pre-grown bus. After warm-up the

@@ -95,4 +95,4 @@ Emitted for every surface hit during a move. Includes `hit_entity`, `normal`, `p
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — capsule controller, iterative sweep, step-up, external gravity | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — capsule controller, iterative sweep, step-up, external gravity | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |

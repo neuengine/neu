@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/scheduler"
-	"github.com/teratron/boltengine/internal/ecs/world"
+	"github.com/neuengine/neu/internal/ecs/scheduler"
+	"github.com/neuengine/neu/internal/ecs/world"
 )
 
 func TestSequentialExecutorEmptySchedule(t *testing.T) {

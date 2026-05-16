@@ -6,7 +6,7 @@
 
 ## Overview
 
-The World is the central data store of the Bolt engine. It owns all entities, components, resources, and schedules. Every game operation reads from or writes to a World instance. The World orchestrates entity allocation, archetype management, resource storage, and change tracking.
+The World is the central data store of the Neu engine. It owns all entities, components, resources, and schedules. Every game operation reads from or writes to a World instance. The World orchestrates entity allocation, archetype management, resource storage, and change tracking.
 
 ## Related Specifications
 
@@ -167,7 +167,7 @@ This centralized registry enables the automatic system discovery pattern (see [s
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-25 | Initial draft | [examples/world](file:///d:/Projects/src/github.com/teratron/boltengine/examples/world) |
-| 0.2.0 | 2026-03-26 | Added batch entity operations, processor registry with auto-dispatch | [examples/world](file:///d:/Projects/src/github.com/teratron/boltengine/examples/world) |
-| 0.2.1 | 2026-04-19 | Spec hygiene: promoted orphan `### 1. Motivation` to `## 1. Motivation` (heading level consistency) | [examples/world](file:///d:/Projects/src/github.com/teratron/boltengine/examples/world) |
+| 0.1.0 | 2026-03-25 | Initial draft | [examples/world](file:///d:/Projects/src/github.com/neuengine/neu/examples/world) |
+| 0.2.0 | 2026-03-26 | Added batch entity operations, processor registry with auto-dispatch | [examples/world](file:///d:/Projects/src/github.com/neuengine/neu/examples/world) |
+| 0.2.1 | 2026-04-19 | Spec hygiene: promoted orphan `### 1. Motivation` to `## 1. Motivation` (heading level consistency) | [examples/world](file:///d:/Projects/src/github.com/neuengine/neu/examples/world) |
 | 0.3.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` | [examples/ecs/poc](../../../examples/ecs/poc) |

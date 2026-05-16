@@ -3,7 +3,7 @@ package pool_test
 import (
 	"testing"
 
-	"github.com/teratron/boltengine/internal/ecs/pool"
+	"github.com/neuengine/neu/internal/ecs/pool"
 )
 
 // BenchmarkPool_GetPut measures the steady-state cost of acquiring and

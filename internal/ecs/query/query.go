@@ -1,6 +1,6 @@
 package query
 
-import "github.com/teratron/boltengine/internal/ecs/component"
+import "github.com/neuengine/neu/internal/ecs/component"
 
 // QueryState is the cached, archetype-level matching primitive shared by
 // every concrete query type (Query1, Query2, …). It encodes:

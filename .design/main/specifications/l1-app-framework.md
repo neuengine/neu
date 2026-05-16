@@ -19,7 +19,7 @@ The App framework is the top-level entry point for the engine. It provides a bui
 
 ## 1. Motivation
 
-An Bolt engine is more than entities and components — it needs a structured way to:
+An Neu engine is more than entities and components — it needs a structured way to:
 
 - Configure and assemble the engine from modular pieces.
 - Define the order in which systems execute each frame.

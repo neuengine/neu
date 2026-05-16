@@ -6,7 +6,7 @@
 
 ## Overview
 
-The Physics System defines how rigid body simulation integrates with the Bolt engine. A dedicated Physics SubApp owns its own internal state, receives extracted transform data each frame, runs deterministic fixed-timestep simulation, and writes results back to the main World via a writeback phase. A pluggable `PhysicsBackend` interface allows swapping the underlying solver without touching game code. The default backend is a minimal impulse-based solver written in pure Go with zero external dependencies. A Rapier or Jolt backend can be substituted later via a plugin.
+The Physics System defines how rigid body simulation integrates with the Neu engine. A dedicated Physics SubApp owns its own internal state, receives extracted transform data each frame, runs deterministic fixed-timestep simulation, and writes results back to the main World via a writeback phase. A pluggable `PhysicsBackend` interface allows swapping the underlying solver without touching game code. The default backend is a minimal impulse-based solver written in pure Go with zero external dependencies. A Rapier or Jolt backend can be substituted later via a plugin.
 
 ## Related Specifications
 
@@ -328,4 +328,4 @@ Build(app):
 
 | Version | Date | Description | Examples |
 | :--- | :--- | :--- | :--- |
-| 0.1.0 | 2026-03-27 | Initial draft — SubApp phases, backend interface, impulse solver, interpolation, collision events | [examples/physics](file:///d:/Projects/src/github.com/teratron/boltengine/examples/physics) |
+| 0.1.0 | 2026-03-27 | Initial draft — SubApp phases, backend interface, impulse solver, interpolation, collision events | [examples/physics](file:///d:/Projects/src/github.com/neuengine/neu/examples/physics) |

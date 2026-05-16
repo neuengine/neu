@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/teratron/boltengine/internal/ecs/query"
+	"github.com/neuengine/neu/internal/ecs/query"
 )
 
 // ErrDuplicateSystem is returned by [Schedule.AddSystem] when a name is

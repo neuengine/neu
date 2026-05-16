@@ -4,15 +4,15 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-16 19:23
+**Updated:** 2026-05-16 20:16
 **Phase:** 2 — Framework Primitives
-**Status:** Active
+**Status:** Done
 
 ## Current Position
 
-- **Task:** Phase 1 complete — C29 unblocked
+- **Task:** T-2E02 Ref/Mut wrappers + closed T-1D03 scaffold
 - **Spec:** all 17 P1 specs Document History updated; `examples/ecs/poc/` validates runtime
-- **Next Action:** Run /magic.run main to execute Phase 2 (24 atomic tasks, Tracks A-G + Validation T; critical path E -> F)
+- **Next Action:** Execute T-2E03 (RemovedComponents[T] event-backed tracking + ChangeDetectionPlugin; completes Track E critical path)
 
 ## Progress
 

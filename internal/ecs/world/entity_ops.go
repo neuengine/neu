@@ -4,6 +4,7 @@ import (
 	"maps"
 	"reflect"
 
+	"github.com/neuengine/neu/internal/ecs/changedetect"
 	"github.com/neuengine/neu/internal/ecs/component"
 	"github.com/neuengine/neu/internal/ecs/entity"
 )
@@ -34,7 +35,7 @@ func (w *World) SpawnWithEntityAndData(e entity.Entity, data ...component.Data) 
 	}
 	ids = sortIDsAscending(ids)
 	arch := w.archetypes.findOrCreate(ids, w.components)
-	row := w.addEntityToArchetype(arch, e, values)
+	row := w.addEntityToArchetype(arch, e, values, nil)
 	w.records[e.ID()] = entityRecord{archetypeID: arch.id, row: row}
 }
 
@@ -74,8 +75,10 @@ func RemoveByID(w *World, e entity.Entity, id component.ID) error {
 		}
 	}
 
+	keep := idSet(newArch.componentIDs)
+	carry := w.captureTableTicks(oldArch, rec.row, keep)
 	w.removeEntityFromArchetype(oldArch, e, rec.row, false)
-	row := w.addEntityToArchetype(newArch, e, mergedValues)
+	row := w.addEntityToArchetype(newArch, e, mergedValues, carry)
 	w.records[e.ID()] = entityRecord{archetypeID: newArch.id, row: row}
 	return nil
 }
@@ -96,7 +99,7 @@ func (w *World) Spawn(data ...component.Data) entity.Entity {
 	ids = sortIDsAscending(ids)
 
 	arch := w.archetypes.findOrCreate(ids, w.components)
-	row := w.addEntityToArchetype(arch, e, values)
+	row := w.addEntityToArchetype(arch, e, values, nil)
 	w.records[e.ID()] = entityRecord{archetypeID: arch.id, row: row}
 	return e
 }
@@ -150,13 +153,36 @@ func (w *World) Insert(e entity.Entity, data ...component.Data) error {
 	}
 	maps.Copy(mergedValues, newValues)
 
+	// Carry every surviving component's tick history (captureTableTicks
+	// silently skips ids not in the old table, so genuinely new components
+	// fall through to a fresh Added stamp inside addEntityToArchetype).
+	carry := w.captureTableTicks(oldArch, rec.row, idSet(newArch.componentIDs))
 	w.removeEntityFromArchetype(oldArch, e, rec.row, false)
 	// SparseSet components shared with the new archetype stay in the global
 	// sparse set; only those *not* in the new archetype were removed above.
 
-	row := w.addEntityToArchetype(newArch, e, mergedValues)
+	row := w.addEntityToArchetype(newArch, e, mergedValues, carry)
+	// A component supplied in this Insert that the entity already carried is
+	// an overwrite, not an insertion: its Added time was preserved by carry,
+	// so mark it Changed at the current tick.
+	if newArch.table != nil {
+		for id := range newValues {
+			if oldArch.Has(id) && w.components.Info(id).Storage == component.StorageTable {
+				newArch.table.StampChangedByID(id, row, changedetect.Tick(w.changeTick))
+			}
+		}
+	}
 	w.records[e.ID()] = entityRecord{archetypeID: newArch.id, row: row}
 	return nil
+}
+
+// idSet builds a presence set from a slice of component IDs.
+func idSet(ids []component.ID) map[component.ID]struct{} {
+	out := make(map[component.ID]struct{}, len(ids))
+	for _, id := range ids {
+		out[id] = struct{}{}
+	}
+	return out
 }
 
 // Get returns a typed pointer to component T on the given entity, or
@@ -244,8 +270,10 @@ func Remove[T any](w *World, e entity.Entity) error {
 		}
 	}
 
+	keep := idSet(newArch.componentIDs)
+	carry := w.captureTableTicks(oldArch, rec.row, keep)
 	w.removeEntityFromArchetype(oldArch, e, rec.row, false)
-	row := w.addEntityToArchetype(newArch, e, mergedValues)
+	row := w.addEntityToArchetype(newArch, e, mergedValues, carry)
 	w.records[e.ID()] = entityRecord{archetypeID: newArch.id, row: row}
 	return nil
 }
@@ -286,7 +314,22 @@ func (w *World) resolveData(data []component.Data) map[component.ID]any {
 // that already hold a value (from a prior archetype) are left untouched.
 // Returns the row index assigned to the entity (also the index in
 // arch.entities).
-func (w *World) addEntityToArchetype(arch *Archetype, e entity.Entity, values map[component.ID]any) int {
+//
+// carry carries change-detection history across an archetype migration:
+// table-stored components present in carry adopt the supplied
+// [changedetect.ComponentTicks] verbatim (the same logical component instance
+// moved tables — its Added time must persist); components absent from carry
+// are freshly stamped Added at the current change tick. Pass nil for a fresh
+// spawn (everything is newly added). Kept sparse-set components are not
+// re-stamped: sparse storage is global and the migration never moves it.
+func (w *World) addEntityToArchetype(
+	arch *Archetype,
+	e entity.Entity,
+	values map[component.ID]any,
+	carry map[component.ID]changedetect.ComponentTicks,
+) int {
+	tick := changedetect.Tick(w.changeTick)
+
 	// Sparse-set components first — adding to the global sparse set does not
 	// affect the archetype row.
 	for _, id := range arch.componentIDs {
@@ -296,11 +339,13 @@ func (w *World) addEntityToArchetype(arch *Archetype, e entity.Entity, values ma
 		}
 		val, supplied := values[id]
 		if !supplied {
-			// Already present in the global sparse set from before; leave it.
+			// Already present in the global sparse set from before; leave it
+			// (and its ticks) untouched.
 			continue
 		}
 		ss := w.sparseSetFor(id, info)
 		ss.Add(e, val)
+		ss.StampAdded(e, tick)
 	}
 
 	row := len(arch.entities)
@@ -313,9 +358,40 @@ func (w *World) addEntityToArchetype(arch *Archetype, e entity.Entity, values ma
 			}
 		}
 		row = arch.table.AddRow(tableValues)
+
+		for _, id := range arch.componentIDs {
+			if w.components.Info(id).Storage != component.StorageTable {
+				continue
+			}
+			if ct, migrated := carry[id]; migrated {
+				arch.table.SetTicksByID(id, row, ct)
+			} else {
+				arch.table.StampAddedByID(id, row, tick)
+			}
+		}
 	}
 	arch.entities = append(arch.entities, e)
 	return row
+}
+
+// captureTableTicks snapshots the per-component ticks of the row e occupies
+// in arch's table, restricted to ids in keep. Used to carry change-detection
+// history across an archetype migration before the old row is evicted.
+func (w *World) captureTableTicks(
+	arch *Archetype,
+	row int,
+	keep map[component.ID]struct{},
+) map[component.ID]changedetect.ComponentTicks {
+	if arch.table == nil || len(keep) == 0 {
+		return nil
+	}
+	out := make(map[component.ID]changedetect.ComponentTicks, len(keep))
+	for id := range keep {
+		if ct, ok := arch.table.TicksByID(id, row); ok {
+			out[id] = ct
+		}
+	}
+	return out
 }
 
 // removeEntityFromArchetype evicts e at row from arch's table and entities
@@ -362,14 +438,17 @@ func (w *World) removeEntityFromArchetype(arch *Archetype, e entity.Entity, row 
 // when [World.Insert] receives a value for a component the entity already
 // owns (no archetype migration required).
 func (w *World) writeComponentValue(arch *Archetype, row int, e entity.Entity, id component.ID, val any) {
+	tick := changedetect.Tick(w.changeTick)
 	info := w.components.Info(id)
 	if info.Storage == component.StorageSparseSet {
 		ss := w.sparseSetFor(id, info)
 		ss.Add(e, val) // Add overwrites if the entity already has a slot.
+		ss.StampChanged(e, tick)
 		return
 	}
 	if arch.table != nil {
 		arch.table.SetCellByID(id, row, val)
+		arch.table.StampChangedByID(id, row, tick)
 	}
 }
 

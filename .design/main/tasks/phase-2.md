@@ -73,8 +73,8 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 
 ### Track E — Change Detection (Critical Path · closes T-1D03)
 
-- [ ] [T-2E01] Per-row `ComponentTicks` (added/changed) in `Table` + `SparseSet`; world `LastChangeTick` / `IncrementChangeTick` integration. — `internal/ecs/changedetect/ticks.go` + `internal/ecs/component/{table,sparseset}.go` [Bootstrap]
-- [ ] [T-2E02] `Ref[T]` / `Mut[T]` wrappers (`IsAdded` / `IsChanged`); **replace the Phase 1 `passesPerRow` stub** with real Added/Changed tick comparison in `internal/ecs/query/filter.go`. — `internal/ecs/changedetect/wrappers.go` + `internal/ecs/query/filter.go` [Bootstrap]
+- [x] [T-2E01] Per-row `ComponentTicks` (added/changed) in `Table` + `SparseSet`; world `LastChangeTick` / `IncrementChangeTick` integration. — `internal/ecs/changedetect/ticks.go` + `internal/ecs/component/{table,sparseset}.go` [Bootstrap]
+- [x] [T-2E02] `Ref[T]` / `Mut[T]` wrappers (`IsAdded` / `IsChanged`); **replace the Phase 1 `passesPerRow` stub** with real Added/Changed tick comparison in `internal/ecs/query/filter.go`. — `internal/ecs/changedetect/wrappers.go` + `internal/ecs/query/filter.go` [Bootstrap]
 - [ ] [T-2E03] `RemovedComponents[T]` (event-backed) + `ChangeDetectionPlugin`. — `internal/ecs/changedetect/{removed,plugin}.go` [Bootstrap]
 
 ### Track F — App Framework (Critical Path)
@@ -183,18 +183,20 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 ### [T-2E01] ComponentTicks integration
 
 - **Spec:** [l2-change-detection-go.md](../specifications/l2-change-detection-go.md)
-- **Status:** Todo [Bootstrap]
-- **Verify:** `go test ./internal/ecs/changedetect/ -run TestComponentTicks` — added-tick set on insert; changed-tick advances only on mutation, not on read.
+- **Status:** Done [Bootstrap]
+- **Verify:** `go test ./internal/ecs/changedetect/ -run TestComponentTicks` — PASS (8 subtests); added-tick set on insert, changed-tick advances only on explicit mutation, reads side-effect free.
 - **Handoff:** **Critical path.** Required by T-2E02 (filter rewrite), T-2F03.
 - **Notes:** Extends Phase 1 `Table`/`SparseSet` (T-1B02) with per-row tick storage; world tick model from T-1C01.
+- **Changes:** New leaf pkg `internal/ecs/changedetect/ticks.go` — `Tick`, `ComponentTicks` (Added/Changed, `NewComponentTicks`/`IsAdded`/`IsChanged`/`SetChanged`), `ColumnTicks` aggregate (`Observe`/`Reset`/`MayHaveChanged`/`MayHaveAdded`) for O(1) column skip; leaf (no ecs-core imports) to avoid world→component→changedetect→world cycle. `component.Table` + `SparseSet` extended with dense tick arrays parallel to rows (tracked for tag columns too), swap-and-pop mirrored, plus `Ticks`/`TicksByID`/`StampAddedByID`/`StampChangedByID`/`SetTicksByID`/`ColumnTicks[ByID]` (Table) and `Ticks`/`StampAdded`/`StampChanged`/`SetTicks`/`ColumnTicks` (SparseSet). Verify: changedetect 100% cov, component 97.2% (≥ pre-existing 96.6%), full Phase 1 suite 12/12 green, `-race` clean. World-side auto-stamp + archetype-migration tick-carry deliberately deferred to T-2E02/E03 (no scope creep).
 
 ### [T-2E02] Ref/Mut wrappers + closes T-1D03 scaffold
 
 - **Spec:** [l1-change-detection.md](../specifications/l1-change-detection.md), [l2-change-detection-go.md](../specifications/l2-change-detection-go.md)
-- **Status:** Todo [Bootstrap]
-- **Verify:** `go test ./internal/ecs/query -run TestAddedChangedFilter` — `Added`/`Changed` filters select **only** mutated rows; the Phase 1 same-shape stub (`passesPerRow` accept-all in `query/filter.go`) is replaced and its scaffold test updated to assert real selectivity.
+- **Status:** Done [Bootstrap]
+- **Verify:** `go test ./internal/ecs/query -run TestAddedChangedFilter` — PASS (3 subtests: Added selectivity, Changed selectivity, baseline catch-up after ClearTrackers). The Phase 1 accept-all `passesPerRow` stub is eliminated; scaffold test `TestAddedAndChangedScaffoldBehavior` replaced and `TestQuery2/3CountWithPerRowFilter` updated to assert real tick semantics.
 - **Handoff:** Unblocks every Phase 2+ system that relies on `Changed`/`Added` filters (cascade — see Planning Audit).
-- **Notes:** This is the designed consumer of T-1D03's deferred seam (STATE.md 2026-04-29 pattern note). Do not change `Query[N]` call sites — only the per-row predicate body.
+- **Notes:** Designed consumer of T-1D03's deferred seam (STATE.md 2026-04-29 pattern note).
+- **Changes:** `changedetect/wrappers.go` — `Ref[T]` (read-only, no-mark) + `Mut[T]` (auto-marks Changed on `Value()`; `prevChanged` captured at construction so `IsChanged` is call-order independent; `SetChanged`/`BypassChangeDetection`). `query/filter.go` — `passesPerRow` rewritten to strict-`>` per-row `Added`/`Changed` comparison vs `world.LastChangeTick()` baseline, via `rowTicks` helper dispatching Table (`TicksByID`) vs SparseSet (`ss.Ticks`) like `fetchComponent`; AND semantics across records. **Bootstrap deviation from planner's 2-file key_files** (Planning Audit pre-flagged Track E "reaches into Phase 1 files"): the stub's `(w, perRow)` signature was structurally insufficient, so all 8 call sites in `query/{query1,query2,query3,par}.go` extended to `(w, arch, row, perRow)` (one-line guards unchanged); and `world/entity_ops.go` wired tick stamping (`addEntityToArchetype` carry param + `captureTableTicks`/`idSet`: Added on fresh insert, history carried verbatim across archetype migration, Changed on in-place overwrite and overwrite-during-migration) — without it the comparison is untestable (all slots `{0,0}`). Verify: changedetect 100% cov, query 95.8% (≥95% gate; residual = unreachable defensive nil-guards), component 97.2%, world 96.1%, full Phase 1 suite 12/12 green, `-race` clean on all affected pkgs.
 
 ### [T-2E03] RemovedComponents + ChangeDetectionPlugin
 

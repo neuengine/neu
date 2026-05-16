@@ -59,7 +59,7 @@ func (q *Query3[A, B, C]) All(w *world.World) iter.Seq2[entity.Entity, Tuple3[A,
 			arch := w.Archetypes().At(archID)
 			entities := arch.Entities()
 			for row, e := range entities {
-				if !passesPerRow(w, q.perRow) {
+				if !passesPerRow(w, arch, row, q.perRow) {
 					continue
 				}
 				tup := Tuple3[A, B, C]{
@@ -89,7 +89,7 @@ func (q *Query3[A, B, C]) Count(w *world.World) int {
 	for _, archID := range q.matched {
 		arch := w.Archetypes().At(archID)
 		for row := 0; row < arch.Len(); row++ {
-			if passesPerRow(w, q.perRow) {
+			if passesPerRow(w, arch, row, q.perRow) {
 				n++
 			}
 		}

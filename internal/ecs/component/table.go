@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"unsafe"
+
+	"github.com/neuengine/neu/internal/ecs/changedetect"
 )
 
 // DefaultChunkSize is the byte size of a single Table chunk. It matches the
@@ -35,6 +37,14 @@ type Table struct {
 
 	chunks [][]byte
 
+	// Change-detection ticks, parallel to the public column ordering.
+	// ticks[publicCol][row] holds the per-instance Added/Changed ticks;
+	// colAgg[publicCol] is the running max enabling O(1) column skip.
+	// Ticks are tracked for every column including zero-size tags — a tag
+	// can still be Added/Changed even though it has no payload bytes.
+	ticks  [][]changedetect.ComponentTicks
+	colAgg []changedetect.ColumnTicks
+
 	// Non-pointer scalar fields — outside GC scan range.
 	chunkSize int
 	chunkRows int // rows per chunk (>= 1)
@@ -63,6 +73,9 @@ func NewTable(specs []ColumnSpec, chunkSize int) *Table {
 	for i := range specs {
 		t.publicToOriginal[i] = i
 	}
+
+	t.ticks = make([][]changedetect.ComponentTicks, len(specs))
+	t.colAgg = make([]changedetect.ColumnTicks, len(specs))
 
 	t.computeLayout()
 	return t
@@ -118,6 +131,14 @@ func (t *Table) AddRow(values map[ID]any) int {
 		}
 		t.setRowValue(idx, row, v)
 	}
+
+	// Append an (unstamped) tick slot for every column. The world boundary
+	// stamps Added/Changed via StampAddedByID after the structural insert;
+	// the storage layer only guarantees the slot exists and stays aligned
+	// with the row index under swap-and-pop.
+	for col := range t.cols {
+		t.ticks[col] = append(t.ticks[col], changedetect.ComponentTicks{})
+	}
 	return row
 }
 
@@ -158,6 +179,16 @@ func (t *Table) RemoveRow(row int) int {
 		}
 		movedFrom = last
 	}
+
+	// Mirror swap-and-pop on the parallel tick arrays for every column
+	// (including zero-size tags, which the byte loop above skips).
+	for col := range t.cols {
+		tk := t.ticks[col]
+		if row != last {
+			tk[row] = tk[last]
+		}
+		t.ticks[col] = tk[:last]
+	}
 	t.nRows--
 
 	// Drop trailing chunk if it just became empty.
@@ -167,8 +198,94 @@ func (t *Table) RemoveRow(row int) int {
 	return movedFrom
 }
 
-// Reset clears the table without releasing chunk memory.
-func (t *Table) Reset() { t.nRows = 0 }
+// Reset clears the table without releasing chunk memory. Tick slots are
+// truncated (capacity retained) and the column aggregates are zeroed.
+func (t *Table) Reset() {
+	t.nRows = 0
+	for col := range t.cols {
+		t.ticks[col] = t.ticks[col][:0]
+		t.colAgg[col].Reset()
+	}
+}
+
+// Ticks returns the change-detection ticks for (public column, row).
+func (t *Table) Ticks(col, row int) changedetect.ComponentTicks {
+	t.boundsCheck(col, row)
+	return t.ticks[col][row]
+}
+
+// TicksByID returns the ticks for (component ID, row) and whether the table
+// has that column.
+func (t *Table) TicksByID(id ID, row int) (changedetect.ComponentTicks, bool) {
+	col, ok := t.colByID[id]
+	if !ok {
+		return changedetect.ComponentTicks{}, false
+	}
+	t.boundsCheck(col, row)
+	return t.ticks[col][row], true
+}
+
+// ColumnTicks returns the per-column aggregate for the public column index,
+// used for O(1) Added/Changed column skipping during query iteration.
+func (t *Table) ColumnTicks(col int) changedetect.ColumnTicks {
+	if col < 0 || col >= len(t.cols) {
+		panic(fmt.Sprintf("component.Table.ColumnTicks: column %d out of range [0,%d)", col, len(t.cols)))
+	}
+	return t.colAgg[col]
+}
+
+// ColumnTicksByID returns the per-column aggregate for a component ID and
+// whether the table has that column.
+func (t *Table) ColumnTicksByID(id ID) (changedetect.ColumnTicks, bool) {
+	col, ok := t.colByID[id]
+	if !ok {
+		return changedetect.ColumnTicks{}, false
+	}
+	return t.colAgg[col], true
+}
+
+// StampAddedByID records component (id) on row as inserted at changeTick:
+// both Added and Changed are set to changeTick and folded into the column
+// aggregate. No-op (returns false) if the table has no such column.
+func (t *Table) StampAddedByID(id ID, row int, changeTick changedetect.Tick) bool {
+	col, ok := t.colByID[id]
+	if !ok {
+		return false
+	}
+	t.boundsCheck(col, row)
+	ct := changedetect.NewComponentTicks(changeTick)
+	t.ticks[col][row] = ct
+	t.colAgg[col].Observe(ct)
+	return true
+}
+
+// StampChangedByID advances component (id) on row to mutated at changeTick
+// and folds it into the column aggregate. No-op (returns false) if the
+// table has no such column.
+func (t *Table) StampChangedByID(id ID, row int, changeTick changedetect.Tick) bool {
+	col, ok := t.colByID[id]
+	if !ok {
+		return false
+	}
+	t.boundsCheck(col, row)
+	t.ticks[col][row].SetChanged(changeTick)
+	t.colAgg[col].Observe(t.ticks[col][row])
+	return true
+}
+
+// SetTicksByID overwrites the tick slot for (id, row) wholesale and folds
+// it into the column aggregate. Used by archetype migration to carry an
+// existing component's Added/Changed history into its new table unchanged.
+func (t *Table) SetTicksByID(id ID, row int, ct changedetect.ComponentTicks) bool {
+	col, ok := t.colByID[id]
+	if !ok {
+		return false
+	}
+	t.boundsCheck(col, row)
+	t.ticks[col][row] = ct
+	t.colAgg[col].Observe(ct)
+	return true
+}
 
 // HasColumn reports whether the table has a column for the given component ID.
 func (t *Table) HasColumn(id ID) bool {

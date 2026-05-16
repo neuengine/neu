@@ -9,7 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
 - Updated task plan and task index (main)
 - Completed task `phase-1` (main)
 - Added 2 specifications (main)
 - Updated 7 specifications (main)
+- Completed task `phase-2` (main)
+

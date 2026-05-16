@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"unsafe"
 
+	"github.com/neuengine/neu/internal/ecs/changedetect"
 	"github.com/neuengine/neu/internal/ecs/entity"
 )
 
@@ -19,9 +20,11 @@ import (
 // Removal uses swap-and-pop on the dense arrays so iteration stays
 // contiguous. The set is NOT safe for concurrent mutation.
 type SparseSet struct {
-	sparse   []uint32        // entity index -> dense+1 (0 means absent)
-	entities []entity.Entity // dense, length == n
-	data     []byte          // dense, length == n*size (nil if zero-size)
+	sparse   []uint32                      // entity index -> dense+1 (0 means absent)
+	entities []entity.Entity               // dense, length == n
+	data     []byte                        // dense, length == n*size (nil if zero-size)
+	ticks    []changedetect.ComponentTicks // dense, length == n (parallel to entities)
+	agg      changedetect.ColumnTicks      // running max for O(1) column skip
 	spec     ColumnSpec
 }
 
@@ -76,6 +79,10 @@ func (s *SparseSet) Add(e entity.Entity, value any) {
 	if s.spec.Size > 0 {
 		s.data = append(s.data, make([]byte, s.spec.Size)...)
 	}
+	// Unstamped slot; the world boundary stamps Added/Changed after insert.
+	// The overwrite branch above intentionally leaves an existing slot alone
+	// so a re-Add preserves the original Added tick.
+	s.ticks = append(s.ticks, changedetect.ComponentTicks{})
 	s.sparse[idx] = uint32(row + 1)
 	s.writeRow(row, value)
 }
@@ -97,12 +104,14 @@ func (s *SparseSet) Remove(e entity.Entity) bool {
 		if s.spec.Size > 0 {
 			copy(s.rowBytes(row), s.rowBytes(last))
 		}
+		s.ticks[row] = s.ticks[last]
 	}
 
 	s.entities = s.entities[:last]
 	if s.spec.Size > 0 {
 		s.data = s.data[:uintptr(last)*s.spec.Size]
 	}
+	s.ticks = s.ticks[:last]
 	s.sparse[idx] = 0
 	return true
 }
@@ -142,6 +151,59 @@ func (s *SparseSet) Clear() {
 	if s.spec.Size > 0 {
 		s.data = s.data[:0]
 	}
+	s.ticks = s.ticks[:0]
+	s.agg.Reset()
+}
+
+// Ticks returns the change-detection ticks for an entity and whether the
+// entity is present in the set.
+func (s *SparseSet) Ticks(e entity.Entity) (changedetect.ComponentTicks, bool) {
+	if !s.Has(e) {
+		return changedetect.ComponentTicks{}, false
+	}
+	row := int(s.sparse[int(e.Index())] - 1)
+	return s.ticks[row], true
+}
+
+// ColumnTicks returns the per-set aggregate for O(1) Added/Changed skip.
+func (s *SparseSet) ColumnTicks() changedetect.ColumnTicks { return s.agg }
+
+// StampAdded records the entity's component as inserted at changeTick
+// (Added and Changed both set) and folds it into the aggregate. No-op
+// (returns false) if the entity is not present.
+func (s *SparseSet) StampAdded(e entity.Entity, changeTick changedetect.Tick) bool {
+	if !s.Has(e) {
+		return false
+	}
+	row := int(s.sparse[int(e.Index())] - 1)
+	ct := changedetect.NewComponentTicks(changeTick)
+	s.ticks[row] = ct
+	s.agg.Observe(ct)
+	return true
+}
+
+// StampChanged advances the entity's component to mutated at changeTick and
+// folds it into the aggregate. No-op (returns false) if not present.
+func (s *SparseSet) StampChanged(e entity.Entity, changeTick changedetect.Tick) bool {
+	if !s.Has(e) {
+		return false
+	}
+	row := int(s.sparse[int(e.Index())] - 1)
+	s.ticks[row].SetChanged(changeTick)
+	s.agg.Observe(s.ticks[row])
+	return true
+}
+
+// SetTicks overwrites an entity's tick slot wholesale and folds it into the
+// aggregate. Used by archetype migration to carry tick history unchanged.
+func (s *SparseSet) SetTicks(e entity.Entity, ct changedetect.ComponentTicks) bool {
+	if !s.Has(e) {
+		return false
+	}
+	row := int(s.sparse[int(e.Index())] - 1)
+	s.ticks[row] = ct
+	s.agg.Observe(ct)
+	return true
 }
 
 // rowBytes returns the dense-data slice for a given row. Caller must ensure

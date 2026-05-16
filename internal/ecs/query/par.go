@@ -69,7 +69,7 @@ func (q *Query1[T]) runChunk(w *world.World, arch *world.Archetype, lo, hi int, 
 	entities := arch.Entities()
 	for row := lo; row < hi; row++ {
 		e := entities[row]
-		if !passesPerRow(w, q.perRow) {
+		if !passesPerRow(w, arch, row, q.perRow) {
 			continue
 		}
 		ptr := fetchComponent(w, arch, e, row, q.id)

@@ -1,7 +1,9 @@
 package query
 
 import (
+	"github.com/neuengine/neu/internal/ecs/changedetect"
 	"github.com/neuengine/neu/internal/ecs/component"
+	"github.com/neuengine/neu/internal/ecs/entity"
 	"github.com/neuengine/neu/internal/ecs/world"
 )
 
@@ -40,19 +42,78 @@ const (
 	tickKindChanged
 )
 
-// passesPerRow evaluates the per-row tick filters captured on a query. In
-// Phase 1 the column-level change ticks are not yet tracked — that wiring
-// belongs to Phase 2 (change-detection track) — so the scaffold accepts
-// every row that already passed the structural archetype test. The shape
-// of this function is what the Phase 2 implementation will replace; until
-// then [Added] and [Changed] are equivalent to a [With] of the same type.
-func passesPerRow(_ *world.World, perRow []tickFilterRecord) bool {
+// passesPerRow evaluates the per-row [Added]/[Changed] tick filters captured
+// on a query against the entity occupying (arch, row). The comparison
+// baseline is the world's last-cleared tick — the engine-level analogue of a
+// system's last-run tick (per-system tick threading lands with the scheduler
+// integration in T-2E03). A row passes only when every per-row record is
+// satisfied (AND semantics, matching [With] composition).
+//
+// Returns true immediately when there are no per-row records, preserving the
+// fast path for structural-only queries. The per-row signature replaces the
+// Phase 1 accept-all stub; call sites pass (arch, row) so the predicate can
+// reach the inline ComponentTicks added in T-2E01 without changing the
+// iteration structure.
+func passesPerRow(w *world.World, arch *world.Archetype, row int, perRow []tickFilterRecord) bool {
 	if len(perRow) == 0 {
 		return true
 	}
-	// Phase 1 scaffold: archetype-level match is sufficient. Phase 2 will
-	// compare arch.Table().ChangeTick(id, row) against w.LastChangeTick().
+	last := changedetect.Tick(w.LastChangeTick())
+	var (
+		ent      entity.Entity
+		resolved bool
+	)
+	for _, rec := range perRow {
+		ct, ok := rowTicks(w, arch, row, rec.id, &ent, &resolved)
+		if !ok {
+			return false // component absent on this row — cannot have been added/changed
+		}
+		switch rec.kind {
+		case tickKindAdded:
+			if !ct.IsAdded(last) {
+				return false
+			}
+		case tickKindChanged:
+			if !ct.IsChanged(last) {
+				return false
+			}
+		}
+	}
 	return true
+}
+
+// rowTicks resolves the [changedetect.ComponentTicks] for component id on the
+// entity at (arch, row), dispatching Table vs SparseSet exactly like
+// [fetchComponent]. The entity is resolved at most once per row and only when
+// a sparse-set lookup actually needs it (the table path is purely positional).
+func rowTicks(
+	w *world.World,
+	arch *world.Archetype,
+	row int,
+	id component.ID,
+	ent *entity.Entity,
+	resolved *bool,
+) (changedetect.ComponentTicks, bool) {
+	info := w.Components().Info(id)
+	if info == nil {
+		return changedetect.ComponentTicks{}, false
+	}
+	if info.Storage == component.StorageSparseSet {
+		if !*resolved {
+			*ent = arch.Entities()[row]
+			*resolved = true
+		}
+		ss, ok := w.SparseSet(id)
+		if !ok {
+			return changedetect.ComponentTicks{}, false
+		}
+		return ss.Ticks(*ent)
+	}
+	tbl := arch.Table()
+	if tbl == nil {
+		return changedetect.ComponentTicks{}, false
+	}
+	return tbl.TicksByID(id, row)
 }
 
 // With[T] requires T to be present on matched archetypes. T is not fetched

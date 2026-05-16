@@ -1,6 +1,7 @@
 package query_test
 
 import (
+	"reflect"
 	"sync/atomic"
 	"testing"
 
@@ -9,6 +10,10 @@ import (
 	"github.com/neuengine/neu/internal/ecs/query"
 	"github.com/neuengine/neu/internal/ecs/world"
 )
+
+// fSparse is registered as sparse-set storage to exercise the SparseSet
+// branch of the per-row tick filter (rowTicks).
+type fSparse struct{ N int }
 
 // fixture component types unique to this test file (kept distinct from
 // query_arity_test.go fixtures to make failures easier to attribute).
@@ -129,32 +134,116 @@ func TestQuery3WithoutFilter(t *testing.T) {
 	}
 }
 
-// TestAddedAndChangedScaffoldBehavior locks the Phase 1 scaffold contract
-// for [Added] and [Changed]: archetype-level matching is enforced, the
-// per-row tick check is a no-op (passes everything). When change-detection
-// lands in Phase 2, this test must be updated to assert tick semantics.
-func TestAddedAndChangedScaffoldBehavior(t *testing.T) {
+// TestAddedChangedFilter is the T-2E02 Verify target. It supersedes the
+// Phase 1 accept-all scaffold test and asserts real tick selectivity: with
+// the comparison baseline at the world's last-cleared tick, [Added] yields
+// only components inserted after that tick and [Changed] only components
+// mutated after it — not every row in a structurally matching archetype.
+func TestAddedChangedFilter(t *testing.T) {
 	t.Parallel()
 
-	w := world.NewWorld()
-	w.Spawn(component.Data{Value: fPos{X: 1}})
-	w.Spawn(component.Data{Value: fPos{X: 2}}, component.Data{Value: fVel{DX: 5}})
+	t.Run("Added selects only components inserted since the baseline", func(t *testing.T) {
+		w := world.NewWorld()
+		// fVel on `stale` is added at tick 0 (== baseline LastChangeTick),
+		// so it must NOT match: change detection uses a strict >, and
+		// "added at the baseline" is not "added since the baseline".
+		stale := w.Spawn(component.Data{Value: fPos{X: 1}}, component.Data{Value: fVel{}})
+		w.IncrementChangeTick() // advance: a logical system/frame boundary
+		fresh := w.Spawn(component.Data{Value: fPos{X: 2}}, component.Data{Value: fVel{}})
 
-	added, err := query.NewQuery1[fPos](w, query.Added[fVel]{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got := added.Count(w); got != 1 {
-		t.Fatalf("Added[fVel] archetype-match count = %d, want 1 (Phase 1 scaffold)", got)
-	}
+		q, err := query.NewQuery1[fPos](w, query.Added[fVel]{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := q.Count(w); got != 1 {
+			t.Fatalf("Added[fVel] Count = %d, want 1 (only the post-baseline entity)", got)
+		}
+		seen := 0
+		for e, p := range q.All(w) {
+			seen++
+			if e != fresh {
+				t.Fatalf("Added[fVel] yielded entity %v, want fresh %v", e, fresh)
+			}
+			if p.X != 2 {
+				t.Fatalf("Added[fVel] yielded fPos.X = %v, want 2", p.X)
+			}
+		}
+		if seen != 1 {
+			t.Fatalf("Added[fVel] iteration visited %d rows, want 1", seen)
+		}
+		_ = stale
+	})
 
-	changed, err := query.NewQuery1[fPos](w, query.Changed[fVel]{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got := changed.Count(w); got != 1 {
-		t.Fatalf("Changed[fVel] archetype-match count = %d, want 1 (Phase 1 scaffold)", got)
-	}
+	t.Run("Changed selects only mutated rows", func(t *testing.T) {
+		w := world.NewWorld()
+		mutated := w.Spawn(component.Data{Value: fPos{X: 1}}, component.Data{Value: fVel{DX: 1}})
+		untouched := w.Spawn(component.Data{Value: fPos{X: 2}}, component.Data{Value: fVel{DX: 2}})
+		w.IncrementChangeTick()
+		// In-place overwrite (same archetype) → StampChanged at the new tick.
+		if err := w.Insert(mutated, component.Data{Value: fVel{DX: 99}}); err != nil {
+			t.Fatal(err)
+		}
+
+		q, err := query.NewQuery1[fPos](w, query.Changed[fVel]{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := q.Count(w); got != 1 {
+			t.Fatalf("Changed[fVel] Count = %d, want 1 (only the mutated entity)", got)
+		}
+		for e := range q.All(w) {
+			if e != mutated {
+				t.Fatalf("Changed[fVel] yielded %v, want mutated %v", e, mutated)
+			}
+		}
+		_ = untouched
+	})
+
+	t.Run("nothing matches once the baseline catches up", func(t *testing.T) {
+		w := world.NewWorld()
+		w.Spawn(component.Data{Value: fPos{X: 1}}, component.Data{Value: fVel{}})
+		w.IncrementChangeTick()
+		w.Spawn(component.Data{Value: fPos{X: 2}}, component.Data{Value: fVel{}})
+		w.ClearTrackers() // LastChangeTick advances to the current tick
+
+		q, err := query.NewQuery1[fPos](w, query.Added[fVel]{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := q.Count(w); got != 0 {
+			t.Fatalf("Added[fVel] after ClearTrackers Count = %d, want 0", got)
+		}
+	})
+
+	t.Run("Changed works for sparse-set stored components", func(t *testing.T) {
+		w := world.NewWorld()
+		// Register fSparse as sparse-set storage *before* any spawn so the
+		// world routes it through the global SparseSet (rowTicks' sparse
+		// branch + ss.Ticks path).
+		w.Components().Register(component.Info{
+			Type:    reflect.TypeFor[fSparse](),
+			Storage: component.StorageSparseSet,
+		})
+		mutated := w.Spawn(component.Data{Value: fPos{X: 1}}, component.Data{Value: fSparse{N: 1}})
+		w.Spawn(component.Data{Value: fPos{X: 2}}, component.Data{Value: fSparse{N: 2}})
+		w.IncrementChangeTick()
+		if err := w.Insert(mutated, component.Data{Value: fSparse{N: 9}}); err != nil {
+			t.Fatal(err)
+		}
+
+		q, err := query.NewQuery1[fPos](w, query.Changed[fSparse]{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := q.Count(w); got != 1 {
+			t.Fatalf("Changed[fSparse] Count = %d, want 1 (only the mutated sparse entity)", got)
+		}
+		for e := range q.All(w) {
+			if e != mutated {
+				t.Fatalf("Changed[fSparse] yielded %v, want %v", e, mutated)
+			}
+		}
+	})
 }
 
 func TestNilFilterIgnored(t *testing.T) {
@@ -302,7 +391,10 @@ func TestQuery2CountWithPerRowFilter(t *testing.T) {
 		t.Fatalf("Query2 + Added[fHP] without fHP entities: Count = %d, want 0", got)
 	}
 
-	// Now spawn entities with fHP — Phase 1 scaffold: all rows pass.
+	// Advance the tick, then spawn fHP-bearing entities: their fHP is added
+	// strictly after the baseline (LastChangeTick == 0), so real change
+	// detection matches all four.
+	w.IncrementChangeTick()
 	for i := range 4 {
 		w.Spawn(
 			component.Data{Value: fPos{}},
@@ -311,7 +403,7 @@ func TestQuery2CountWithPerRowFilter(t *testing.T) {
 		)
 	}
 	if got := q.Count(w); got != 4 {
-		t.Fatalf("Query2 + Added[fHP] with fHP entities: Count = %d, want 4", got)
+		t.Fatalf("Query2 + Added[fHP] with post-baseline fHP entities: Count = %d, want 4", got)
 	}
 }
 
@@ -319,16 +411,21 @@ func TestQuery3CountWithPerRowFilter(t *testing.T) {
 	t.Parallel()
 
 	w := world.NewWorld()
+	// Entity without fLabel spawned at the baseline tick.
+	w.Spawn(
+		component.Data{Value: fPos{}},
+		component.Data{Value: fVel{}},
+		component.Data{Value: fHP{V: 2}},
+	)
+	// Advance, then spawn the fLabel-bearing entity: its fLabel is added
+	// after the baseline, and Changed includes additions, so exactly one
+	// entity satisfies Changed[fLabel].
+	w.IncrementChangeTick()
 	w.Spawn(
 		component.Data{Value: fPos{}},
 		component.Data{Value: fVel{}},
 		component.Data{Value: fHP{V: 1}},
 		component.Data{Value: fLabel{}},
-	)
-	w.Spawn(
-		component.Data{Value: fPos{}},
-		component.Data{Value: fVel{}},
-		component.Data{Value: fHP{V: 2}},
 	)
 
 	q, err := query.NewQuery3[fPos, fVel, fHP](w, query.Changed[fLabel]{})
@@ -336,7 +433,7 @@ func TestQuery3CountWithPerRowFilter(t *testing.T) {
 		t.Fatal(err)
 	}
 	if got := q.Count(w); got != 1 {
-		t.Fatalf("Query3 + Changed[fLabel] Count = %d, want 1", got)
+		t.Fatalf("Query3 + Changed[fLabel] Count = %d, want 1 (only the post-baseline fLabel entity)", got)
 	}
 }
 

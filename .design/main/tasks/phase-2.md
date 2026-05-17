@@ -229,17 +229,17 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 
 ### [T-2G01] pkg/protocol IPC contracts
 
-- **Spec:** [l1-multi-repo-architecture.md](../specifications/l1-multi-repo-architecture.md) *(RFC)*
+- **Spec:** [l2-multi-repo-architecture-go.md](../specifications/l2-multi-repo-architecture-go.md) *(Draft [Bootstrap])* — impl; concept parent [l1-multi-repo-architecture.md](../specifications/l1-multi-repo-architecture.md) *(Draft)*
 - **Status:** Todo [Bootstrap]
-- **Verify:** `go build ./pkg/protocol/` + `go test ./pkg/protocol/ -run TestProtocolRoundTrip` — versioned message encode/decode stable; backward-compat field rule documented.
-- **Notes:** RFC-gated — surface only. Spec ratification is an Exit Criterion, not part of this task.
+- **Verify:** `go build ./pkg/protocol/` + `go test ./pkg/protocol/ -run TestProtocolRoundTrip` — versioned message encode/decode stable; backward-compat field rule documented (codec contract per l2 §Key Methods; round-trip table-driven over every `Kind`).
+- **Notes:** Concrete wire types + codec specified in `l2-multi-repo-architecture-go.md` §Type Definitions / §Error Handling. Surface only — spec ratification is an Exit Criterion (C29 — needs the Phase 2 `examples/` validator), not part of this task.
 
 ### [T-2G02] pkg/editor boundary interfaces
 
-- **Spec:** [l1-multi-repo-architecture.md](../specifications/l1-multi-repo-architecture.md) *(RFC)*
+- **Spec:** [l2-multi-repo-architecture-go.md](../specifications/l2-multi-repo-architecture-go.md) *(Draft [Bootstrap])* — impl; concept parent [l1-multi-repo-architecture.md](../specifications/l1-multi-repo-architecture.md) *(Draft)*
 - **Status:** Todo [Bootstrap]
-- **Verify:** `go build ./pkg/editor/` + architecture-guard test asserting **zero** `internal/` imports in `pkg/editor/`.
-- **Notes:** Engine-side extension points only (no editor implementation — that lives in the extracted `.design-editor/` repo per INDEX note).
+- **Verify:** `go build ./pkg/editor/` + architecture-guard tests `TestEditorPkgIsContractOnly` / `TestNoEditorImports` asserting **zero** `internal/` imports and interface-only content in `pkg/editor/` (per l2 §4 INV-1/INV-3 compliance).
+- **Notes:** Engine-side extension points only (no editor implementation — that lives in the extracted `.design-editor/` repo per INDEX note). Interfaces + data types enumerated in `l2-multi-repo-architecture-go.md` §Type Definitions.
 
 ### [T-2T01] Hierarchy fuzz
 

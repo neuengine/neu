@@ -1,15 +1,15 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.5.0
+**Version:** 1.6.0
 **Generated:** 2026-05-17
-**Based on:** .design/main/INDEX.md v2.24.0
+**Based on:** .design/main/INDEX.md v2.25.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
-**Mode:** Phase 1 specs `Stable` (Bootstrap deactivated for P1 — 17/84 specs promoted 2026-05-17). Phase 2+ remain `[Bootstrap]` pending `examples/ecs/framework/` gate.
+**Mode:** Phase 1 specs `Stable` (Bootstrap deactivated for P1 — 17/89 specs promoted 2026-05-17). Phase 2+ remain `[Bootstrap]` pending per-phase `examples/` gate (P2 → `examples/ecs/framework/`; P3 → `examples/{async,asset,scene,math}/`).
 
 ## Overview
 
-Force-Bootstrap regeneration of the implementation plan. Every registered specification (84 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
+Force-Bootstrap regeneration of the implementation plan. Every registered specification (89 total) is mapped to its target phase, ordered by the P1–P8 priority batches in `INDEX.md` and gated by:
 
 - **STOP FACTOR**: phases ≥ 4 are frozen (`Hold`) until Phase 1 (POC) is validated by code in `examples/ecs/poc/` (C29).
 - **Layer Order**: every L1 concept spec is scheduled before its L2 Go implementation within the same phase.
@@ -17,8 +17,8 @@ Force-Bootstrap regeneration of the implementation plan. Every registered specif
 
 Dependency analysis (Implements: chains):
 
-- 14 hard L2→L1 edges, all 1:1, no chains, no cycles.
-- 62 L1 specs are roots. `Related Specifications` cycles within a single phase are non-blocking (Circular Guard Semantic Split — Soft).
+- 19 hard L2→L1 edges, all 1:1, no chains, no cycles (5 new L2→L1 edges added 2026-05-17: math, multi-repo, task, asset, scene).
+- 65 L1 specs are roots. `Related Specifications` cycles within a single phase are non-blocking (Circular Guard Semantic Split — Soft).
 
 ## Phase 1 — ECS Core POC (Done) `[Bootstrap]`
 
@@ -59,16 +59,21 @@ Dependency analysis (Implements: chains):
 - [ ] **Change Detection (Go)** ([l2-change-detection-go.md](specifications/l2-change-detection-go.md)) [L2] `[Bootstrap]`
 - [ ] **App Framework** ([l1-app-framework.md](specifications/l1-app-framework.md)) [L1] `[Bootstrap]`
 - [ ] **App Framework (Go)** ([l2-app-framework-go.md](specifications/l2-app-framework-go.md)) [L2] `[Bootstrap]`
-- [ ] **Multi-Repo Architecture** ([l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md)) [L1] *(RFC — surface for review)*
+- [ ] **Multi-Repo Architecture** ([l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md)) [L1] `[Bootstrap]` *(Draft — surface only; Track G)*
+- [ ] **Multi-Repo Architecture (Go)** ([l2-multi-repo-architecture-go.md](specifications/l2-multi-repo-architecture-go.md)) [L2] `[Bootstrap]` *(Track G — T-2G01/T-2G02)*
 
 ## Phase 3 — Assets, Math & Concurrency `[Bootstrap]`
 
 *Parallel task pool, asset server, scene serialization, math primitives. Last phase before the STOP FACTOR gate.*
 
 - [ ] **Task System** ([l1-task-system.md](specifications/l1-task-system.md)) [L1] `[Bootstrap]`
+- [ ] **Task System (Go)** ([l2-task-system-go.md](specifications/l2-task-system-go.md)) [L2] `[Bootstrap]`
 - [ ] **Asset System** ([l1-asset-system.md](specifications/l1-asset-system.md)) [L1] `[Bootstrap]`
+- [ ] **Asset System (Go)** ([l2-asset-system-go.md](specifications/l2-asset-system-go.md)) [L2] `[Bootstrap]`
 - [ ] **Scene System** ([l1-scene-system.md](specifications/l1-scene-system.md)) [L1] `[Bootstrap]`
+- [ ] **Scene System (Go)** ([l2-scene-system-go.md](specifications/l2-scene-system-go.md)) [L2] `[Bootstrap]`
 - [ ] **Math System** ([l1-math-system.md](specifications/l1-math-system.md)) [L1] `[Bootstrap]`
+- [ ] **Math System (Go)** ([l2-math-system-go.md](specifications/l2-math-system-go.md)) [L2] `[Bootstrap]`
 
 ## Phase 4 — Render Pipeline `[Hold]` `[Bootstrap]`
 
@@ -178,3 +183,5 @@ Dependency analysis (Implements: chains):
 | 1.2.0 | 2026-05-14 | Added `l1-visual-graph-system` to Phase 6 (Track P already decomposed in `tasks/phase-6.md` as T-6P01..04); INDEX v2.23.0 |
 | 1.3.0 | 2026-05-15 | Registry sync to INDEX v2.24.0 (84 specs); 5 orphan specs placed; full Draft cohort re-mapped |
 | 1.4.0 | 2026-05-16 | Phase 1 → Done (27/27); Phase 2 promoted Active with 24-task atomic decomposition (Tracks A–G + T); corrected stale spec count (79 → 84) |
+| 1.5.0 | 2026-05-17 | Pre-Planning Stabilization: 17 P1 specs Draft → Stable (C29 via T-1T05); Bootstrap deactivated for P1 |
+| 1.6.0 | 2026-05-17 | Registry sync to INDEX v2.25.0 (89 specs); placed 5 orphan L2 specs — `l2-multi-repo-architecture-go` → Phase 2 (Track G); `l2-{task,asset,scene,math}-system-go` → Phase 3. 19 hard L2→L1 edges, acyclic. All new specs `[Bootstrap]` (C29 keeps non-P1 Draft) |

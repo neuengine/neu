@@ -3,6 +3,8 @@ package world
 import (
 	"reflect"
 	"sync"
+
+	"github.com/neuengine/neu/internal/ecs/component"
 )
 
 // ResourceMap stores global singleton resources keyed by Go type.
@@ -85,4 +87,36 @@ func RemoveResource[T any](w *World) bool {
 // ContainsResource reports whether a resource of type T exists.
 func ContainsResource[T any](w *World) bool {
 	return w.resources.contains(reflect.TypeFor[T]())
+}
+
+// RegisterComponent registers component type T with the world's component
+// registry using default StorageTable semantics. Idempotent — returns the
+// existing ID if T was already registered. Used by plugins to pre-register
+// components before any entity spawns, ensuring stable ID assignment order.
+func RegisterComponent[T any](w *World) component.ID {
+	return component.RegisterType[T](w.components)
+}
+
+// SetResourceAny inserts or overwrites the singleton resource for the dynamic
+// type of value. Mirrors SetResource[T]: stores a *T keyed by T so that
+// Resource[T] can retrieve it with a type assertion. Panics if value is nil
+// (no concrete type to key on). Prefer the generic SetResource[T] when T is
+// known at compile time.
+func SetResourceAny(w *World, value any) {
+	t := reflect.TypeOf(value)
+	p := reflect.New(t)
+	p.Elem().Set(reflect.ValueOf(value))
+	w.resources.set(t, p.Interface())
+}
+
+// InitResourceAny stores value as a resource only if no resource for its
+// dynamic type is already registered. Mirrors InitResource[T] semantics.
+func InitResourceAny(w *World, value any) {
+	t := reflect.TypeOf(value)
+	if w.resources.contains(t) {
+		return
+	}
+	p := reflect.New(t)
+	p.Elem().Set(reflect.ValueOf(value))
+	w.resources.set(t, p.Interface())
 }

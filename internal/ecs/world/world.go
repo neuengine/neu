@@ -41,8 +41,8 @@ type World struct {
 	archetypes       *ArchetypeStore
 	sparseSets       map[component.ID]*component.SparseSet
 	records          map[entity.EntityID]entityRecord
-	deferredFlushers []func(*World)                                              // T-1F02: registered command-buffer flushers
-	removedCallbacks map[component.ID]func(entity.Entity, changedetect.Tick)   // T-2E03: per-component removal notifiers
+	removedCallbacks map[component.ID]func(entity.Entity, changedetect.Tick)
+	deferredFlushers []func(*World)
 	changeTick       Tick
 	lastChangeTick   Tick
 }

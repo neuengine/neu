@@ -1,7 +1,7 @@
 ---
 phase: 2
 name: "Framework Primitives"
-status: Todo
+status: Done
 subsystem: "internal/ecs, pkg/app, pkg/editor, pkg/protocol"
 requires:
   - "Phase 1 ECS Core (World, Component, Query, Scheduler, Command, Event)"
@@ -24,7 +24,7 @@ bootstrap: true
 # Stage 2 Tasks — Framework Primitives
 
 **Phase:** 2
-**Status:** Todo
+**Status:** Done
 **Strategic Goal:** Land a general-purpose engine framework on top of the ECS core, validated end-to-end by `examples/ecs/framework/`. Closes the Phase 1 `T-1D03` change-detection scaffold and exposes the editor/tooling plugin surface.
 
 ## Track Overview
@@ -49,27 +49,27 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 
 ### Track A — Hierarchy
 
-- [ ] [T-2A01] `ChildOf` / `Children` relationship components + maintenance ops (attach, detach, reparent, recursive despawn). — `internal/ecs/hierarchy/relationship.go` [Bootstrap]
-- [ ] [T-2A02] `Transform` / `GlobalTransform` components + propagation system (dirty-flag, depth-ordered, root→leaf). — `internal/ecs/hierarchy/transform.go` [Bootstrap]
-- [ ] [T-2A03] Traversal helpers (`iter.Seq` descendants/ancestors) + `HierarchyPlugin` schedule wiring. — `internal/ecs/hierarchy/{traverse,plugin}.go` [Bootstrap]
+- [x] [T-2A01] `ChildOf` / `Children` relationship components + maintenance ops (attach, detach, reparent, recursive despawn). — `internal/ecs/hierarchy/relationship.go` [Bootstrap]
+- [x] [T-2A02] `Transform` / `GlobalTransform` components + propagation system (dirty-flag, depth-ordered, root→leaf). — `internal/ecs/hierarchy/transform.go` [Bootstrap]
+- [x] [T-2A03] Traversal helpers (`iter.Seq` descendants/ancestors) + `HierarchyPlugin` schedule wiring. — `internal/ecs/hierarchy/{traverse,plugin}.go` [Bootstrap]
 
 ### Track B — Time
 
-- [ ] [T-2B01] `Time` / `RealTime` / `VirtualTime` clock model (delta, elapsed, scale, pause). — `internal/ecs/gametime/{clock,virtual}.go` [Bootstrap]
-- [ ] [T-2B02] `FixedTime` + fixed-timestep accumulator (sub-stepping, max-catch-up clamp). — `internal/ecs/gametime/fixed.go` [Bootstrap]
-- [ ] [T-2B03] `Timer` / `Stopwatch` (one-shot, repeating, finished/just-finished) + `TimePlugin`. — `internal/ecs/gametime/{timer,plugin}.go` [Bootstrap]
+- [x] [T-2B01] `Time` / `RealTime` / `VirtualTime` clock model (delta, elapsed, scale, pause). — `internal/ecs/gametime/{clock,virtual}.go` [Bootstrap]
+- [x] [T-2B02] `FixedTime` + fixed-timestep accumulator (sub-stepping, max-catch-up clamp). — `internal/ecs/gametime/fixed.go` [Bootstrap]
+- [x] [T-2B03] `Timer` / `Stopwatch` (one-shot, repeating, finished/just-finished) + `TimePlugin`. — `internal/ecs/gametime/{timer,plugin}.go` [Bootstrap]
 
 ### Track C — Input
 
-- [ ] [T-2C01] Generic `ButtonInput[T]` / `AxisInput[T]` state containers (pressed / just-pressed / just-released, per-frame clear). — `internal/ecs/input/{button,axis}.go` [Bootstrap]
-- [ ] [T-2C02] Code reference types — `KeyCode` / `MouseButton` / `GamepadButton` / `GamepadAxis` / `Touch` enum tables. — `internal/ecs/input/codes.go` [Bootstrap]
-- [ ] [T-2C03] Input ingestion systems (event→state, frame clear) + picking ray helper + `InputPlugin`. — `internal/ecs/input/{system,picking,plugin}.go` [Bootstrap]
+- [x] [T-2C01] Generic `ButtonInput[T]` / `AxisInput[T]` state containers (pressed / just-pressed / just-released, per-frame clear). — `internal/ecs/input/{button,axis}.go` [Bootstrap]
+- [x] [T-2C02] Code reference types — `KeyCode` / `MouseButton` / `GamepadButton` / `GamepadAxis` / `Touch` enum tables. — `internal/ecs/input/codes.go` [Bootstrap]
+- [x] [T-2C03] Input ingestion systems (event→state, frame clear) + picking ray helper + `InputPlugin`. — `internal/ecs/input/{system,picking,plugin}.go` [Bootstrap]
 
 ### Track D — State
 
-- [ ] [T-2D01] `State[S]` / `NextState[S]` resources + transition system (`OnEnter` / `OnExit` schedule sets). — `internal/ecs/state/{state,transition}.go` [Bootstrap]
-- [ ] [T-2D02] `SubState` + `ComputedState` derivation; `DespawnOnExit` cleanup. — `internal/ecs/state/{substate,computed}.go` [Bootstrap]
-- [ ] [T-2D03] `StatePlugin` wiring + `in_state` run-condition integration. — `internal/ecs/state/plugin.go` [Bootstrap]
+- [x] [T-2D01] `State[S]` / `NextState[S]` resources + transition system (`OnEnter` / `OnExit` schedule sets). — `internal/ecs/state/{state,transition}.go` [Bootstrap]
+- [x] [T-2D02] `SubState` + `ComputedState` derivation; `DespawnOnExit` cleanup. — `internal/ecs/state/{substate,computed}.go` [Bootstrap]
+- [x] [T-2D03] `StatePlugin` wiring + `in_state` run-condition integration. — `internal/ecs/state/plugin.go` [Bootstrap]
 
 ### Track E — Change Detection (Critical Path · closes T-1D03)
 
@@ -79,28 +79,28 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 
 ### Track F — App Framework (Critical Path)
 
-- [ ] [T-2F01] `App` builder + `Plugin` / `PluginGroup` interfaces (build/finish lifecycle, dependency order, duplicate guard). — `pkg/app/{app,plugin}.go` [Bootstrap]
-- [ ] [T-2F02] `SubApp` + `RunMode` (once / loop / headless) + main↔sub extract/apply step. — `pkg/app/{subapp,runmode}.go` [Bootstrap]
-- [ ] [T-2F03] `DefaultPlugins` group (wires Hierarchy + Time + Input + State + ChangeDetection) + `App.Run`. — `pkg/app/defaultplugins.go` [Bootstrap]
+- [x] [T-2F01] `App` builder + `Plugin` / `PluginGroup` interfaces (build/finish lifecycle, dependency order, duplicate guard). — `pkg/app/{app,plugin}.go` [Bootstrap]
+- [x] [T-2F02] `SubApp` + `RunMode` (once / loop / headless) + main↔sub extract/apply step. — `pkg/app/{subapp,runmode}.go` [Bootstrap]
+- [x] [T-2F03] `DefaultPlugins` group (wires Hierarchy + Time + Input + State + ChangeDetection) + `App.Run`. — `pkg/app/defaultplugins.go` [Bootstrap]
 
 ### Track G — Multi-Repo Extension Surface (RFC-gated, surface only)
 
-- [ ] [T-2G01] `pkg/protocol/` versioned IPC message contracts + serialization boundary. — `pkg/protocol/` [Bootstrap]
-- [ ] [T-2G02] `pkg/editor/` engine-side boundary interfaces (extension points; **no** editor implementation, **no** `internal/` imports). — `pkg/editor/` [Bootstrap]
+- [x] [T-2G01] `pkg/protocol/` versioned IPC message contracts + serialization boundary. — `pkg/protocol/` [Bootstrap]
+- [x] [T-2G02] `pkg/editor/` engine-side boundary interfaces (extension points; **no** editor implementation, **no** `internal/` imports). — `pkg/editor/` [Bootstrap]
 
 ### Track T — Validation
 
-- [ ] [T-2T01] `FuzzHierarchyReparent` — random spawn/reparent/despawn; invariants: no parent cycles, `Children`↔`ChildOf` consistency.
-- [ ] [T-2T02] Fixed-step determinism golden test — identical input ⇒ identical state hash across 2 runs over 600 fixed steps.
-- [ ] [T-2T03] App lifecycle integration test — `DefaultPlugins`, 100 ticks, state-transition + input-injection + hierarchy-mutation round-trip.
-- [ ] [T-2T04] **Framework gate** — `examples/ecs/framework/` end-to-end; `Document History` updated in every Phase 2 spec (C26).
+- [x] [T-2T01] `FuzzHierarchyReparent` — random spawn/reparent/despawn; invariants: no parent cycles, `Children`↔`ChildOf` consistency.
+- [x] [T-2T02] Fixed-step determinism golden test — identical input ⇒ identical state hash across 2 runs over 600 fixed steps.
+- [x] [T-2T03] App lifecycle integration test — `DefaultPlugins`, 100 ticks, state-transition + input-injection + hierarchy-mutation round-trip.
+- [x] [T-2T04] **Framework gate** — `examples/ecs/framework/` end-to-end; `Document History` updated in every Phase 2 spec (C26).
 
 ## Detailed Tracking
 
 ### [T-2A01] ChildOf / Children relationship
 
 - **Spec:** [l2-hierarchy-system-go.md](../specifications/l2-hierarchy-system-go.md), [l1-hierarchy-system.md](../specifications/l1-hierarchy-system.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Assignment:** Agent
 - **Verify:** `go test ./internal/ecs/hierarchy/ -run TestParentChild` — table-driven attach/detach/reparent + recursive-despawn cases pass; orphaned `ChildOf` cleaned.
 - **Handoff:** Required by T-2A02 (propagation walks the relationship), T-2T01 (fuzz).
@@ -109,7 +109,7 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 ### [T-2A02] Transform propagation
 
 - **Spec:** [l1-hierarchy-system.md](../specifications/l1-hierarchy-system.md), [l2-hierarchy-system-go.md](../specifications/l2-hierarchy-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/hierarchy/ -run TestPropagation` — deterministic world-space `GlobalTransform` across a 3-level chain; dirty-flag skips clean subtrees.
 - **Handoff:** Consumed by T-2F03 (DefaultPlugins schedules propagation), T-2T02.
 - **Notes:** Depth-ordered traversal (root→leaf) is mandatory for single-pass correctness; no recursion into already-clean subtrees (perf, C28 baseline).
@@ -117,66 +117,66 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 ### [T-2A03] Traversal + HierarchyPlugin
 
 - **Spec:** [l2-hierarchy-system-go.md](../specifications/l2-hierarchy-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/hierarchy/` ≥ 95% pkg coverage, `-race` clean.
 - **Handoff:** `HierarchyPlugin` consumed by T-2F03.
 
 ### [T-2B01] Real / Virtual clock model
 
 - **Spec:** [l2-time-system-go.md](../specifications/l2-time-system-go.md), [l1-time-system.md](../specifications/l1-time-system.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/gametime/ -run TestVirtualScaling` — scale=0 (pause), scale=2 (fast), elapsed monotonic invariants pass.
 - **Notes:** `gametime` package name (avoids stdlib `time` collision). Pure-data clocks (C24 §1 POD components).
 
 ### [T-2B02] Fixed-timestep accumulator
 
 - **Spec:** [l1-time-system.md](../specifications/l1-time-system.md), [l2-time-system-go.md](../specifications/l2-time-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/gametime/ -run TestFixedStepDeterminism` — N accumulated steps deterministic for fixed dt; spiral-of-death clamp honored.
 - **Handoff:** Required by T-2T02 (golden determinism), Phase 1 SubApp fixed schedule.
 
 ### [T-2B03] Timer / Stopwatch + TimePlugin
 
 - **Spec:** [l2-time-system-go.md](../specifications/l2-time-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/gametime/` ≥ 95% pkg coverage, `-race` clean; `Timer.JustFinished()` true exactly one frame.
 
 ### [T-2C01] ButtonInput / AxisInput
 
 - **Spec:** [l2-input-system-go.md](../specifications/l2-input-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/input/ -run TestButtonState` — press→just-pressed (1 frame)→pressed→release→just-released edges correct after frame clear.
 - **Notes:** Generic over comparable code type `T`; `sync.Pool` not required (per-frame reused state map, C27 N/A for fixed-size state).
 
 ### [T-2C02] Code reference tables
 
 - **Spec:** [l2-input-system-go-codes.md](../specifications/l2-input-system-go-codes.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/input/ -run TestCodeTables` — stringer round-trip; per-enum count assertion matches the spec reference table.
 
 ### [T-2C03] Input systems + picking + InputPlugin
 
 - **Spec:** [l1-input-system.md](../specifications/l1-input-system.md), [l2-input-system-go.md](../specifications/l2-input-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/input/` ≥ 95% pkg coverage, `-race` clean; picking ray helper unit-tested against a known camera/viewport.
 - **Handoff:** `InputPlugin` consumed by T-2F03.
 
 ### [T-2D01] State / NextState + transitions
 
 - **Spec:** [l2-state-system-go.md](../specifications/l2-state-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/state/ -run TestTransition` — `OnExit(old)` runs before `OnEnter(new)`; no-op when `NextState == State`.
 
 ### [T-2D02] SubState / ComputedState / DespawnOnExit
 
 - **Spec:** [l1-state-system.md](../specifications/l1-state-system.md), [l2-state-system-go.md](../specifications/l2-state-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/state/ -run TestComputedState` — derived state recomputes on source change; `DespawnOnExit` entities removed at transition.
 
 ### [T-2D03] StatePlugin + in_state condition
 
 - **Spec:** [l2-state-system-go.md](../specifications/l2-state-system-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/state/` ≥ 95% pkg coverage, `-race` clean; `in_state(X)` run-condition gates a system on/off across a transition.
 - **Handoff:** `StatePlugin` + `in_state` consumed by T-2F03; integrates Phase 1 `scheduler.RunCondition` (T-1E03).
 
@@ -209,20 +209,20 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 ### [T-2F01] App + Plugin / PluginGroup
 
 - **Spec:** [l2-app-framework-go.md](../specifications/l2-app-framework-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./pkg/app/ -run TestPluginLifecycle` — `Build` then `Finish` ordering; duplicate-plugin registration guarded; plugin dependency order respected.
 - **Notes:** `pkg/app` is a **public** package (C24 boundary) — must not leak `internal/ecs` types beyond the documented façade (reuse `pkg/ecs` aliases from T-1T01).
 
 ### [T-2F02] SubApp + RunMode
 
 - **Spec:** [l1-app-framework.md](../specifications/l1-app-framework.md), [l2-app-framework-go.md](../specifications/l2-app-framework-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./pkg/app/ -run TestSubAppExtract` — sub-app world isolation; extract step copies only declared resources; `RunMode` once/loop/headless each terminate correctly.
 
 ### [T-2F03] DefaultPlugins + App.Run
 
 - **Spec:** [l2-app-framework-go.md](../specifications/l2-app-framework-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./pkg/app/` ≥ 90% pkg coverage, `-race` clean; `DefaultPlugins` boots Hierarchy+Time+Input+State+ChangeDetection and a 10-tick `App.Run` completes with all plugin schedules firing.
 - **Handoff:** **Critical path tail** — blocks on T-2A03, T-2B03, T-2C03, T-2D03, T-2E03. Consumed by T-2T03/T-2T04.
 - **Notes:** Cascade risk — if any plugin track slips, T-2F03 and the validation track stall (see Planning Audit).
@@ -230,14 +230,14 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 ### [T-2G01] pkg/protocol IPC contracts
 
 - **Spec:** [l2-multi-repo-architecture-go.md](../specifications/l2-multi-repo-architecture-go.md) *(Draft [Bootstrap])* — impl; concept parent [l1-multi-repo-architecture.md](../specifications/l1-multi-repo-architecture.md) *(Draft)*
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go build ./pkg/protocol/` + `go test ./pkg/protocol/ -run TestProtocolRoundTrip` — versioned message encode/decode stable; backward-compat field rule documented (codec contract per l2 §Key Methods; round-trip table-driven over every `Kind`).
 - **Notes:** Concrete wire types + codec specified in `l2-multi-repo-architecture-go.md` §Type Definitions / §Error Handling. Surface only — spec ratification is an Exit Criterion (C29 — needs the Phase 2 `examples/` validator), not part of this task.
 
 ### [T-2G02] pkg/editor boundary interfaces
 
 - **Spec:** [l2-multi-repo-architecture-go.md](../specifications/l2-multi-repo-architecture-go.md) *(Draft [Bootstrap])* — impl; concept parent [l1-multi-repo-architecture.md](../specifications/l1-multi-repo-architecture.md) *(Draft)*
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go build ./pkg/editor/` + architecture-guard tests `TestEditorPkgIsContractOnly` / `TestNoEditorImports` asserting **zero** `internal/` imports and interface-only content in `pkg/editor/` (per l2 §4 INV-1/INV-3 compliance).
 - **Notes:** Engine-side extension points only (no editor implementation — that lives in the extracted `.design-editor/` repo per INDEX note). Interfaces + data types enumerated in `l2-multi-repo-architecture-go.md` §Type Definitions.
 
@@ -247,22 +247,28 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 - **Method:** `go test -run x -fuzz FuzzHierarchyReparent -fuzztime 30s ./internal/ecs/hierarchy/` — no crashes; assert no parent cycles + `Children`↔`ChildOf` bijection.
 - **Status:** Todo [Bootstrap]
 
+### [T-2T01] Hierarchy fuzz
+
+- **Goal:** Verify T-2A relationship/propagation invariants under random churn.
+- **Method:** `go test -run x -fuzz FuzzHierarchyReparent -fuzztime 30s ./internal/ecs/hierarchy/` — no crashes; no parent cycles + `Children`↔`ChildOf` bijection.
+- **Status:** Done [Bootstrap]
+
 ### [T-2T02] Fixed-step determinism golden
 
 - **Goal:** Verify T-2B fixed-step is deterministic (network/replay precondition).
 - **Method:** `go test -run TestFixedStepGolden ./internal/ecs/gametime/` — two identical-input runs over 600 fixed steps produce identical state hashes.
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 
 ### [T-2T03] App lifecycle integration
 
 - **Goal:** Verify T-2F integrates all plugin tracks.
 - **Method:** `go test -race ./pkg/app/ -run TestAppLifecycleIntegration` — `DefaultPlugins`, 100 ticks, state transition + input injection + hierarchy mutation round-trip.
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 
 ### [T-2T04] examples/ecs/framework — Phase 2 gate
 
 - **Spec:** [l1-examples-framework.md](../specifications/l1-examples-framework.md), all Phase 2 specs (referenced from `Document History`)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Goal:** End-to-end validation exercising every Phase 2 spec. Output is the gate that lets `magic.spec` promote the Phase 2 cohort `Draft → Stable`.
 - **Method:** `go run ./examples/ecs/framework` deterministic; `go test -race ./examples/ecs/framework` passes.
 - **Acceptance:**

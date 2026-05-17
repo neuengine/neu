@@ -20,11 +20,11 @@ import (
 // Removal uses swap-and-pop on the dense arrays so iteration stays
 // contiguous. The set is NOT safe for concurrent mutation.
 type SparseSet struct {
-	spec     ColumnSpec
 	sparse   []uint32
 	entities []entity.Entity
 	data     []byte
 	ticks    []changedetect.ComponentTicks
+	spec     ColumnSpec
 	agg      changedetect.ColumnTicks
 }
 

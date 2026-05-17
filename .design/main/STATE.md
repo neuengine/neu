@@ -4,21 +4,22 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-17 09:16
+**Updated:** 2026-05-17
 **Phase:** 2 — Framework Primitives
-**Status:** Active
+**Status:** Done
 
 ## Current Position
 
-- **Task:** T-2E02 Ref/Mut wrappers + closed T-1D03 scaffold
-- **Spec:** all 17 P1 specs Document History updated; `examples/ecs/poc/` validates runtime
-- **Next Action:** Phase 2 Track E complete (T-2E01/02/03 Done). Run /magic-run main to execute next Phase 2 task — Track F critical-path tail (T-2F01 App+Plugin) and/or parallel Tracks A-D (Hierarchy/Time/Input/State).
+- **Task:** T-2T04 Phase 2 gate — `examples/ecs/framework/` — Done
+- **Spec:** 24/24 tasks Done. All tracks complete (A–G + T). FuzzHierarchyReparent: 509K executions, 10s, no crashes.
+- **Next Action:** Phase 2 complete. Run `/magic.task main` to plan Phase 3 — Assets, Math & Concurrency.
 
 ## Progress
 
 ```
 Phase 1: [27/27] ████████ 100% ✓ Done
-Overall: [27/27] ████████ 100%
+Phase 2: [24/24] ████████ 100% ✓ Done
+Overall: [51/51] ████████ 100%
 ```
 
 ## Recent Decisions

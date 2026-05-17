@@ -1,7 +1,7 @@
 ﻿# Type Registry — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [type-registry.md](l1-type-registry.md)
 

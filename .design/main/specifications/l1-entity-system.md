@@ -1,7 +1,7 @@
 ﻿# Entity System
 
 **Version:** 0.3.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** concept
 
 ## Overview

@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.4.0
-**Generated:** 2026-05-16
+**Version:** 1.5.0
+**Generated:** 2026-05-17
 **Based on:** .design/main/INDEX.md v2.24.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
-**Mode:** `[Bootstrap]` — full Draft cohort planned tentatively per C6 Bootstrap Exception (user override). All specs remain `Draft` until each phase's `examples/` gate is satisfied (Phase 1: `examples/ecs/poc/` ✓; Phase 2: `examples/ecs/framework/` pending).
+**Mode:** Phase 1 specs `Stable` (Bootstrap deactivated for P1 — 17/84 specs promoted 2026-05-17). Phase 2+ remain `[Bootstrap]` pending `examples/ecs/framework/` gate.
 
 ## Overview
 
@@ -13,7 +13,7 @@ Force-Bootstrap regeneration of the implementation plan. Every registered specif
 
 - **STOP FACTOR**: phases ≥ 4 are frozen (`Hold`) until Phase 1 (POC) is validated by code in `examples/ecs/poc/` (C29).
 - **Layer Order**: every L1 concept spec is scheduled before its L2 Go implementation within the same phase.
-- **C29 Override Pending**: no spec promotion `Draft → Stable` is performed during this Bootstrap pass. Promotion happens once a validating example exists.
+- **C29 Resolved (Phase 1)**: P1 ECS Core specs promoted `Draft → Stable` on 2026-05-17 via Pre-Planning Stabilization (T-1T05 satisfied the gate). Phase 2+ promotion deferred to `examples/ecs/framework/` completion.
 
 Dependency analysis (Implements: chains):
 
@@ -24,23 +24,23 @@ Dependency analysis (Implements: chains):
 
 *Foundation runtime: world, entities, components, queries, scheduler. Outcome: a runnable POC in `examples/ecs/poc/` that exercises the full data path and unblocks C29. **Complete — 27/27 atomic tasks Done.***
 
-- [ ] **World System** ([l1-world-system.md](specifications/l1-world-system.md)) [L1] `[Bootstrap]`
-- [ ] **World System (Go)** ([l2-world-system-go.md](specifications/l2-world-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Entity System** ([l1-entity-system.md](specifications/l1-entity-system.md)) [L1] `[Bootstrap]`
-- [ ] **Entity System (Go)** ([l2-entity-system-go.md](specifications/l2-entity-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Component System** ([l1-component-system.md](specifications/l1-component-system.md)) [L1] `[Bootstrap]`
-- [ ] **Component System (Go)** ([l2-component-system-go.md](specifications/l2-component-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Query System** ([l1-query-system.md](specifications/l1-query-system.md)) [L1] `[Bootstrap]`
-- [ ] **Query System (Go)** ([l2-query-system-go.md](specifications/l2-query-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **System Scheduling** ([l1-system-scheduling.md](specifications/l1-system-scheduling.md)) [L1] `[Bootstrap]`
-- [ ] **System Scheduling (Go)** ([l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md)) [L2] `[Bootstrap]`
-- [ ] **Command System** ([l1-command-system.md](specifications/l1-command-system.md)) [L1] `[Bootstrap]`
-- [ ] **Command System (Go)** ([l2-command-system-go.md](specifications/l2-command-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Event System** ([l1-event-system.md](specifications/l1-event-system.md)) [L1] `[Bootstrap]`
-- [ ] **Event System (Go)** ([l2-event-system-go.md](specifications/l2-event-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Type Registry** ([l1-type-registry.md](specifications/l1-type-registry.md)) [L1] `[Bootstrap]`
-- [ ] **Type Registry (Go)** ([l2-type-registry-go.md](specifications/l2-type-registry-go.md)) [L2] `[Bootstrap]`
-- [ ] **ECS Lifecycle Patterns** ([l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md)) [L1] `[Bootstrap]`
+- [x] **World System** ([l1-world-system.md](specifications/l1-world-system.md)) [L1] `Stable`
+- [x] **World System (Go)** ([l2-world-system-go.md](specifications/l2-world-system-go.md)) [L2] `Stable`
+- [x] **Entity System** ([l1-entity-system.md](specifications/l1-entity-system.md)) [L1] `Stable`
+- [x] **Entity System (Go)** ([l2-entity-system-go.md](specifications/l2-entity-system-go.md)) [L2] `Stable`
+- [x] **Component System** ([l1-component-system.md](specifications/l1-component-system.md)) [L1] `Stable`
+- [x] **Component System (Go)** ([l2-component-system-go.md](specifications/l2-component-system-go.md)) [L2] `Stable`
+- [x] **Query System** ([l1-query-system.md](specifications/l1-query-system.md)) [L1] `Stable`
+- [x] **Query System (Go)** ([l2-query-system-go.md](specifications/l2-query-system-go.md)) [L2] `Stable`
+- [x] **System Scheduling** ([l1-system-scheduling.md](specifications/l1-system-scheduling.md)) [L1] `Stable`
+- [x] **System Scheduling (Go)** ([l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md)) [L2] `Stable`
+- [x] **Command System** ([l1-command-system.md](specifications/l1-command-system.md)) [L1] `Stable`
+- [x] **Command System (Go)** ([l2-command-system-go.md](specifications/l2-command-system-go.md)) [L2] `Stable`
+- [x] **Event System** ([l1-event-system.md](specifications/l1-event-system.md)) [L1] `Stable`
+- [x] **Event System (Go)** ([l2-event-system-go.md](specifications/l2-event-system-go.md)) [L2] `Stable`
+- [x] **Type Registry** ([l1-type-registry.md](specifications/l1-type-registry.md)) [L1] `Stable`
+- [x] **Type Registry (Go)** ([l2-type-registry-go.md](specifications/l2-type-registry-go.md)) [L2] `Stable`
+- [x] **ECS Lifecycle Patterns** ([l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md)) [L1] `Stable`
 
 ## Phase 2 — Framework Primitives (Active) `[Bootstrap]`
 

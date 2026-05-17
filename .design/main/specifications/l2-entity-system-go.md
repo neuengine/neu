@@ -1,7 +1,7 @@
 ﻿# Entity System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [entity-system.md](l1-entity-system.md)
 

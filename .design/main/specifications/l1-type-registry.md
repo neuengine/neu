@@ -1,7 +1,7 @@
 ﻿# Type Registry
 
 **Version:** 0.2.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** concept
 
 ## Related Specifications

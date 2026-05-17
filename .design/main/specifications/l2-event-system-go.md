@@ -1,7 +1,7 @@
 ﻿# Event System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [event-system.md](l1-event-system.md)
 

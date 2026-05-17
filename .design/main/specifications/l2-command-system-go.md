@@ -1,7 +1,7 @@
 ﻿# Command System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [command-system.md](l1-command-system.md)
 

@@ -5,6 +5,7 @@ package world
 import (
 	"errors"
 
+	"github.com/neuengine/neu/internal/ecs/changedetect"
 	"github.com/neuengine/neu/internal/ecs/component"
 	"github.com/neuengine/neu/internal/ecs/entity"
 )
@@ -40,7 +41,8 @@ type World struct {
 	archetypes       *ArchetypeStore
 	sparseSets       map[component.ID]*component.SparseSet
 	records          map[entity.EntityID]entityRecord
-	deferredFlushers []func(*World) // T-1F02: registered command-buffer flushers
+	deferredFlushers []func(*World)                                              // T-1F02: registered command-buffer flushers
+	removedCallbacks map[component.ID]func(entity.Entity, changedetect.Tick)   // T-2E03: per-component removal notifiers
 	changeTick       Tick
 	lastChangeTick   Tick
 }
@@ -146,11 +148,15 @@ func (w *World) IncrementChangeTick() Tick {
 	return w.changeTick
 }
 
-// ClearTrackers advances lastChangeTick to the current changeTick, resetting
-// change-detection state for the next update cycle. Called once per frame,
-// typically at the end of the update schedule.
+// ClearTrackers advances lastChangeTick to the current changeTick and drains
+// any registered [changedetect.RemovedComponents] trackers, pruning entries
+// outside the two-frame retention window. Called once per frame, typically at
+// the end of the update schedule (wired by ChangeDetectionPlugin in T-2F03).
 func (w *World) ClearTrackers() {
 	w.lastChangeTick = w.changeTick
+	if pp, ok := Resource[*changedetect.RemovedRegistry](w); ok && pp != nil {
+		(*pp).DrainAll(changedetect.Tick(w.lastChangeTick))
+	}
 }
 
 // RegisterDeferredFlusher installs fn as a deferred flusher. Every call to

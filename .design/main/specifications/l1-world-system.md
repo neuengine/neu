@@ -1,7 +1,7 @@
 # World System
 
 **Version:** 0.2.1
-**Status:** Draft
+**Status:** Stable
 **Layer:** concept
 
 ## Overview

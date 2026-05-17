@@ -1,7 +1,7 @@
 # World System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [world-system.md](l1-world-system.md)
 

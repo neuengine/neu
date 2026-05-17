@@ -1,7 +1,7 @@
 ﻿# Component System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [component-system.md](l1-component-system.md)
 

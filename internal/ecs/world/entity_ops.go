@@ -75,6 +75,10 @@ func RemoveByID(w *World, e entity.Entity, id component.ID) error {
 		}
 	}
 
+	if cb, ok := w.removedCallbacks[id]; ok {
+		cb(e, changedetect.Tick(w.changeTick))
+	}
+
 	keep := idSet(newArch.componentIDs)
 	carry := w.captureTableTicks(oldArch, rec.row, keep)
 	w.removeEntityFromArchetype(oldArch, e, rec.row, false)
@@ -268,6 +272,10 @@ func Remove[T any](w *World, e entity.Entity) error {
 		if ss, ok := w.sparseSets[id]; ok {
 			ss.Remove(e)
 		}
+	}
+
+	if cb, ok := w.removedCallbacks[id]; ok {
+		cb(e, changedetect.Tick(w.changeTick))
 	}
 
 	keep := idSet(newArch.componentIDs)

@@ -11,23 +11,23 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-world-system.md](specifications/l1-world-system.md) | Central data store: entities, components, resources, change tracking | Draft | concept | 0.2.1 |
-| [l2-world-system-go.md](specifications/l2-world-system-go.md) | World Go implementation: World struct, DeferredWorld, ResourceMap, archetypes, tables | Draft | go | 0.1.0 |
-| [l1-entity-system.md](specifications/l1-entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling, abstract concept entities | Draft | concept | 0.3.0 |
-| [l2-entity-system-go.md](specifications/l2-entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Draft | go | 0.1.0 |
-| [l1-component-system.md](specifications/l1-component-system.md) | Component registration, storage strategies, hooks, required components | Draft | concept | 0.4.0 |
-| [l2-component-system-go.md](specifications/l2-component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Draft | go | 0.1.0 |
-| [l1-query-system.md](specifications/l1-query-system.md) | Data access: queries, filters, iteration, access tracking | Draft | concept | 0.1.0 |
-| [l2-query-system-go.md](specifications/l2-query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Draft | go | 0.1.0 |
-| [l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Draft | concept | 0.2.0 |
-| [l1-system-scheduling.md](specifications/l1-system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Draft | concept | 0.4.0 |
-| [l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Draft | go | 0.1.0 |
-| [l1-command-system.md](specifications/l1-command-system.md) | Deferred mutations, command buffers, apply points | Draft | concept | 0.1.0 |
-| [l2-command-system-go.md](specifications/l2-command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Draft | go | 0.1.0 |
-| [l1-event-system.md](specifications/l1-event-system.md) | Events, messages, observers, reactive triggers | Draft | concept | 0.3.0 |
-| [l2-event-system-go.md](specifications/l2-event-system-go.md) | Go impl: EventBus, MessageChannel, Observers, entity event bubbling | Draft | go | 0.1.0 |
-| [l1-type-registry.md](specifications/l1-type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Draft | concept | 0.2.0 |
-| [l2-type-registry-go.md](specifications/l2-type-registry-go.md) | Go impl: TypeRegistry, FieldInfo, DynamicObject, serialization hooks | Draft | go | 0.1.0 |
+| [l1-world-system.md](specifications/l1-world-system.md) | Central data store: entities, components, resources, change tracking | Stable | concept | 0.2.1 |
+| [l2-world-system-go.md](specifications/l2-world-system-go.md) | World Go implementation: World struct, DeferredWorld, ResourceMap, archetypes, tables | Stable | go | 0.1.0 |
+| [l1-entity-system.md](specifications/l1-entity-system.md) | Entity lifecycle, generational IDs, allocation, disabling, abstract concept entities | Stable | concept | 0.3.0 |
+| [l2-entity-system-go.md](specifications/l2-entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Stable | go | 0.1.0 |
+| [l1-component-system.md](specifications/l1-component-system.md) | Component registration, storage strategies, hooks, required components | Stable | concept | 0.4.0 |
+| [l2-component-system-go.md](specifications/l2-component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Stable | go | 0.1.0 |
+| [l1-query-system.md](specifications/l1-query-system.md) | Data access: queries, filters, iteration, access tracking | Stable | concept | 0.1.0 |
+| [l2-query-system-go.md](specifications/l2-query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Stable | go | 0.1.0 |
+| [l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Stable | concept | 0.2.0 |
+| [l1-system-scheduling.md](specifications/l1-system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Stable | concept | 0.4.0 |
+| [l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Stable | go | 0.1.0 |
+| [l1-command-system.md](specifications/l1-command-system.md) | Deferred mutations, command buffers, apply points | Stable | concept | 0.1.0 |
+| [l2-command-system-go.md](specifications/l2-command-system-go.md) | Go impl: Command interface, CommandBuffer, entity reservation, flush | Stable | go | 0.1.0 |
+| [l1-event-system.md](specifications/l1-event-system.md) | Events, messages, observers, reactive triggers | Stable | concept | 0.3.0 |
+| [l2-event-system-go.md](specifications/l2-event-system-go.md) | Go impl: EventBus, MessageChannel, Observers, entity event bubbling | Stable | go | 0.1.0 |
+| [l1-type-registry.md](specifications/l1-type-registry.md) | Runtime introspection, field metadata, dynamic type mapping | Stable | concept | 0.2.0 |
+| [l2-type-registry-go.md](specifications/l2-type-registry-go.md) | Go impl: TypeRegistry, FieldInfo, DynamicObject, serialization hooks | Stable | go | 0.1.0 |
 
 ## P2 — Framework
 
@@ -47,15 +47,20 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-app-framework.md](specifications/l1-app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
 | [l2-app-framework-go.md](specifications/l2-app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
 | [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | Draft | concept | 1.4.0 |
+| [l2-multi-repo-architecture-go.md](specifications/l2-multi-repo-architecture-go.md) | Go impl: pkg/editor interfaces + pkg/protocol JSON wire messages, //go:build editor scoping, AST/go-list architecture-guard tests (Implements: l1-multi-repo-architecture) | Draft | go | 0.1.0 |
 
 ## P3 — Assets & Math
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
 | [l1-task-system.md](specifications/l1-task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.2.0 |
+| [l2-task-system-go.md](specifications/l2-task-system-go.md) | Go impl: ComputePool/IOPool, Chase-Lev work-stealing, RunScope, ForBatched, TaskHandle[T], MainThreadExecutor (Implements: l1-task-system) | Draft | go | 0.1.0 |
 | [l1-asset-system.md](specifications/l1-asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.3.0 |
+| [l2-asset-system-go.md](specifications/l2-asset-system-go.md) | Go impl: Handle[A]/Assets[A], AssetLoader registry, fs.FS VFS, stdlib dev watcher, ContentManager refcount (Implements: l1-asset-system) | Draft | go | 0.1.0 |
 | [l1-scene-system.md](specifications/l1-scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.4.0 |
+| [l2-scene-system-go.md](specifications/l2-scene-system-go.md) | Go impl: StaticScene gob + DynamicScene reflection, two-pass remap, interned binary codec, SceneSpawner (Implements: l1-scene-system) | Draft | go | 0.1.0 |
 | [l1-math-system.md](specifications/l1-math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Draft | concept | 0.3.0 |
+| [l2-math-system-go.md](specifications/l2-math-system-go.md) | Go impl: Vec/Mat/Quat/Affine3, Dir/Isometry, primitives, Color, Curves, TransformInterpolator (Implements: l1-math-system) | Draft | go | 0.1.0 |
 
 ## P4 — Render Pipeline
 
@@ -134,6 +139,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-05-15
-- **Total Specifications**: 84 (65 L1 concept + 17 L2 Go + 1 test + 1 tool) | Stable: 0 | RFC: 0 | Draft: 84
+- **Last Updated**: 2026-05-17
+- **Total Specifications**: 89 (65 L1 concept + 22 L2 Go + 1 test + 1 tool) | Stable: 17 | RFC: 0 | Draft: 72
 - **Engine Version:** 2.1.27
+- **Last Stabilization:** 2026-05-17 — P1 ECS Core (9 L1 + 8 L2) promoted Draft → Stable via Pre-Planning Stabilization (C29 gate unblocked by T-1T05)

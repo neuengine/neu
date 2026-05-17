@@ -75,7 +75,7 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 
 - [x] [T-2E01] Per-row `ComponentTicks` (added/changed) in `Table` + `SparseSet`; world `LastChangeTick` / `IncrementChangeTick` integration. — `internal/ecs/changedetect/ticks.go` + `internal/ecs/component/{table,sparseset}.go` [Bootstrap]
 - [x] [T-2E02] `Ref[T]` / `Mut[T]` wrappers (`IsAdded` / `IsChanged`); **replace the Phase 1 `passesPerRow` stub** with real Added/Changed tick comparison in `internal/ecs/query/filter.go`. — `internal/ecs/changedetect/wrappers.go` + `internal/ecs/query/filter.go` [Bootstrap]
-- [ ] [T-2E03] `RemovedComponents[T]` (event-backed) + `ChangeDetectionPlugin`. — `internal/ecs/changedetect/{removed,plugin}.go` [Bootstrap]
+- [x] [T-2E03] `RemovedComponents[T]` (event-backed) + `ChangeDetectionPlugin`. — `internal/ecs/changedetect/{removed,plugin}.go` [Bootstrap]
 
 ### Track F — App Framework (Critical Path)
 
@@ -201,9 +201,10 @@ Critical path: **E → F** (App `DefaultPlugins` integrates every plugin; Change
 ### [T-2E03] RemovedComponents + ChangeDetectionPlugin
 
 - **Spec:** [l2-change-detection-go.md](../specifications/l2-change-detection-go.md)
-- **Status:** Todo [Bootstrap]
+- **Status:** Done [Bootstrap]
 - **Verify:** `go test ./internal/ecs/changedetect/` ≥ 95% pkg coverage, `-race` clean; `RemovedComponents[T]` drained per tick (double-buffered like Phase 1 EventBus T-1G01).
 - **Handoff:** `ChangeDetectionPlugin` consumed by T-2F03.
+- **Changes:** `changedetect/removed.go` — `RemovedComponents[T]` (Append/Iter/Len/DrainBefore with two-frame retention window INV-5; underflow guard for lastTick < 2; GC-safe clear on pruned tail) + `RemovedRegistry` (type-erased `[]func(Tick)` drain callbacks, avoids generics at world boundary). `changedetect/plugin.go` — `ChangeDetectionPlugin` stub. `world/world.go` — `removedCallbacks map[component.ID]func(entity.Entity, changedetect.Tick)` field + `ClearTrackers` updated to drain registered `RemovedRegistry` via `Resource[*changedetect.RemovedRegistry]` double-pointer pattern. `world/removed.go` — `RegisterRemovedComponents[T]` (idempotent; wires drain callback into shared registry; registers per-component removal hook) + `ensureRemovedRegistry`. `world/entity_ops.go` — removal hooks fired in both `RemoveByID` and `Remove[T]` before archetype migration. Verify: changedetect 100% coverage, `-race` clean.
 
 ### [T-2F01] App + Plugin / PluginGroup
 

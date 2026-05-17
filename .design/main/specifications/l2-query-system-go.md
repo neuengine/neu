@@ -1,7 +1,7 @@
 ﻿# Query System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [query-system.md](l1-query-system.md)
 

@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.8.0
+**Version:** 1.9.0
 **Generated:** 2026-05-18
-**Based on:** .design/main/PLAN.md v1.8.0
+**Based on:** .design/main/PLAN.md v1.9.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Phases 1–2 specs → `Stable` (Bootstrap deactivated for P1–P2). Phase 3 atomic-decomposed (18 tasks, Tracks A–D + T) — deferral gate satisfied (Phase 2 = 100%). Phase 3+ specs remain `[Bootstrap]` — per-phase `examples/` gate pending (P3 → `examples/{async,asset,scene,math}/`).
+**Mode:** Phases 1–3 specs → `Stable` (Bootstrap deactivated for P1–P3; 38/89). Phase 3 **Done** (18/18; C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Phase 4 STOP FACTOR lifted but `Hold` on Release Cond. #3 (L2 render specs absent) — decomposition deferred to `/magic.task main "decompose phase-4"` after `/magic.spec` authors the L2 contracts.
 
 ## Overview
 
@@ -35,7 +35,7 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 
 - **Total atomic tasks (Phase 1)**: 27 (Tracks A–I + T) — Done
 - **Total atomic tasks (Phase 2)**: 24 (Tracks A–G + T) — decomposed 2026-05-16; critical path E → F
-- **Total atomic tasks (Phase 3)**: 18 (Tracks A:3 / B:3 / C:3 / D:4 / T:5) — decomposed 2026-05-18; critical path A → B
+- **Total atomic tasks (Phase 3)**: 18 (Tracks A:3 / B:3 / C:3 / D:4 / T:5) — **Done 2026-05-18** (18/18; critical path A → B held; C29 P3 gate closed by T-3T05)
 - **Total atomic tasks (Phase 6)**: 46 (Tracks A–P + T) — Track P (Visual Graph System, 4 tasks) added 2026-05-14
 - **Phases 4–5, 7–8**: structural workbooks, atomic decomposition deferred to per-phase `/magic.task {workspace} "decompose phase-N"` invocations.
 
@@ -44,7 +44,8 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 - **Last Updated**: 2026-05-18
 - **Maintainer**: Core Team
 - **Phase 3 Atomic Decomposition (2026-05-18)**: 18 atomic tasks written to `tasks/phase-3.md` — Track A (Task System, 3: deque/pool, scope/handle, executor/plugin — critical-path head), Track B (Asset System, 3: handle/store, loader/VFS/async, content/watch — consumes A's pool), Track C (Scene System, 3: static/codec, dynamic/spawner, remap), Track D (Math System, 4: linear, affine/primitives, color/curves, SIMD-parity), Track T (Validation, 5: async/asset/scene/math examples + C29 gate sign-off). Deferral condition (Phase 2 ≥ 50% Done) satisfied — Phase 2 is 100% Done. Resolved PLAN↔workbook drift: PLAN v1.7.0 prose claimed decomposition complete while the workbook still read "Pending". Pre-Planning Stabilization: 0 specs promoted (C29 P3 `examples/` gate unmet — Bootstrap retained for P3+). Execute via `/magic.run main`.
-- **RULES Parity (⚠ drift, non-blocking — carried forward)**: `.design/RULES.md` header declares `**Version:** 1.7.1`, but its Document History records a `1.8.0` row (C31 — sync-docs Safety Gate) and C31 is present in the body (§7). The version-of-record (header) lags content by one minor. `magic.task` does not own `RULES.md` — recorded parity uses the header value (1.7.1). **Action required:** run `/magic.rule` to reconcile the RULES.md header to 1.8.0 (content already present, no rule change needed — header bump + Document-History consistency only).
+- **RULES Parity (✅ resolved 2026-05-18)**: `.design/RULES.md` header now reads `**Version:** 1.8.0`, consistent with its Document History (C31 — sync-docs Safety Gate) and §7 body. Prior header/content drift (1.7.1 lagging 1.8.0) reconciled. Recorded parity in this header: RULES v1.8.0.
+- **Post-Run Replan (2026-05-18, rules/magic.md §5)**: Phase 3 → **Done** (18/18 atomic tasks across Tracks A–D + T). Resolved PLAN↔STATE mechanical drift — PLAN.md listed Phase 3 `Active` with unchecked items while STATE.md/TASKS.md/git history all recorded Done. Pre-Planning Stabilization promoted **8 P3 specs Draft → Stable** (4 L1 + 4 L2: task, asset, scene, math) — C29 P3 gate satisfied by T-3T05 (`examples/{async,asset,scene,math}/` build+race green, full workspace `go test -race ./...` 25 pkgs PASS). Bootstrap deactivated for P3. INDEX v2.26.0 → v2.27.0 (Stable 30 → 38 / 89). Phase 4 STOP FACTOR [C-002] lifted (POC validated + App Framework Stable + Phase 3 Done); Phase 4 stays `Hold` on Release Condition #3 (L2 render specs absent) — atomic decomposition deferred per the per-phase policy above.
 - **Phase 1 Progress**: 27 / 27 (100%) — All tracks complete. Validation Track T done: `pkg/ecs` public API, race/fuzz/golden tests, `examples/ecs/poc/` end-to-end POC. C29 unblocked. Phase 1 → Done.
 - **Pre-Planning Stabilization (2026-05-17)**: 17 P1 ECS Core specs promoted `Draft → Stable` via Trust Mode batch (C29 gate satisfied by T-1T05). Breakdown: 9 L1 concept specs + 8 L2 Go impl specs. Bootstrap Mode deactivated for Phase 1; Phase 2+ remain `[Bootstrap]` until `examples/ecs/framework/` validates the runtime. Stable: 17 / 84.
 - **Phase 2 Atomic Decomposition (2026-05-16)**: 24 atomic tasks across Tracks A (Hierarchy), B (Time), C (Input), D (State), E (Change Detection — critical path, closes T-1D03 stub), F (App Framework — critical path tail), G (Multi-Repo surface, RFC-gated), T (Validation). Phase 2 is the active phase; `examples/ecs/framework/` is the Phase 2 promotion gate. Execute via `/magic.run main`.

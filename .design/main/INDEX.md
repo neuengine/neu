@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.26.0
+**Version:** 2.27.0
 **Status:** Active
 
 ## Overview
@@ -53,14 +53,14 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-task-system.md](specifications/l1-task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Draft | concept | 0.2.0 |
-| [l2-task-system-go.md](specifications/l2-task-system-go.md) | Go impl: ComputePool/IOPool, Chase-Lev work-stealing, RunScope, ForBatched, TaskHandle[T], MainThreadExecutor (Implements: l1-task-system) | Draft | go | 0.1.0 |
-| [l1-asset-system.md](specifications/l1-asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Draft | concept | 0.3.0 |
-| [l2-asset-system-go.md](specifications/l2-asset-system-go.md) | Go impl: Handle[A]/Assets[A], AssetLoader registry, fs.FS VFS, stdlib dev watcher, ContentManager refcount (Implements: l1-asset-system) | Draft | go | 0.1.0 |
-| [l1-scene-system.md](specifications/l1-scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Draft | concept | 0.4.0 |
-| [l2-scene-system-go.md](specifications/l2-scene-system-go.md) | Go impl: StaticScene gob + DynamicScene reflection, two-pass remap, interned binary codec, SceneSpawner (Implements: l1-scene-system) | Draft | go | 0.1.0 |
-| [l1-math-system.md](specifications/l1-math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Draft | concept | 0.3.0 |
-| [l2-math-system-go.md](specifications/l2-math-system-go.md) | Go impl: Vec/Mat/Quat/Affine3, Dir/Isometry, primitives, Color, Curves, TransformInterpolator (Implements: l1-math-system) | Draft | go | 0.1.0 |
+| [l1-task-system.md](specifications/l1-task-system.md) | Parallelism: worker pools, scoped tasks, parallel iteration | Stable | concept | 0.2.0 |
+| [l2-task-system-go.md](specifications/l2-task-system-go.md) | Go impl: ComputePool/IOPool, Chase-Lev work-stealing, RunScope, ForBatched, TaskHandle[T], MainThreadExecutor (Implements: l1-task-system) | Stable | go | 0.1.0 |
+| [l1-asset-system.md](specifications/l1-asset-system.md) | Asset server, loaders, handles, hot-reload, IO abstraction | Stable | concept | 0.3.0 |
+| [l2-asset-system-go.md](specifications/l2-asset-system-go.md) | Go impl: Handle[A]/Assets[A], AssetLoader registry, fs.FS VFS, stdlib dev watcher, ContentManager refcount (Implements: l1-asset-system) | Stable | go | 0.1.0 |
+| [l1-scene-system.md](specifications/l1-scene-system.md) | Scene serialization, dynamic scenes, spawning, entity remapping | Stable | concept | 0.4.0 |
+| [l2-scene-system-go.md](specifications/l2-scene-system-go.md) | Go impl: StaticScene gob + DynamicScene reflection, two-pass remap, interned binary codec, SceneSpawner (Implements: l1-scene-system) | Stable | go | 0.1.0 |
+| [l1-math-system.md](specifications/l1-math-system.md) | Vectors, matrices, quaternions, colors, geometric primitives | Stable | concept | 0.3.0 |
+| [l2-math-system-go.md](specifications/l2-math-system-go.md) | Go impl: Vec/Mat/Quat/Affine3, Dir/Isometry, primitives, Color, Curves, TransformInterpolator (Implements: l1-math-system) | Stable | go | 0.1.0 |
 
 ## P4 — Render Pipeline
 
@@ -139,7 +139,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-05-17
-- **Total Specifications**: 89 (65 L1 concept + 22 L2 Go + 1 test + 1 tool) | Stable: 30 | RFC: 0 | Draft: 59
+- **Last Updated**: 2026-05-18
+- **Total Specifications**: 89 (65 L1 concept + 22 L2 Go + 1 test + 1 tool) | Stable: 38 | RFC: 0 | Draft: 51
 - **Engine Version:** 2.1.27
-- **Last Stabilization:** 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable via Pre-Planning Stabilization (C29-style gate satisfied by `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)
+- **Last Stabilization:** 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

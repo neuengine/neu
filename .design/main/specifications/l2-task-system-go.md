@@ -1,7 +1,7 @@
 # Task System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-task-system.md](l1-task-system.md)
 

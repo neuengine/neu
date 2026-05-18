@@ -27,11 +27,11 @@ bootstrap: true
 
 ## High-Level Checklist
 
-- [ ] [T-3A] Task pool: worker pools, scoped tasks, parallel iteration (work-stealing). ([l1-task-system.md](../specifications/l1-task-system.md) → [l2-task-system-go.md](../specifications/l2-task-system-go.md))
-- [ ] [T-3B] Asset server: loaders, handles, hot-reload, IO abstraction. ([l1-asset-system.md](../specifications/l1-asset-system.md) → [l2-asset-system-go.md](../specifications/l2-asset-system-go.md))
-- [ ] [T-3C] Scene system: serialization, dynamic scenes, entity remapping. ([l1-scene-system.md](../specifications/l1-scene-system.md) → [l2-scene-system-go.md](../specifications/l2-scene-system-go.md))
-- [ ] [T-3D] Math: vectors, matrices, quaternions, colors, geometric primitives, `simd/archsimd` accel. ([l1-math-system.md](../specifications/l1-math-system.md) → [l2-math-system-go.md](../specifications/l2-math-system-go.md))
-- [ ] [T-3T] Validation: parallel-iter determinism (deterministic seed), asset hot-reload roundtrip, scene save/load fixture, math correctness vs. reference impl. Gate: `examples/{async,asset,scene,math}/` (C29 — unblocks P3 Draft → Stable).
+- [x] [T-3A] Task pool: worker pools, scoped tasks, parallel iteration (work-stealing). ([l1-task-system.md](../specifications/l1-task-system.md) → [l2-task-system-go.md](../specifications/l2-task-system-go.md))
+- [x] [T-3B] Asset server: loaders, handles, hot-reload, IO abstraction. ([l1-asset-system.md](../specifications/l1-asset-system.md) → [l2-asset-system-go.md](../specifications/l2-asset-system-go.md))
+- [x] [T-3C] Scene system: serialization, dynamic scenes, entity remapping. ([l1-scene-system.md](../specifications/l1-scene-system.md) → [l2-scene-system-go.md](../specifications/l2-scene-system-go.md))
+- [x] [T-3D] Math: vectors, matrices, quaternions, colors, geometric primitives, `simd/archsimd` accel. ([l1-math-system.md](../specifications/l1-math-system.md) → [l2-math-system-go.md](../specifications/l2-math-system-go.md))
+- [x] [T-3T] Validation: parallel-iter determinism (deterministic seed), asset hot-reload roundtrip, scene save/load fixture, math correctness vs. reference impl. Gate: `examples/{async,asset,scene,math}/` (C29 — unblocks P3 Draft → Stable).
 
 ## Atomic Decomposition
 

@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.8.0
+**Version:** 1.9.0
 **Generated:** 2026-05-18
-**Based on:** .design/main/INDEX.md v2.26.0
-**Based on RULES:** .design/RULES.md v1.7.1
+**Based on:** .design/main/INDEX.md v2.27.0
+**Based on RULES:** .design/RULES.md v1.8.0
 **Status:** Active
-**Mode:** Phases 1–2 specs `Stable` (30/89 promoted 2026-05-17 — P1 ECS Core + P2 Framework; multi-repo l1/l2 stay Draft, RFC-gated). Phase 3 atomic-decomposed (18 tasks, Tracks A–D + T) — deferral gate satisfied (Phase 2 = 100%). Phase 3+ specs remain `[Bootstrap]` pending per-phase `examples/` gate (P3 → `examples/{async,asset,scene,math}/`).
+**Mode:** Phases 1–3 specs `Stable` (38/89 — P1 ECS Core + P2 Framework + P3 Assets/Math/Concurrency; multi-repo l1/l2 stay Draft, RFC-gated). Phase 3 **Done** (18/18 tasks; C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Phase 4 STOP FACTOR lifted (POC validated + App Framework Stable) but Hold Release Condition #3 unmet — L2 render specs absent; atomic decomposition deferred per TASKS.md policy.
 
 ## Overview
 
@@ -62,22 +62,22 @@ Dependency analysis (Implements: chains):
 - [x] **Multi-Repo Architecture** ([l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md)) [L1] `Draft` *(surface delivered; RFC ratification pending — Exit Criterion #4)*
 - [x] **Multi-Repo Architecture (Go)** ([l2-multi-repo-architecture-go.md](specifications/l2-multi-repo-architecture-go.md)) [L2] `Draft` *(Track G — T-2G01/T-2G02 surface delivered; promotion gated on RFC)*
 
-## Phase 3 — Assets, Math & Concurrency (Active) `[Bootstrap]`
+## Phase 3 — Assets, Math & Concurrency (Done)
 
-*Parallel task pool, asset server, scene serialization, math primitives. Last phase before the STOP FACTOR gate. **Atomic decomposition complete (2026-05-18) — 18 tasks across Tracks A (Task, critical-path head), B (Asset, consumes pool), C (Scene), D (Math), T (Validation/C29 gate); see [tasks/phase-3.md](tasks/phase-3.md). Critical path: Task → Asset (asset loading uses the worker pool).***
+*Parallel task pool, asset server, scene serialization, math primitives. Last phase before the STOP FACTOR gate. **Complete — 18/18 atomic tasks Done across Tracks A (Task, critical-path head), B (Asset, consumes pool), C (Scene), D (Math), T (Validation/C29 gate); see [tasks/phase-3.md](tasks/phase-3.md). Validated end-to-end by `examples/{async,asset,scene,math}/` (T-3T05 C29 sign-off — `go test -race ./...` 25 pkgs PASS). All 8 P3 specs promoted Draft → Stable; Bootstrap deactivated for P3.***
 
-- [ ] **Task System** ([l1-task-system.md](specifications/l1-task-system.md)) [L1] `[Bootstrap]`
-- [ ] **Task System (Go)** ([l2-task-system-go.md](specifications/l2-task-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Asset System** ([l1-asset-system.md](specifications/l1-asset-system.md)) [L1] `[Bootstrap]`
-- [ ] **Asset System (Go)** ([l2-asset-system-go.md](specifications/l2-asset-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Scene System** ([l1-scene-system.md](specifications/l1-scene-system.md)) [L1] `[Bootstrap]`
-- [ ] **Scene System (Go)** ([l2-scene-system-go.md](specifications/l2-scene-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Math System** ([l1-math-system.md](specifications/l1-math-system.md)) [L1] `[Bootstrap]`
-- [ ] **Math System (Go)** ([l2-math-system-go.md](specifications/l2-math-system-go.md)) [L2] `[Bootstrap]`
+- [x] **Task System** ([l1-task-system.md](specifications/l1-task-system.md)) [L1] `Stable`
+- [x] **Task System (Go)** ([l2-task-system-go.md](specifications/l2-task-system-go.md)) [L2] `Stable`
+- [x] **Asset System** ([l1-asset-system.md](specifications/l1-asset-system.md)) [L1] `Stable`
+- [x] **Asset System (Go)** ([l2-asset-system-go.md](specifications/l2-asset-system-go.md)) [L2] `Stable`
+- [x] **Scene System** ([l1-scene-system.md](specifications/l1-scene-system.md)) [L1] `Stable`
+- [x] **Scene System (Go)** ([l2-scene-system-go.md](specifications/l2-scene-system-go.md)) [L2] `Stable`
+- [x] **Math System** ([l1-math-system.md](specifications/l1-math-system.md)) [L1] `Stable`
+- [x] **Math System (Go)** ([l2-math-system-go.md](specifications/l2-math-system-go.md)) [L2] `Stable`
 
 ## Phase 4 — Render Pipeline `[Hold]` `[Bootstrap]`
 
-*Render graph, mesh/image, materials, camera, post-processing. **Hold:** unfreezes once Phase 1 POC validated (C29) AND Phase 2 App Framework `Stable`.*
+*Render graph, mesh/image, materials, camera, post-processing. **STOP FACTOR lifted** (Phase 1 POC validated + Phase 2 App Framework `Stable` + Phase 3 Done). **Remaining hold — Release Condition #3:** L2 Go render specs are absent; implementation requires L2 contracts (you implement against L2, never L1 directly). **Next:** author L2 render specs via `/magic.spec`, then `/magic.task main "decompose phase-4"` (atomic decomposition deferred per TASKS.md per-phase policy).*
 
 - [ ] **Render Core** ([l1-render-core.md](specifications/l1-render-core.md)) [L1]
 - [ ] **Mesh & Image** ([l1-mesh-and-image.md](specifications/l1-mesh-and-image.md)) [L1]
@@ -159,8 +159,8 @@ Dependency analysis (Implements: chains):
 | :--- | :--- | :--- |
 | 1 — ECS Core POC | Done | — (27/27 complete) |
 | 2 — Framework | Done | — (24/24 complete; 13 specs Stable; multi-repo RFC pending) |
-| 3 — Assets, Math & Concurrency | Active | — (current; Phase 2 100% Done) |
-| 4 — Render Pipeline | Hold | gate now met (POC validated + App Framework Stable); sequenced after Phase 3 |
+| 3 — Assets, Math & Concurrency | Done | — (18/18 complete; 8 P3 specs Stable; C29 P3 gate satisfied by T-3T05) |
+| 4 — Render Pipeline | Hold | STOP FACTOR lifted; blocked solely on Release Cond. #3 — L2 render specs absent. Author via `/magic.spec`, then `/magic.task main "decompose phase-4"` |
 | 5 — Content Systems | Hold | Render Core Stable |
 | 6 — UI, Tooling & Quality | Hold | Phase 1–3 Stable |
 | 7 — Networking & Hot-Reload | Hold | App Framework + Scheduler Stable |
@@ -190,3 +190,4 @@ Dependency analysis (Implements: chains):
 | 1.6.0 | 2026-05-17 | Registry sync to INDEX v2.25.0 (89 specs); placed 5 orphan L2 specs — `l2-multi-repo-architecture-go` → Phase 2 (Track G); `l2-{task,asset,scene,math}-system-go` → Phase 3. 19 hard L2→L1 edges, acyclic. All new specs `[Bootstrap]` (C29 keeps non-P1 Draft) |
 | 1.7.0 | 2026-05-17 | Phase 2 → Done (24/24); Pre-Planning Stabilization promoted 13 P2 specs Draft → Stable (C29-style gate via `examples/ecs/framework/`); multi-repo l1/l2 stay Draft (RFC-gated, Exit Criterion #4). Phase 3 → Active with atomic decomposition. INDEX v2.26.0 (Stable 30/89) |
 | 1.8.0 | 2026-05-18 | Phase 3 atomic decomposition realized in `tasks/phase-3.md` (18 tasks: Tracks A:3 Task / B:3 Asset / C:3 Scene / D:4 Math / T:5 Validation) — deferral gate satisfied (Phase 2 = 100% Done). Resolved PLAN↔workbook drift (1.7.0 prose claimed decomposition complete while workbook was still "Pending"). Pre-Planning Stabilization: 0 promoted (C29 P3 `examples/` gate unmet — Bootstrap retained). Engine Snapshot synced (`.design/INDEX.md` **Engine Version:** → 2.1.27). INDEX v2.26.0 unchanged (Stable 30/89) |
+| 1.9.0 | 2026-05-18 | Post-Run Replan (rules/magic.md §5): Phase 3 → **Done** (18/18); resolved PLAN↔STATE mechanical drift (PLAN listed Phase 3 Active with unchecked items while STATE/TASKS/git = Done). Pre-Planning Stabilization promoted 8 P3 specs Draft → Stable (4 L1 + 4 L2: task, asset, scene, math) — C29 P3 gate satisfied by T-3T05 (`examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Phase 4 STOP FACTOR [C-002] lifted; remains `Hold` on Release Cond. #3 (L2 render specs absent) — decomposition deferred per TASKS.md per-phase policy. INDEX v2.27.0 (Stable 38/89), RULES parity v1.8.0 |

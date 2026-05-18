@@ -27,11 +27,14 @@
 │   ├── README.md
 │   ├── app/
 │   ├── asset/
+│   ├── async/
 │   ├── audio/
 │   ├── diagnostic/
 │   ├── ecs/
+│   ├── math/
 │   ├── networking/
 │   ├── physics/
+│   ├── scene/
 │   ├── stress_test/
 │   ├── ui/
 │   └── world/
@@ -39,10 +42,13 @@
 │   └── ecs/
 └── pkg/
     ├── app/
+    ├── asset/
     ├── ecs/
     ├── editor/
     ├── math/
-    └── protocol/
+    ├── protocol/
+    ├── scene/
+    └── task/
 ```
 
 ## Recent Changes

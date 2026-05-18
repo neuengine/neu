@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-05-17
+**Generated:** 2026-05-18
 
 ## Active Technologies
 
@@ -38,7 +38,11 @@
 ├── internal/
 │   └── ecs/
 └── pkg/
-    └── ecs/
+    ├── app/
+    ├── ecs/
+    ├── editor/
+    ├── math/
+    └── protocol/
 ```
 
 ## Recent Changes

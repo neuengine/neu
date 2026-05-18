@@ -1,7 +1,7 @@
 # Input System — Go Implementation
 
 **Version:** 0.2.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [input-system.md](l1-input-system.md)
 

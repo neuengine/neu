@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.6.0
-**Generated:** 2026-05-17
-**Based on:** .design/main/INDEX.md v2.25.0
+**Version:** 1.8.0
+**Generated:** 2026-05-18
+**Based on:** .design/main/INDEX.md v2.26.0
 **Based on RULES:** .design/RULES.md v1.7.1
 **Status:** Active
-**Mode:** Phase 1 specs `Stable` (Bootstrap deactivated for P1 — 17/89 specs promoted 2026-05-17). Phase 2+ remain `[Bootstrap]` pending per-phase `examples/` gate (P2 → `examples/ecs/framework/`; P3 → `examples/{async,asset,scene,math}/`).
+**Mode:** Phases 1–2 specs `Stable` (30/89 promoted 2026-05-17 — P1 ECS Core + P2 Framework; multi-repo l1/l2 stay Draft, RFC-gated). Phase 3 atomic-decomposed (18 tasks, Tracks A–D + T) — deferral gate satisfied (Phase 2 = 100%). Phase 3+ specs remain `[Bootstrap]` pending per-phase `examples/` gate (P3 → `examples/{async,asset,scene,math}/`).
 
 ## Overview
 
@@ -42,29 +42,29 @@ Dependency analysis (Implements: chains):
 - [x] **Type Registry (Go)** ([l2-type-registry-go.md](specifications/l2-type-registry-go.md)) [L2] `Stable`
 - [x] **ECS Lifecycle Patterns** ([l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md)) [L1] `Stable`
 
-## Phase 2 — Framework Primitives (Active) `[Bootstrap]`
+## Phase 2 — Framework Primitives (Done) `[Bootstrap]`
 
-*Hierarchy, time, input, state, change-detection, app/plugin assembly. Targets `pkg/` extension points and prepares the plugin surface for editor/tooling. Multi-repo architecture (RFC) gate. **Atomic decomposition complete — 24 tasks across Tracks A–G + Validation T (see [tasks/phase-2.md](tasks/phase-2.md)). Critical path: E → F.***
+*Hierarchy, time, input, state, change-detection, app/plugin assembly. Targets `pkg/` extension points and prepares the plugin surface for editor/tooling. Multi-repo architecture (RFC) gate. **Complete — 24/24 atomic tasks Done across Tracks A–G + Validation T (see [tasks/phase-2.md](tasks/phase-2.md)). Validated end-to-end by `examples/ecs/framework/`. 13 specs promoted Draft → Stable; multi-repo l1/l2 remain Draft (RFC ratification = Exit Criterion #4 via /magic.spec).***
 
-- [ ] **Hierarchy System** ([l1-hierarchy-system.md](specifications/l1-hierarchy-system.md)) [L1] `[Bootstrap]`
-- [ ] **Hierarchy System (Go)** ([l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Time System** ([l1-time-system.md](specifications/l1-time-system.md)) [L1] `[Bootstrap]`
-- [ ] **Time System (Go)** ([l2-time-system-go.md](specifications/l2-time-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Input System** ([l1-input-system.md](specifications/l1-input-system.md)) [L1] `[Bootstrap]`
-- [ ] **Input System (Go)** ([l2-input-system-go.md](specifications/l2-input-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Input System Codes (Go)** ([l2-input-system-go-codes.md](specifications/l2-input-system-go-codes.md)) [L2] `[Bootstrap]`
-- [ ] **State System** ([l1-state-system.md](specifications/l1-state-system.md)) [L1] `[Bootstrap]`
-- [ ] **State System (Go)** ([l2-state-system-go.md](specifications/l2-state-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Change Detection** ([l1-change-detection.md](specifications/l1-change-detection.md)) [L1] `[Bootstrap]`
-- [ ] **Change Detection (Go)** ([l2-change-detection-go.md](specifications/l2-change-detection-go.md)) [L2] `[Bootstrap]`
-- [ ] **App Framework** ([l1-app-framework.md](specifications/l1-app-framework.md)) [L1] `[Bootstrap]`
-- [ ] **App Framework (Go)** ([l2-app-framework-go.md](specifications/l2-app-framework-go.md)) [L2] `[Bootstrap]`
-- [ ] **Multi-Repo Architecture** ([l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md)) [L1] `[Bootstrap]` *(Draft — surface only; Track G)*
-- [ ] **Multi-Repo Architecture (Go)** ([l2-multi-repo-architecture-go.md](specifications/l2-multi-repo-architecture-go.md)) [L2] `[Bootstrap]` *(Track G — T-2G01/T-2G02)*
+- [x] **Hierarchy System** ([l1-hierarchy-system.md](specifications/l1-hierarchy-system.md)) [L1] `Stable`
+- [x] **Hierarchy System (Go)** ([l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md)) [L2] `Stable`
+- [x] **Time System** ([l1-time-system.md](specifications/l1-time-system.md)) [L1] `Stable`
+- [x] **Time System (Go)** ([l2-time-system-go.md](specifications/l2-time-system-go.md)) [L2] `Stable`
+- [x] **Input System** ([l1-input-system.md](specifications/l1-input-system.md)) [L1] `Stable`
+- [x] **Input System (Go)** ([l2-input-system-go.md](specifications/l2-input-system-go.md)) [L2] `Stable`
+- [x] **Input System Codes (Go)** ([l2-input-system-go-codes.md](specifications/l2-input-system-go-codes.md)) [L2] `Stable`
+- [x] **State System** ([l1-state-system.md](specifications/l1-state-system.md)) [L1] `Stable`
+- [x] **State System (Go)** ([l2-state-system-go.md](specifications/l2-state-system-go.md)) [L2] `Stable`
+- [x] **Change Detection** ([l1-change-detection.md](specifications/l1-change-detection.md)) [L1] `Stable`
+- [x] **Change Detection (Go)** ([l2-change-detection-go.md](specifications/l2-change-detection-go.md)) [L2] `Stable`
+- [x] **App Framework** ([l1-app-framework.md](specifications/l1-app-framework.md)) [L1] `Stable`
+- [x] **App Framework (Go)** ([l2-app-framework-go.md](specifications/l2-app-framework-go.md)) [L2] `Stable`
+- [x] **Multi-Repo Architecture** ([l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md)) [L1] `Draft` *(surface delivered; RFC ratification pending — Exit Criterion #4)*
+- [x] **Multi-Repo Architecture (Go)** ([l2-multi-repo-architecture-go.md](specifications/l2-multi-repo-architecture-go.md)) [L2] `Draft` *(Track G — T-2G01/T-2G02 surface delivered; promotion gated on RFC)*
 
-## Phase 3 — Assets, Math & Concurrency `[Bootstrap]`
+## Phase 3 — Assets, Math & Concurrency (Active) `[Bootstrap]`
 
-*Parallel task pool, asset server, scene serialization, math primitives. Last phase before the STOP FACTOR gate.*
+*Parallel task pool, asset server, scene serialization, math primitives. Last phase before the STOP FACTOR gate. **Atomic decomposition complete (2026-05-18) — 18 tasks across Tracks A (Task, critical-path head), B (Asset, consumes pool), C (Scene), D (Math), T (Validation/C29 gate); see [tasks/phase-3.md](tasks/phase-3.md). Critical path: Task → Asset (asset loading uses the worker pool).***
 
 - [ ] **Task System** ([l1-task-system.md](specifications/l1-task-system.md)) [L1] `[Bootstrap]`
 - [ ] **Task System (Go)** ([l2-task-system-go.md](specifications/l2-task-system-go.md)) [L2] `[Bootstrap]`
@@ -158,9 +158,9 @@ Dependency analysis (Implements: chains):
 | Phase | Status | Unfreezes when |
 | :--- | :--- | :--- |
 | 1 — ECS Core POC | Done | — (27/27 complete) |
-| 2 — Framework | Active | — (current; Phase 1 100% Done) |
-| 3 — Assets, Math & Concurrency | Todo | Phase 1 Done; Phase 2 ≥ 50% |
-| 4 — Render Pipeline | Hold | C29 unblocked (POC validated) AND App Framework Stable |
+| 2 — Framework | Done | — (24/24 complete; 13 specs Stable; multi-repo RFC pending) |
+| 3 — Assets, Math & Concurrency | Active | — (current; Phase 2 100% Done) |
+| 4 — Render Pipeline | Hold | gate now met (POC validated + App Framework Stable); sequenced after Phase 3 |
 | 5 — Content Systems | Hold | Render Core Stable |
 | 6 — UI, Tooling & Quality | Hold | Phase 1–3 Stable |
 | 7 — Networking & Hot-Reload | Hold | App Framework + Scheduler Stable |
@@ -172,6 +172,9 @@ Dependency analysis (Implements: chains):
 - **Phase 2 Optimism Bias**: 24 atomic tasks across 8 tracks (A–G + T). Tracks A–D file-independent and parallelizable; Track E is small but highest-risk (reaches into Phase 1 `query/filter.go`).
 - **Phase 2 Hidden Dependencies**: Track E (Change Detection) is the critical path — T-2E02 replaces the Phase 1 `T-1D03` accept-all stub and unblocks every `Changed`-filtered system. Track F's `DefaultPlugins` (T-2F03) joins on A03/B03/C03/D03/E03.
 - **Phase 2 Cascade Risk**: If Track E slips, the framework example (T-2T04) cannot prove its `Changed`-filter acceptance → Phase 2 gate stays closed → Phases 4–8 remain `Hold` (C-002). Mitigation: schedule Track E first; strongest contributor owns it.
+- **Phase 3 Optimism Bias**: 18 atomic tasks across Tracks A–D + T. Track D (Math) is the largest (`l2-math-system-go.md` 435 lines, plus SIMD-accel parity) — sized at 4 tasks (T-3D01..04), not the default 2–3, to avoid under-estimation of the linear-algebra + primitives + color/curves + SIMD surface.
+- **Phase 3 Hidden Dependencies**: Tracks are **not** fully parallel — Track B's async asset loader (T-3B02) consumes Track A's `ComputePool` (T-3A03), so A03 gates B02. Tracks C (Scene) and D (Math) are file-independent and parallelizable; Scene reuses Phase 1 `typereg` (Done, no new dependency). Critical path: **A → B**.
+- **Phase 3 Cascade Risk**: If Track A slips, T-3B02 (async loader) and T-3T01 (`examples/async/`) are blocked → the C29 P3 gate (`examples/{async,asset,scene,math}/`) stays closed → P3 specs cannot promote Draft → Stable and Phases 4–8 remain `Hold` (C-002). Mitigation: schedule Track A first; strongest contributor owns the work-stealing deque (T-3A01).
 - **C29 Cascade Risk (standing)**: Phases 4–8 are blocked on per-phase `examples/` gates; if a gate slips, the upper plan freezes. Each phase carries an explicit Validation Track (T-*) scoping the minimal gate.
 
 ## Document History
@@ -185,3 +188,5 @@ Dependency analysis (Implements: chains):
 | 1.4.0 | 2026-05-16 | Phase 1 → Done (27/27); Phase 2 promoted Active with 24-task atomic decomposition (Tracks A–G + T); corrected stale spec count (79 → 84) |
 | 1.5.0 | 2026-05-17 | Pre-Planning Stabilization: 17 P1 specs Draft → Stable (C29 via T-1T05); Bootstrap deactivated for P1 |
 | 1.6.0 | 2026-05-17 | Registry sync to INDEX v2.25.0 (89 specs); placed 5 orphan L2 specs — `l2-multi-repo-architecture-go` → Phase 2 (Track G); `l2-{task,asset,scene,math}-system-go` → Phase 3. 19 hard L2→L1 edges, acyclic. All new specs `[Bootstrap]` (C29 keeps non-P1 Draft) |
+| 1.7.0 | 2026-05-17 | Phase 2 → Done (24/24); Pre-Planning Stabilization promoted 13 P2 specs Draft → Stable (C29-style gate via `examples/ecs/framework/`); multi-repo l1/l2 stay Draft (RFC-gated, Exit Criterion #4). Phase 3 → Active with atomic decomposition. INDEX v2.26.0 (Stable 30/89) |
+| 1.8.0 | 2026-05-18 | Phase 3 atomic decomposition realized in `tasks/phase-3.md` (18 tasks: Tracks A:3 Task / B:3 Asset / C:3 Scene / D:4 Math / T:5 Validation) — deferral gate satisfied (Phase 2 = 100% Done). Resolved PLAN↔workbook drift (1.7.0 prose claimed decomposition complete while workbook was still "Pending"). Pre-Planning Stabilization: 0 promoted (C29 P3 `examples/` gate unmet — Bootstrap retained). Engine Snapshot synced (`.design/INDEX.md` **Engine Version:** → 2.1.27). INDEX v2.26.0 unchanged (Stable 30/89) |

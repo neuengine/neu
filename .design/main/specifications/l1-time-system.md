@@ -1,7 +1,7 @@
 # Time System
 
 **Version:** 0.2.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** concept
 
 ## Overview

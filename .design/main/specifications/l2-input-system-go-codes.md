@@ -1,7 +1,7 @@
 # Input System Codes — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [input-system.md](l1-input-system.md)
 

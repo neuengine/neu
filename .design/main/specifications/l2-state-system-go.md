@@ -1,7 +1,7 @@
 # State System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [state-system.md](l1-state-system.md)
 

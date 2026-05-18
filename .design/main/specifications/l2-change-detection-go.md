@@ -1,7 +1,7 @@
 # Change Detection — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [change-detection.md](l1-change-detection.md)
 

@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.25.0
+**Version:** 2.26.0
 **Status:** Active
 
 ## Overview
@@ -33,19 +33,19 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-hierarchy-system.md](specifications/l1-hierarchy-system.md) | Parent-child relationships, transform propagation, traversal | Draft | concept | 0.2.0 |
-| [l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md) | Go impl: ChildOf, Children, Transform, GlobalTransform, propagation | Draft | go | 0.1.0 |
-| [l1-time-system.md](specifications/l1-time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Draft | concept | 0.2.0 |
-| [l2-time-system-go.md](specifications/l2-time-system-go.md) | Go impl: gametime package, Time/RealTime/VirtualTime/FixedTime, Timer, Stopwatch | Draft | go | 0.1.0 |
-| [l1-input-system.md](specifications/l1-input-system.md) | Keyboard, mouse, gamepad, touch; polling + events; picking | Draft | concept | 0.3.0 |
-| [l2-input-system-go.md](specifications/l2-input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], input state systems, plugin | Draft | go | 0.2.0 |
-| [l2-input-system-go-codes.md](specifications/l2-input-system-go-codes.md) | Go impl: KeyCode/GamepadButton/GamepadAxis/Touch reference type tables (Implements: l1-input-system) | Draft | go | 0.1.0 |
-| [l1-state-system.md](specifications/l1-state-system.md) | Hierarchical state machines, transitions, computed states | Draft | concept | 0.1.0 |
-| [l2-state-system-go.md](specifications/l2-state-system-go.md) | Go impl: State[S], NextState[S], SubState, ComputedState, DespawnOnExit | Draft | go | 0.1.0 |
-| [l1-change-detection.md](specifications/l1-change-detection.md) | Tick-based change tracking, Added/Changed filters, Ref/Mut wrappers | Draft | concept | 0.1.0 |
-| [l2-change-detection-go.md](specifications/l2-change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Draft | go | 0.1.0 |
-| [l1-app-framework.md](specifications/l1-app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Draft | concept | 0.4.0 |
-| [l2-app-framework-go.md](specifications/l2-app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Draft | go | 0.1.0 |
+| [l1-hierarchy-system.md](specifications/l1-hierarchy-system.md) | Parent-child relationships, transform propagation, traversal | Stable | concept | 0.2.0 |
+| [l2-hierarchy-system-go.md](specifications/l2-hierarchy-system-go.md) | Go impl: ChildOf, Children, Transform, GlobalTransform, propagation | Stable | go | 0.1.0 |
+| [l1-time-system.md](specifications/l1-time-system.md) | Real/virtual/fixed time, timers, fixed timestep loop | Stable | concept | 0.2.0 |
+| [l2-time-system-go.md](specifications/l2-time-system-go.md) | Go impl: gametime package, Time/RealTime/VirtualTime/FixedTime, Timer, Stopwatch | Stable | go | 0.1.0 |
+| [l1-input-system.md](specifications/l1-input-system.md) | Keyboard, mouse, gamepad, touch; polling + events; picking | Stable | concept | 0.3.0 |
+| [l2-input-system-go.md](specifications/l2-input-system-go.md) | Go impl: ButtonInput[T], AxisInput[T], input state systems, plugin | Stable | go | 0.2.0 |
+| [l2-input-system-go-codes.md](specifications/l2-input-system-go-codes.md) | Go impl: KeyCode/GamepadButton/GamepadAxis/Touch reference type tables (Implements: l1-input-system) | Stable | go | 0.1.0 |
+| [l1-state-system.md](specifications/l1-state-system.md) | Hierarchical state machines, transitions, computed states | Stable | concept | 0.1.0 |
+| [l2-state-system-go.md](specifications/l2-state-system-go.md) | Go impl: State[S], NextState[S], SubState, ComputedState, DespawnOnExit | Stable | go | 0.1.0 |
+| [l1-change-detection.md](specifications/l1-change-detection.md) | Tick-based change tracking, Added/Changed filters, Ref/Mut wrappers | Stable | concept | 0.1.0 |
+| [l2-change-detection-go.md](specifications/l2-change-detection-go.md) | Go impl: Tick, ComponentTicks, Ref[T], Mut[T], RemovedComponents[T] | Stable | go | 0.1.0 |
+| [l1-app-framework.md](specifications/l1-app-framework.md) | App builder, plugins, plugin groups, sub-apps, game loop | Stable | concept | 0.4.0 |
+| [l2-app-framework-go.md](specifications/l2-app-framework-go.md) | Go impl: App, Plugin, PluginGroup, SubApp, RunMode, DefaultPlugins | Stable | go | 0.1.0 |
 | [l1-multi-repo-architecture.md](specifications/l1-multi-repo-architecture.md) | Repository split architecture: pkg-based boundary between engine and editor | Draft | concept | 1.4.0 |
 | [l2-multi-repo-architecture-go.md](specifications/l2-multi-repo-architecture-go.md) | Go impl: pkg/editor interfaces + pkg/protocol JSON wire messages, //go:build editor scoping, AST/go-list architecture-guard tests (Implements: l1-multi-repo-architecture) | Draft | go | 0.1.0 |
 
@@ -140,6 +140,6 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-17
-- **Total Specifications**: 89 (65 L1 concept + 22 L2 Go + 1 test + 1 tool) | Stable: 17 | RFC: 0 | Draft: 72
+- **Total Specifications**: 89 (65 L1 concept + 22 L2 Go + 1 test + 1 tool) | Stable: 30 | RFC: 0 | Draft: 59
 - **Engine Version:** 2.1.27
-- **Last Stabilization:** 2026-05-17 — P1 ECS Core (9 L1 + 8 L2) promoted Draft → Stable via Pre-Planning Stabilization (C29 gate unblocked by T-1T05)
+- **Last Stabilization:** 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable via Pre-Planning Stabilization (C29-style gate satisfied by `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

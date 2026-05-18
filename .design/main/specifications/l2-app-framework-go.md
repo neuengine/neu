@@ -1,7 +1,7 @@
 # App Framework — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [app-framework.md](l1-app-framework.md)
 

@@ -38,14 +38,18 @@ bootstrap: true
 > Decomposed 2026-05-18 (Phase 2 = 100% Done — deferral gate satisfied). 18 atomic tasks across Tracks A–D + T.
 > **Execution Mode:** Parallel (C3). **Critical path:** A (Task pool) → B (Asset async loader). Tracks C, D file-independent and parallelizable. Track T joins all on the C29 P3 gate.
 
-### Track A — Task System (`internal/task/`) — critical-path head
+### Track A — Task System (`pkg/task/`) — critical-path head
 
-- [ ] **T-3A01** — Chase-Lev work-stealing deque + worker-pool core. Files: `internal/task/{deque,pool}.go`. Spec: [l2-task-system-go.md](../specifications/l2-task-system-go.md) §Deque/§Pool.
-  Verify: `go test -race ./internal/task/...` (deque ABA-free under 8×CPU steal storm) + `go test -bench=BenchmarkDequePushPop -benchmem ./internal/task/` shows 0 allocs/op steady-state (C27/C-004).
-- [ ] **T-3A02** — Scoped tasks: `RunScope`, `ForBatched`, `TaskHandle[T]`. Files: `internal/task/{scope,handle}.go`.
-  Verify: `go test -race -run TestRunScope ./internal/task/...` (scope join blocks until all children settle) + `ForBatched` golden output identical across 100 fixed-seed runs.
-- [ ] **T-3A03** — `ComputePool`/`IOPool`, `MainThreadExecutor`, `TaskPlugin` App wiring. Files: `internal/task/executor.go` + plugin registration.
-  Verify: `go test -race ./...` green + `go list -deps ./internal/task/...` resolves to stdlib only (C24/C-003) + `go vet ./...` clean.
+> **Path correction (2026-05-18):** workbook drafted `internal/task/`; the authoritative L2 spec §Go Package mandates **`pkg/task/`** (public, no-ECS, mirrors `pkg/math`). Implemented per spec.
+
+- [x] **T-3A01** — Chase-Lev work-stealing deque + ComputePool/IOPool core. Files: `pkg/task/{deque,pool}.go`. Spec: [l2-task-system-go.md](../specifications/l2-task-system-go.md) §Type Definitions/§Performance Strategy. `[Bootstrap]`
+  Verify: ✅ `go test -race ./pkg/task/...` ok (8×CPU steal-storm: every task consumed exactly once) + `BenchmarkDequePushPop` 61 ns/op **0 B/op 0 allocs/op** (C-004/C-027) + build/vet clean, stdlib-only (C-003).
+  Changes: Chase-Lev deque with `[]atomic.Pointer[tcell]` slots + `sync.Pool` cell recycling (race-clean *and* 0-alloc steady-state); `ComputePool` fixed-N workers (INV-1) + per-worker deque + priority deques + random-victim stealing + parked-worker wake; `IOPool` semaphore-bounded elastic; `Shutdown(ctx)` drains then joins (INV-4); panic isolation per worker.
+- [x] **T-3A02** — Scoped tasks: `RunScope`/`Scope.Spawn` (INV-2), `TaskHandle[T]` (Spawn/Poll/BlockOn/Detach/Err), `ForBatched` atomic-claim dispatcher, `ParChunkMap`/`ParSplatMap`. Files: `pkg/task/{scope,handle,dispatch}.go`. `[Bootstrap]`
+  Verify: ✅ `go test -race ./pkg/task/...` ok 24.8s (TestRunScope join/borrow/**nested-no-deadlock**) + `TestForBatchedGoldenDeterminism` ×100 stable + `BenchmarkForBatched` **0 B/op 0 allocs/op** + deque bench regression 0-alloc.
+  Changes: scope-owned work-stealing deque registered with the pool — RunScope join drains **only its own** children inline (livelock-free nested scopes; single-worker deadlock-free). `TaskHandle[T]` state machine (pending/running/finished/detached) + `PanicError` re-panic on `BlockOn`. `ForBatched` one-atomic-add-per-batch claim, runner count capped at batch count. **Bug found & fixed (run.md §3.5):** initial `tryRunOne` cooperative wait recursively absorbed unrelated blocking tasks → livelock under nested `RunScope` (caught by `TestRunScopeNestedNoDeadlock`, 100s timeout). Also hardened a latent T-3A01 hazard: external `submitPrio` now serialized (`submitMu`) — concurrent `pushBottom` violated the Chase-Lev single-owner contract.
+- [ ] **T-3A03** — `MainThreadExecutor` (INV-3, `LockOSThread`/`PollMainThread`), `TaskPlugin` App wiring, cooperative `BlockOn` steal (§4.9). Files: `pkg/task/mainthread.go` + plugin registration.
+  Verify: `go test -race ./...` green + `go list -deps ./pkg/task/...` resolves to stdlib only (C-003) + `go vet ./...` clean + `PollMainThread` from non-main goroutine panics (INV-3 test).
 
 ### Track B — Asset System (`pkg/asset/`) — consumes Track A pool
 

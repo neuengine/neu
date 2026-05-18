@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 - Updated task plan and task index (main)
 - Completed task `phase-1` (main)
 - Added 2 specifications (main)
@@ -21,4 +22,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated 18 specifications (main)
 - Updated 19 specifications (main)
 - Updated 22 specifications (main)
+- Updated global project rules (main)
 

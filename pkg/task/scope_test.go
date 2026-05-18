@@ -13,7 +13,7 @@ func TestRunScopeJoinsAllChildren(t *testing.T) {
 	const n = 5000
 	var done int64
 	RunScope(cp, func(s *Scope) {
-		for i := 0; i < n; i++ {
+		for range n {
 			s.Spawn(func() { atomic.AddInt64(&done, 1) })
 		}
 	})
@@ -32,7 +32,6 @@ func TestRunScopeBorrowVisible(t *testing.T) {
 	buf := make([]int, 1000) // borrowed stack-ish slice
 	RunScope(cp, func(s *Scope) {
 		for i := range buf {
-			i := i
 			s.Spawn(func() { buf[i] = i * i })
 		}
 	})
@@ -49,12 +48,12 @@ func TestRunScopeNestedNoDeadlock(t *testing.T) {
 
 	var leaves int64
 	RunScope(cp, func(outer *Scope) {
-		for i := 0; i < 8; i++ {
+		for range 8 {
 			outer.Spawn(func() {
 				// Nested RunScope from inside a worker must not deadlock
 				// (cooperative wait).
 				RunScope(cp, func(inner *Scope) {
-					for j := 0; j < 8; j++ {
+					for range 8 {
 						inner.Spawn(func() { atomic.AddInt64(&leaves, 1) })
 					}
 				})
@@ -116,7 +115,7 @@ func TestForBatchedCoversExactlyOnce(t *testing.T) {
 			atomic.AddInt32(&hits[v], 1)
 		}
 	})
-	for i := 0; i < n; i++ {
+	for i := range n {
 		if hits[i] != 1 {
 			t.Fatalf("item %d processed %d times, want exactly 1", i, hits[i])
 		}
@@ -136,10 +135,10 @@ func TestForBatchedGoldenDeterminism(t *testing.T) {
 		items[i] = i
 	}
 	var golden int64
-	for i := 0; i < n; i++ {
+	for i := range n {
 		golden += int64(i)
 	}
-	for run := 0; run < 100; run++ {
+	for run := range 100 {
 		var sum int64
 		ForBatched(cp, items, 97, func(batch []int) {
 			var local int64

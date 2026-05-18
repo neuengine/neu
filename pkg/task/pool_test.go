@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-func uptr(v uint) *uint { return &v }
+//go:fix inline
+func uptr(v uint) *uint { return new(v) }
 
 func TestConfigResolution(t *testing.T) {
 	pct := 0.5
@@ -43,7 +44,7 @@ func TestPoolFixedWorkerCount(t *testing.T) {
 
 	var ran int64
 	const n = 50_000
-	for i := 0; i < n; i++ {
+	for range n {
 		if err := cp.submit(func() { atomic.AddInt64(&ran, 1) }); err != nil {
 			t.Fatalf("submit: %v", err)
 		}
@@ -87,7 +88,7 @@ func TestPoolDrainsOnShutdown(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: uptr(2)})
 	var ran int64
 	const n = 10_000
-	for i := 0; i < n; i++ {
+	for range n {
 		_ = cp.submit(func() { atomic.AddInt64(&ran, 1) })
 	}
 	if err := cp.Shutdown(context.Background()); err != nil {
@@ -126,7 +127,7 @@ func TestIOPoolBounded(t *testing.T) {
 	var wg sync.WaitGroup
 	const n = 200
 	wg.Add(n)
-	for i := 0; i < n; i++ {
+	for range n {
 		err := io.Go(func() {
 			defer wg.Done()
 			cur := atomic.AddInt64(&inflight, 1)

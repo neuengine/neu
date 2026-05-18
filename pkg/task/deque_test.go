@@ -13,7 +13,7 @@ func TestDequeOwnerLIFO(t *testing.T) {
 		t.Fatal("popBottom on empty deque returned ok")
 	}
 	const n = 100
-	for i := 0; i < n; i++ {
+	for i := range n {
 		i := i
 		d.pushBottom(func() { _ = i })
 	}
@@ -32,7 +32,7 @@ func TestDequeOwnerLIFO(t *testing.T) {
 func TestDequeGrow(t *testing.T) {
 	d := newDeque(2) // 4 slots
 	const n = 10_000 // forces several grows
-	for i := 0; i < n; i++ {
+	for range n {
 		d.pushBottom(func() {})
 	}
 	got := 0
@@ -63,7 +63,7 @@ func TestDequeStealStorm(t *testing.T) {
 	stop := make(chan struct{})
 
 	wg.Add(thieves)
-	for g := 0; g < thieves; g++ {
+	for range thieves {
 		go func() {
 			defer wg.Done()
 			for {
@@ -89,7 +89,7 @@ func TestDequeStealStorm(t *testing.T) {
 	}
 
 	// Owner: interleave pushes with opportunistic pops.
-	for i := 0; i < n; i++ {
+	for i := range n {
 		d.pushBottom(mk(i))
 		if i%3 == 0 {
 			if tk, ok := d.popBottom(); ok {
@@ -114,7 +114,7 @@ func TestDequeStealStorm(t *testing.T) {
 		t.Fatalf("retrieved %d tasks, want %d (stolen=%d popped=%d)",
 			total, n, stolen, popped)
 	}
-	for i := 0; i < n; i++ {
+	for i := range n {
 		if c := atomic.LoadInt32(&seen[i]); c != 1 {
 			t.Fatalf("task %d executed %d times, want exactly 1", i, c)
 		}

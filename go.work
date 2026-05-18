@@ -6,11 +6,14 @@ use (
 	./examples/3d
 	./examples/app
 	./examples/asset
+	./examples/async
 	./examples/audio
 	./examples/diagnostic
 	./examples/ecs
+	./examples/math
 	./examples/networking
 	./examples/physics
+	./examples/scene
 	./examples/stress_test
 	./examples/ui
 	./examples/world

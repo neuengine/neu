@@ -272,7 +272,7 @@ func TestFromTranslation(t *testing.T) {
 }
 
 func TestFromRotation(t *testing.T) {
-	q := neu.FromAxisAngle(neu.Vec3{X: 0, Y: 1, Z: 0}, 1.0)
+	q := neu.QuatFromAxisAngle(neu.Vec3{X: 0, Y: 1, Z: 0}, 1.0)
 	tr := FromRotation(q)
 	if tr.Rotation != q {
 		t.Errorf("FromRotation.Rotation = %v, want %v", tr.Rotation, q)

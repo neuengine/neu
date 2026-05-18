@@ -19,10 +19,7 @@ func ForBatched[T any](p *ComputePool, items []T, batchSize int, fn func(batch [
 		batchSize = 1
 	}
 	var cursor atomic.Int64
-	workers := p.NumWorkers()
-	if workers < 1 {
-		workers = 1
-	}
+	workers := max(p.NumWorkers(), 1)
 	// Cap dispatched runners at the number of batches — never spawn idle work.
 	batches := (n + batchSize - 1) / batchSize
 	if workers > batches {

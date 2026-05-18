@@ -152,7 +152,7 @@ func NewTaskPools(cfg TaskPoolConfig) (*ComputePool, *IOPool) {
 	for i := range cp.prio {
 		cp.prio[i] = newDeque(logInitialDeque)
 	}
-	for i := 0; i < n; i++ {
+	for i := range n {
 		w := &worker{id: i, pool: cp, local: newDeque(logInitialDeque)}
 		cp.workers[i] = w
 	}
@@ -199,7 +199,7 @@ func (w *worker) nextTask() (task, bool) {
 	if t, ok := w.local.popBottom(); ok {
 		return t, true
 	}
-	for pr := Critical; pr < numPriorities; pr++ {
+	for pr := range numPriorities {
 		if t, ok := w.pool.prio[pr].steal(); ok {
 			return t, true
 		}
@@ -218,7 +218,7 @@ func (w *worker) steal() (task, bool) {
 		return nil, false
 	}
 	start := rand.IntN(n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		victim := ws[(start+i)%n]
 		if victim.id == w.id {
 			continue
@@ -235,7 +235,7 @@ func (w *worker) steal() (task, bool) {
 // (RunScope, TaskHandle.BlockOn) so a blocked goroutine helps drain the pool
 // instead of sleeping — and never deadlocks when called from a worker.
 func (p *ComputePool) tryRunOne() bool {
-	for pr := Critical; pr < numPriorities; pr++ {
+	for pr := range numPriorities {
 		if t, ok := p.prio[pr].steal(); ok {
 			runTask(t)
 			return true

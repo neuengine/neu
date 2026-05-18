@@ -3,7 +3,7 @@
 **Version:** 1.8.0
 **Generated:** 2026-05-18
 **Based on:** .design/main/PLAN.md v1.8.0
-**Based on RULES:** .design/RULES.md v1.7.1 *(⚠ see RULES Parity note in Meta — RULES.md header lags its own Document History/body by one minor)*
+**Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
 **Mode:** Phases 1–2 specs → `Stable` (Bootstrap deactivated for P1–P2). Phase 3 atomic-decomposed (18 tasks, Tracks A–D + T) — deferral gate satisfied (Phase 2 = 100%). Phase 3+ specs remain `[Bootstrap]` — per-phase `examples/` gate pending (P3 → `examples/{async,asset,scene,math}/`).
@@ -17,8 +17,8 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 | Phase | Description | Status |
 | :--- | :--- | :--- |
 | [Phase 1](tasks/phase-1.md) | ECS Core POC — world, entities, components, queries, scheduler, validating `examples/ecs/poc/` | Done |
-| [Phase 2](tasks/phase-2.md) | Framework Primitives — hierarchy, time, input, state, change-detection, app/plugin (24 atomic tasks, Tracks A–G + T) | Done |
-| [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Todo |
+| [Phase 2](archives/tasks/phase-2.md) | Framework Primitives — hierarchy, time, input, state, change-detection, app/plugin (24 atomic tasks, Tracks A–G + T) | Done |
+| [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Done |
 | [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing | Hold |
 | [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening | Hold |
 | [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Hold |

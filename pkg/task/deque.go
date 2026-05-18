@@ -52,8 +52,8 @@ func newCircArray(logSize uint) *circArray {
 	return &circArray{size: size, mask: size - 1, buf: make([]atomic.Pointer[tcell], size)}
 }
 
-func (a *circArray) get(i int64) *tcell     { return a.buf[i&a.mask].Load() }
-func (a *circArray) put(i int64, c *tcell)  { a.buf[i&a.mask].Store(c) }
+func (a *circArray) get(i int64) *tcell    { return a.buf[i&a.mask].Load() }
+func (a *circArray) put(i int64, c *tcell) { a.buf[i&a.mask].Store(c) }
 
 // grow returns a doubled copy holding the live range [top, bottom).
 func (a *circArray) grow(top, bottom int64) *circArray {

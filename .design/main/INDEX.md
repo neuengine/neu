@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.27.0
+**Version:** 2.28.0
 **Status:** Active
 
 ## Overview
@@ -67,10 +67,15 @@ Local registry of specifications for this workspace. Organized by priority batch
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
 | [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | Draft | concept | 0.5.0 |
+| [l2-render-core-go.md](specifications/l2-render-core-go.md) | Go impl: RID+command-queue server, RenderBackend interface, Kahn-DAG graph, SubApp extract isolation, 4-phase schedule, SoA RenderDataHolder (Implements: l1-render-core) | Draft | go | 0.1.0 |
 | [l1-mesh-and-image.md](specifications/l1-mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Draft | concept | 0.1.0 |
+| [l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md) | Go impl: immutable attribute-map Mesh, validated index/skin invariants, FNV layout hash, stdlib decode on IOPool, shelf-pack DynamicAtlas (Implements: l1-mesh-and-image) | Draft | go | 0.1.0 |
 | [l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Draft | concept | 0.1.0 |
+| [l2-materials-and-lighting-go.md](specifications/l2-materials-and-lighting-go.md) | Go impl: typed MaterialParameters, idempotent PBR clamp, total AlphaMode→phase, CascadeShadowConfig, ForBatched light clustering (Implements: l1-materials-and-lighting) | Draft | go | 0.1.0 |
 | [l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md) | Camera, projections, visibility hierarchy, frustum culling | Draft | concept | 0.1.0 |
+| [l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md) | Go impl: pure-data Camera, projection guards, 3-layer visibility reusing hierarchy walk, conservative frustum test, ForBatched cull (Implements: l1-camera-and-visibility) | Draft | go | 0.1.0 |
 | [l1-post-processing.md](specifications/l1-post-processing.md) | Post-process effects, anti-aliasing, tonemapping, bloom | Draft | concept | 0.1.0 |
+| [l2-post-processing-go.md](specifications/l2-post-processing-go.md) | Go impl: canonical EffectSlot chain, omit-disabled graph nodes, pooled ping-pong, HDR→LDR tonemap guard, AA mutual-exclusion (Implements: l1-post-processing) | Draft | go | 0.1.0 |
 
 ## P5 — Content Systems
 
@@ -140,6 +145,6 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-18
-- **Total Specifications**: 89 (65 L1 concept + 22 L2 Go + 1 test + 1 tool) | Stable: 38 | RFC: 0 | Draft: 51
+- **Total Specifications**: 94 (65 L1 concept + 27 L2 Go + 1 test + 1 tool) | Stable: 38 | RFC: 0 | Draft: 56
 - **Engine Version:** 2.1.27
 - **Last Stabilization:** 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

@@ -3,6 +3,7 @@ package asset
 import (
 	"errors"
 	"io/fs"
+	"slices"
 	"strings"
 )
 
@@ -41,8 +42,8 @@ func (v *VFS) Mount(prefix string, fsys fs.FS, rw bool) {
 func (v *VFS) Open(vpath string) (fs.File, error) {
 	vpath = stripScheme(vpath)
 	// Scan in reverse — latest mount wins.
-	for i := len(v.mounts) - 1; i >= 0; i-- {
-		m := v.mounts[i]
+	for _, m := range slices.Backward(v.mounts) {
+
 		rel, ok := cutPrefix(vpath, m.prefix)
 		if !ok {
 			continue

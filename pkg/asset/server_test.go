@@ -129,7 +129,6 @@ func TestServerConcurrentLoadDedup(t *testing.T) {
 	handles := make([]Handle[string], n)
 	var wg sync.WaitGroup
 	for i := range n {
-		i := i
 		wg.Go(func() {
 			handles[i] = Load[string](srv, "/data.txt")
 		})

@@ -12,7 +12,6 @@ func TestMainThreadExecutor_DrainOrder(t *testing.T) {
 	var mu sync.Mutex
 	var got []int
 	for i := range 5 {
-		i := i
 		exec.Execute(func() {
 			mu.Lock()
 			got = append(got, i)

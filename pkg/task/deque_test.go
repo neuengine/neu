@@ -14,7 +14,6 @@ func TestDequeOwnerLIFO(t *testing.T) {
 	}
 	const n = 100
 	for i := range n {
-		i := i
 		d.pushBottom(func() { _ = i })
 	}
 	got := 0

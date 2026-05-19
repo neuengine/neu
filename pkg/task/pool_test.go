@@ -20,8 +20,8 @@ func TestConfigResolution(t *testing.T) {
 		want func(int) bool
 	}{
 		{"auto", TaskPoolConfig{}, func(n int) bool { return n == max(1, runtime.NumCPU()-1) }},
-		{"explicit", TaskPoolConfig{ComputeThreads: uptr(3)}, func(n int) bool { return n == 3 }},
-		{"zero-clamped", TaskPoolConfig{ComputeThreads: uptr(0)}, func(n int) bool { return n == 1 }},
+		{"explicit", TaskPoolConfig{ComputeThreads: new(uint(3))}, func(n int) bool { return n == 3 }},
+		{"zero-clamped", TaskPoolConfig{ComputeThreads: new(uint(0))}, func(n int) bool { return n == 1 }},
 		{"percent", TaskPoolConfig{PercentOfCores: &pct}, func(n int) bool { return n == max(1, runtime.NumCPU()/2) }},
 	}
 	for _, c := range cases {
@@ -37,15 +37,15 @@ func TestConfigResolution(t *testing.T) {
 // the pool stays exactly NumWorkers under heavy load.
 func TestPoolFixedWorkerCount(t *testing.T) {
 	base := runtime.NumGoroutine()
-	cp, io := NewTaskPools(TaskPoolConfig{ComputeThreads: uptr(4)})
+	cp, io := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
 	if cp.NumWorkers() != 4 {
 		t.Fatalf("NumWorkers=%d, want 4", cp.NumWorkers())
 	}
 
-	var ran int64
+	var ran atomic.Int64
 	const n = 50_000
 	for range n {
-		if err := cp.submit(func() { atomic.AddInt64(&ran, 1) }); err != nil {
+		if err := cp.submit(func() { ran.Add(1) }); err != nil {
 			t.Fatalf("submit: %v", err)
 		}
 	}
@@ -56,10 +56,10 @@ func TestPoolFixedWorkerCount(t *testing.T) {
 	}
 
 	deadline := time.After(10 * time.Second)
-	for atomic.LoadInt64(&ran) < n {
+	for ran.Load() < n {
 		select {
 		case <-deadline:
-			t.Fatalf("only %d/%d tasks ran before timeout", atomic.LoadInt64(&ran), n)
+			t.Fatalf("only %d/%d tasks ran before timeout", ran.Load(), n)
 		default:
 			runtime.Gosched()
 		}
@@ -85,16 +85,16 @@ func TestPoolFixedWorkerCount(t *testing.T) {
 // TestPoolDrainsOnShutdown verifies INV-4: queued work runs during Shutdown
 // rather than being dropped.
 func TestPoolDrainsOnShutdown(t *testing.T) {
-	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: uptr(2)})
-	var ran int64
+	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(2))})
+	var ran atomic.Int64
 	const n = 10_000
 	for range n {
-		_ = cp.submit(func() { atomic.AddInt64(&ran, 1) })
+		_ = cp.submit(func() { ran.Add(1) })
 	}
 	if err := cp.Shutdown(context.Background()); err != nil {
 		t.Fatalf("Shutdown: %v", err)
 	}
-	if got := atomic.LoadInt64(&ran); got != n {
+	if got := ran.Load(); got != n {
 		t.Fatalf("drained %d/%d tasks on shutdown", got, n)
 	}
 	if err := cp.submit(func() {}); err != ErrPoolClosed {
@@ -103,15 +103,15 @@ func TestPoolDrainsOnShutdown(t *testing.T) {
 }
 
 func TestPoolPanicIsolation(t *testing.T) {
-	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: uptr(2)})
+	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(2))})
 	defer cp.Shutdown(context.Background())
 
-	var after int64
+	var after atomic.Int64
 	_ = cp.submit(func() { panic("boom") })
-	_ = cp.submit(func() { atomic.AddInt64(&after, 1) })
+	_ = cp.submit(func() { after.Add(1) })
 
 	deadline := time.After(5 * time.Second)
-	for atomic.LoadInt64(&after) == 0 {
+	for after.Load() == 0 {
 		select {
 		case <-deadline:
 			t.Fatal("worker did not survive a panicking task")

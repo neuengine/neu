@@ -127,12 +127,10 @@ func TestResourceTracker_ConcurrentRetainRelease(t *testing.T) {
 	tr.Retain(rid) // hold one ref so it never hits 0 mid-storm
 	var wg sync.WaitGroup
 	for range g {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			tr.Retain(rid)
 			tr.Release(rid, 0)
-		}()
+		})
 	}
 	wg.Wait()
 	if tr.RefCount(rid) != 1 {

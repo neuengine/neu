@@ -153,7 +153,7 @@ func (g *RenderGraph) Build(tr *ResourceTracker) error {
 
 	// Kahn with a sorted ready frontier → deterministic order on ties.
 	ready := make([]int, 0, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		if indeg[i] == 0 {
 			ready = append(ready, i)
 		}

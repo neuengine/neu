@@ -53,9 +53,7 @@ func TestServer_ConcurrentSubmitDrain(t *testing.T) {
 	var wrongGoroutine atomic.Bool
 	var wg sync.WaitGroup
 	for range n {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			if err := s.Submit(func() {
 				if currentGID() != wantGID {
 					wrongGoroutine.Store(true)
@@ -64,7 +62,7 @@ func TestServer_ConcurrentSubmitDrain(t *testing.T) {
 			}); err != nil {
 				t.Errorf("Submit: %v", err)
 			}
-		}()
+		})
 	}
 	wg.Wait()
 	s.Drain()

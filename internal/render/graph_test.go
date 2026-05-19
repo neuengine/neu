@@ -16,10 +16,10 @@ type fakePass struct {
 	recorder *[]string
 }
 
-func (p *fakePass) Name() string            { return p.name }
-func (p *fakePass) Phase() gpu.RenderPhase   { return p.phase }
-func (p *fakePass) Inputs() []gpu.RID        { return p.in }
-func (p *fakePass) Outputs() []gpu.RID       { return p.out }
+func (p *fakePass) Name() string           { return p.name }
+func (p *fakePass) Phase() gpu.RenderPhase { return p.phase }
+func (p *fakePass) Inputs() []gpu.RID      { return p.in }
+func (p *fakePass) Outputs() []gpu.RID     { return p.out }
 func (p *fakePass) Execute(ctx *PassContext) {
 	if p.recorder != nil {
 		*p.recorder = append(*p.recorder, p.name)
@@ -93,10 +93,10 @@ func TestRenderGraph_SelfCycle(t *testing.T) {
 // A→{B,C}→D over resources r1 (A→B), r2 (A→C), r3 (B→D), r4 (C→D).
 func TestRenderGraph_Barriers(t *testing.T) {
 	g := &RenderGraph{}
-	g.AddPass(&fakePass{name: "A", out: []gpu.RID{tex(1), tex(2)}})           // 0
+	g.AddPass(&fakePass{name: "A", out: []gpu.RID{tex(1), tex(2)}})                // 0
 	g.AddPass(&fakePass{name: "B", in: []gpu.RID{tex(1)}, out: []gpu.RID{tex(3)}}) // 1
 	g.AddPass(&fakePass{name: "C", in: []gpu.RID{tex(2)}, out: []gpu.RID{tex(4)}}) // 2
-	g.AddPass(&fakePass{name: "D", in: []gpu.RID{tex(3), tex(4)}})            // 3
+	g.AddPass(&fakePass{name: "D", in: []gpu.RID{tex(3), tex(4)}})                 // 3
 
 	if err := g.Build(nil); err != nil {
 		t.Fatalf("Build: %v", err)

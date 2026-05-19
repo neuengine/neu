@@ -4,14 +4,14 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-19 07:01
+**Updated:** 2026-05-19 11:21
 **Phase:** 4 — Render Pipeline
 **Status:** Active
 
 ## Current Position
 
-- **Task:** T-4A03 Done — RenderSubApp + 4-stage schedule + INV-4 guard. Next: T-4A04 (Track A tail).
-- **Next Action:** Run /magic.run main → T-4A04 RenderFeature + RenderObject proxy + SoA RenderDataHolder + `task.ForBatched` parallel cull; completes Track A → unblocks B/C/D/E
+- **Task:** T-4A04 Done — **Track A complete** (T-4A01..04). Render core fully landed; B/C/D/E unblocked.
+- **Next Action:** Run /magic.run main → T-4B01 Mesh/VertexAttribute/IndexBuffer/VertexLayout-hash/Validate (Track B head — consumes A's server for GPU upload)
 
 ## Progress
 
@@ -19,14 +19,15 @@
 Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
-Phase 4: [ 3/19] █▌░░░░░░  16% ▶ Active
-Overall: [72/88] ███████░  82%
+Phase 4: [ 4/19] ██░░░░░░  21% ▶ Active  (Track A ✓)
+Overall: [73/88] ███████░  83%
 ```
 
 ## Recent Decisions
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-19 **Done:** T-4A04 — `internal/render/{renderdata,feature,visibility}.go` + subapp feature dispatch. **Track A complete.** SoA `RenderDataHolder` (type-erased columns, `RegisterStatic/DynamicKey[T]`, `Slice()` aliases storage → GPU-bindable). `RenderFeature` 7-hook interface + contexts. `VisibilityGroup`: Gribb–Hartmann `buildFrustum`, frame-skip, **lock-free disjoint-index parallel cull** (`visible[DataIndex]`) + ordered compaction → parallel≡sequential (10k, `-race`). **QA-caught:** sequential bench 165B/1alloc — shared `test` closure captured `f` & escaped via conditional `ForBatched` arg; fixed by non-closure `cullBatch` method → SoA kernel **0 B/op 0 allocs/op** (C-027). **Bootstrap reconciliation:** `BenchmarkFrustumCullSoA` pins the SoA kernel (C-027 unit); parallel path's O(workers) allocs are `task.ForBatched`'s documented per-call cost (correctness proven by parallel≡seq test). Next: T-4B01 (Track B head).
 - 2026-05-19 **Done:** T-4A03 — `internal/render/{phases,extract,subapp}.go`. `Stage` enum (Collect/Extract/Prepare/Draw — distinct from `gpu.RenderPhase`). `ExtractFn func(main,render *world.World)` mirrors `app.ExtractFn` (no pkg/app coupling) + ordered `extractRegistry`. `RenderSubApp` owns isolated `world.World`+server+tracker+graph; `RunFrame` = Collect→Extract(once, `ErrExtractReentry` INV-4 guard)→Prepare(drain placeholder, feature prep = T-4A04)→Draw(graph Build+Execute, Submit/Present, tracker.EndFrame); lazy server.Bind frame 1. `-race` clean (isolation via slices.Clone proven; 3-frame guard; cycle surfaces). **Pattern:** render world is a per-frame copy-not-share snapshot; App-plugin wiring deferred (RunFrame is app.SubApp-adapter-compatible). Next: T-4A04 (Track A tail).
 - 2026-05-19 **Done:** T-4A02 — `internal/render/graph.go` + `pkg/render/phase.go`. `RenderGraph`: producer→consumer edges from shared RIDs, Kahn topo sort (sorted ready frontier → deterministic) reusing scheduler DAG pattern (C30); `ErrRenderGraphCycle` (errors.Is-compatible wrapper naming passes, mirrors `dagCycleError`), self-cycle rejected; `Barrier` transition list (golden-tested on diamond); INV-3 pin via in-package `*ResourceTracker` with external-vs-transient input distinction (transient produced in-graph exempt+pinned, external zero-ref ⇒ `ErrResourceReleased`); `ErrRenderGraphNotBuilt` guard. `RenderPhase` public enum. `-race` clean 7/7 + no T-4A01 regression. **Pattern:** `RenderPhase`→`pkg/render` (public, cross-spec); graph stays `internal/render` (consumers lighting/postpass are internal). Next: T-4A03.
 - 2026-05-19 **Done:** T-4A01 — `pkg/render/backend.go` + `internal/render/{server,resources}.go`. `RID` = kind8|gen24|idx32 bit-pack (zero = nil). `Server`: sync `Allocate`, deferred `Initialize`/`Submit` with goroutine-bound inline fast-path (drains queue before inline cmd → global FIFO), `Drain` sole consumer, `Close`→`ErrRenderClosed`. `ResourceTracker`: refcount→0 records freed-frame; `EndFrame(f)` destroys only `freed < f` (never in-flight — INV-3); `Retain` cancels pending. `-race` clean (256-goroutine Submit dedup; deferred-delete timing). **Pattern:** internal/render imports pkg/render aliased `gpu` (RIDs caller-held → public). **Spec tightening (Bootstrap):** `Submit` returns `error` per §Error Handling. Track A root done — unblocks A02/A03/A04 then B/C/D/E.

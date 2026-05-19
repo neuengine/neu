@@ -4,14 +4,14 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-19 06:17
+**Updated:** 2026-05-19 06:35
 **Phase:** 4 — Render Pipeline
 **Status:** Active
 
 ## Current Position
 
-- **Task:** Phase 4 decomposed — 19 atomic tasks ready (Tracks A:4 / B:3 / C:2 / D:3 / E:2 / T:5). All 3 Hold Release Conditions met; 5 L2 render specs authored + placed.
-- **Next Action:** Run /magic.run main to execute Phase 4 (start Track A render-core — critical-path head; A01 RID+server gates B/C/D/E)
+- **Task:** T-4A01 Done — render core server/RID/tracker. Next: T-4A02.
+- **Next Action:** Run /magic.run main → T-4A02 RenderGraph (Kahn-DAG, barrier insertion, cycle guard); A02 gates D03/E01
 
 ## Progress
 
@@ -19,14 +19,15 @@
 Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
-Phase 4: [ 0/19] ░░░░░░░░   0% ▶ Active
-Overall: [69/88] ███████░  78%
+Phase 4: [ 1/19] ▌░░░░░░░   5% ▶ Active
+Overall: [70/88] ███████░  80%
 ```
 
 ## Recent Decisions
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-19 **Done:** T-4A01 — `pkg/render/backend.go` + `internal/render/{server,resources}.go`. `RID` = kind8|gen24|idx32 bit-pack (zero = nil). `Server`: sync `Allocate`, deferred `Initialize`/`Submit` with goroutine-bound inline fast-path (drains queue before inline cmd → global FIFO), `Drain` sole consumer, `Close`→`ErrRenderClosed`. `ResourceTracker`: refcount→0 records freed-frame; `EndFrame(f)` destroys only `freed < f` (never in-flight — INV-3); `Retain` cancels pending. `-race` clean (256-goroutine Submit dedup; deferred-delete timing). **Pattern:** internal/render imports pkg/render aliased `gpu` (RIDs caller-held → public). **Spec tightening (Bootstrap):** `Submit` returns `error` per §Error Handling. Track A root done — unblocks A02/A03/A04 then B/C/D/E.
 - 2026-04-26 **Done:** T-1B02 — `internal/ecs/component/{column,sparseset,table}.go`. Table uses 16 KB physical chunks, columns sorted by Align desc → Size desc → ID asc (deterministic), SOA layout with `alignUp` padding, swap-and-pop on RemoveRow, releases trailing empty chunk. SparseSet covers tag-stored (zero-size) components and fallback storage. 97.2% coverage. ADR-001 (chunk layout) deferred to pre-T-1T05.
 - 2026-04-26 **Done:** T-1B03 — `internal/ecs/component/{hooks,bundle,required}.go`. Hooks use a forward-declared `HookContext` (empty interface) to avoid circular import on world; concrete `*world.DeferredWorld` will satisfy it post-T-1C02. Required-component graph resolved at registration with three-state cycle detection (visiting set fires before typeToID short-circuit so already-registered nodes still trip on cycles). Bundle.Components flatten via reflect, supporting both value- and pointer-receiver implementations. 95.7% coverage. Track B complete.
 - 2026-04-26 **Pattern:** Lifecycle hook signature is `func(HookContext, entity.Entity)` with `HookContext` as an opaque interface. Future world packages will type-assert to the concrete deferred world; this avoids import cycles between component and world.

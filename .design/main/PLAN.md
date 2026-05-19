@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.9.0
-**Generated:** 2026-05-18
-**Based on:** .design/main/INDEX.md v2.27.0
+**Version:** 1.10.0
+**Generated:** 2026-05-19
+**Based on:** .design/main/INDEX.md v2.28.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Status:** Active
-**Mode:** Phases 1–3 specs `Stable` (38/89 — P1 ECS Core + P2 Framework + P3 Assets/Math/Concurrency; multi-repo l1/l2 stay Draft, RFC-gated). Phase 3 **Done** (18/18 tasks; C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Phase 4 STOP FACTOR lifted (POC validated + App Framework Stable) but Hold Release Condition #3 unmet — L2 render specs absent; atomic decomposition deferred per TASKS.md policy.
+**Mode:** Phases 1–3 specs `Stable` (38/94). Phase 3 **Done**. **Phase 4 Active** — all 3 Hold Release Conditions met (POC validated + App Framework Stable + 5 L2 render specs authored 2026-05-18); atomic-decomposed 2026-05-19 (19 tasks, Tracks A–E + T; critical path A → {B‖C} → D → E → T). P4 specs `Draft [Bootstrap]` — C29 holds Stable promotion until `examples/{3d,camera,shader}/` validate (T-4T05).
 
 ## Overview
 
@@ -75,15 +75,20 @@ Dependency analysis (Implements: chains):
 - [x] **Math System** ([l1-math-system.md](specifications/l1-math-system.md)) [L1] `Stable`
 - [x] **Math System (Go)** ([l2-math-system-go.md](specifications/l2-math-system-go.md)) [L2] `Stable`
 
-## Phase 4 — Render Pipeline `[Hold]` `[Bootstrap]`
+## Phase 4 — Render Pipeline (Active) `[Bootstrap]`
 
-*Render graph, mesh/image, materials, camera, post-processing. **STOP FACTOR lifted** (Phase 1 POC validated + Phase 2 App Framework `Stable` + Phase 3 Done). **Remaining hold — Release Condition #3:** L2 Go render specs are absent; implementation requires L2 contracts (you implement against L2, never L1 directly). **Next:** author L2 render specs via `/magic.spec`, then `/magic.task main "decompose phase-4"` (atomic decomposition deferred per TASKS.md per-phase policy).*
+*Render graph, mesh/image, materials, camera, post-processing. **Active** — all 3 Hold Release Conditions met (Phase 1 POC validated + Phase 2 App Framework `Stable` + 5 L2 render specs authored 2026-05-18). **Atomic decomposition complete (2026-05-19) — 19 tasks across Tracks A (Render Core, 4 — critical-path head), B (Mesh & Image, 3), C (Camera & Visibility, 2), D (Materials & Lighting, 3), E (Post-Processing, 2), T (Validation, 5); see [tasks/phase-4.md](tasks/phase-4.md). Critical path: A → {B‖C} → D → E → T.** First phase under the full C29 unblock — promotion requires `examples/{3d,camera,shader}/` (T-4T05).*
 
-- [ ] **Render Core** ([l1-render-core.md](specifications/l1-render-core.md)) [L1]
-- [ ] **Mesh & Image** ([l1-mesh-and-image.md](specifications/l1-mesh-and-image.md)) [L1]
-- [ ] **Materials & Lighting** ([l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md)) [L1]
-- [ ] **Camera & Visibility** ([l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md)) [L1]
-- [ ] **Post-Processing** ([l1-post-processing.md](specifications/l1-post-processing.md)) [L1]
+- [ ] **Render Core** ([l1-render-core.md](specifications/l1-render-core.md)) [L1] `[Bootstrap]`
+- [ ] **Render Core (Go)** ([l2-render-core-go.md](specifications/l2-render-core-go.md)) [L2] `[Bootstrap]`
+- [ ] **Mesh & Image** ([l1-mesh-and-image.md](specifications/l1-mesh-and-image.md)) [L1] `[Bootstrap]`
+- [ ] **Mesh & Image (Go)** ([l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md)) [L2] `[Bootstrap]`
+- [ ] **Camera & Visibility** ([l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md)) [L1] `[Bootstrap]`
+- [ ] **Camera & Visibility (Go)** ([l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md)) [L2] `[Bootstrap]`
+- [ ] **Materials & Lighting** ([l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md)) [L1] `[Bootstrap]`
+- [ ] **Materials & Lighting (Go)** ([l2-materials-and-lighting-go.md](specifications/l2-materials-and-lighting-go.md)) [L2] `[Bootstrap]`
+- [ ] **Post-Processing** ([l1-post-processing.md](specifications/l1-post-processing.md)) [L1] `[Bootstrap]`
+- [ ] **Post-Processing (Go)** ([l2-post-processing-go.md](specifications/l2-post-processing-go.md)) [L2] `[Bootstrap]`
 
 ## Phase 5 — Content Systems `[Hold]` `[Bootstrap]`
 
@@ -160,8 +165,8 @@ Dependency analysis (Implements: chains):
 | 1 — ECS Core POC | Done | — (27/27 complete) |
 | 2 — Framework | Done | — (24/24 complete; 13 specs Stable; multi-repo RFC pending) |
 | 3 — Assets, Math & Concurrency | Done | — (18/18 complete; 8 P3 specs Stable; C29 P3 gate satisfied by T-3T05) |
-| 4 — Render Pipeline | Hold | STOP FACTOR lifted; blocked solely on Release Cond. #3 — L2 render specs absent. Author via `/magic.spec`, then `/magic.task main "decompose phase-4"` |
-| 5 — Content Systems | Hold | Render Core Stable |
+| 4 — Render Pipeline | Active | — (current; 19 tasks decomposed 2026-05-19; all 3 Hold Release Conditions met; C29 P4 gate = `examples/{3d,camera,shader}/`) |
+| 5 — Content Systems | Hold | Phase 4 Render Core `Stable` (C29 P4 gate closed by T-4T05) |
 | 6 — UI, Tooling & Quality | Hold | Phase 1–3 Stable |
 | 7 — Networking & Hot-Reload | Hold | App Framework + Scheduler Stable |
 | 8 — Physics & Scripting | Hold | Render Core + Phase 3 Math Stable |
@@ -175,6 +180,9 @@ Dependency analysis (Implements: chains):
 - **Phase 3 Optimism Bias**: 18 atomic tasks across Tracks A–D + T. Track D (Math) is the largest (`l2-math-system-go.md` 435 lines, plus SIMD-accel parity) — sized at 4 tasks (T-3D01..04), not the default 2–3, to avoid under-estimation of the linear-algebra + primitives + color/curves + SIMD surface.
 - **Phase 3 Hidden Dependencies**: Tracks are **not** fully parallel — Track B's async asset loader (T-3B02) consumes Track A's `ComputePool` (T-3A03), so A03 gates B02. Tracks C (Scene) and D (Math) are file-independent and parallelizable; Scene reuses Phase 1 `typereg` (Done, no new dependency). Critical path: **A → B**.
 - **Phase 3 Cascade Risk**: If Track A slips, T-3B02 (async loader) and T-3T01 (`examples/async/`) are blocked → the C29 P3 gate (`examples/{async,asset,scene,math}/`) stays closed → P3 specs cannot promote Draft → Stable and Phases 4–8 remain `Hold` (C-002). Mitigation: schedule Track A first; strongest contributor owns the work-stealing deque (T-3A01).
+- **Phase 4 Optimism Bias**: 19 atomic tasks across Tracks A–E + T. Track A (Render Core) is sized at **4** tasks (not the default 2–3) — `l2-render-core-go.md` is the largest P4 surface (281 lines: server/RID, Kahn graph, SubApp+4-phase extract, RenderFeature+SoA) and is the hard dependency for every other track; under-sizing it is the dominant schedule risk.
+- **Phase 4 Hidden Dependencies**: Tracks are **not** fully parallel. T-4A01 (server/RID) gates T-4B03 (image upload) and T-4C01 (camera RenderTarget); T-4A02 (graph) gates T-4D03 (shadow pass) and T-4E01 (post chain); T-4A04 (SoA cull) gates T-4C02. Tracks B (mesh) and C (camera) are mutually file-independent and parallelize once A03 lands. D (materials) joins B+C; E (post) is the tail joining D. The render server (A01→A03) is the true critical path, not a single track.
+- **Phase 4 Cascade Risk**: If Track A slips, **every** downstream track and all three C29 examples (`examples/{3d,camera,shader}/`, T-4T01–03) are blocked → the C29 P4 gate stays closed → P4 specs cannot promote Draft → Stable and Phase 5 (Content Systems) stays `Hold` (depends on Render Core `Stable`). Mitigation: schedule Track A first; the strongest contributor owns the RID+command-queue server (T-4A01) and the Kahn-DAG graph (T-4A02). Render-world isolation (T-4T04) must be proven early — a leak there invalidates the extract-pattern invariant the whole phase rests on.
 - **C29 Cascade Risk (standing)**: Phases 4–8 are blocked on per-phase `examples/` gates; if a gate slips, the upper plan freezes. Each phase carries an explicit Validation Track (T-*) scoping the minimal gate.
 
 ## Document History
@@ -191,3 +199,4 @@ Dependency analysis (Implements: chains):
 | 1.7.0 | 2026-05-17 | Phase 2 → Done (24/24); Pre-Planning Stabilization promoted 13 P2 specs Draft → Stable (C29-style gate via `examples/ecs/framework/`); multi-repo l1/l2 stay Draft (RFC-gated, Exit Criterion #4). Phase 3 → Active with atomic decomposition. INDEX v2.26.0 (Stable 30/89) |
 | 1.8.0 | 2026-05-18 | Phase 3 atomic decomposition realized in `tasks/phase-3.md` (18 tasks: Tracks A:3 Task / B:3 Asset / C:3 Scene / D:4 Math / T:5 Validation) — deferral gate satisfied (Phase 2 = 100% Done). Resolved PLAN↔workbook drift (1.7.0 prose claimed decomposition complete while workbook was still "Pending"). Pre-Planning Stabilization: 0 promoted (C29 P3 `examples/` gate unmet — Bootstrap retained). Engine Snapshot synced (`.design/INDEX.md` **Engine Version:** → 2.1.27). INDEX v2.26.0 unchanged (Stable 30/89) |
 | 1.9.0 | 2026-05-18 | Post-Run Replan (rules/magic.md §5): Phase 3 → **Done** (18/18); resolved PLAN↔STATE mechanical drift (PLAN listed Phase 3 Active with unchecked items while STATE/TASKS/git = Done). Pre-Planning Stabilization promoted 8 P3 specs Draft → Stable (4 L1 + 4 L2: task, asset, scene, math) — C29 P3 gate satisfied by T-3T05 (`examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Phase 4 STOP FACTOR [C-002] lifted; remains `Hold` on Release Cond. #3 (L2 render specs absent) — decomposition deferred per TASKS.md per-phase policy. INDEX v2.27.0 (Stable 38/89), RULES parity v1.8.0 |
+| 1.10.0 | 2026-05-19 | Scoped+Guided `/magic.task main "decompose phase-4"`. Phase 4 `Hold` → **Active** — all 3 Hold Release Conditions met (POC validated + App Framework Stable + 5 L2 render specs authored 2026-05-18 via `/magic.spec`). Placed 5 orphan L2 render specs into Phase 4 under their L1 parents (resolves Pre-flight ORPHANED_SPEC ×5 + SYNC_GAP). Atomic decomposition: 19 tasks across Tracks A:4 Render Core / B:3 Mesh&Image / C:2 Camera / D:3 Materials / E:2 Post / T:5 Validation — critical path A → {B‖C} → D → E → T. Pre-Planning Stabilization: 0 promoted (C29 P4 `examples/{3d,camera,shader}/` gate unmet — Bootstrap retained). 5 new hard L2→L1 edges (24 total), acyclic. INDEX sync v2.27.0 → v2.28.0 (94 specs, Stable 38/94). |

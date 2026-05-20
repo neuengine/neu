@@ -14,10 +14,9 @@ import (
 // destroyed in-flight.
 type ResourceTracker struct {
 	backend gpu.RenderBackend
-
-	mu      sync.Mutex
 	refs    map[gpu.RID]int32
-	pending map[gpu.RID]uint64 // RID → frame in which refcount hit 0
+	pending map[gpu.RID]uint64
+	mu      sync.Mutex
 }
 
 // NewResourceTracker returns a tracker that destroys resources via backend.

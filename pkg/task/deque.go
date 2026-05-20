@@ -42,9 +42,9 @@ func consume(c *tcell) task {
 // two so index wrapping is a mask. Slots are atomic pointers: get/put are the
 // only accesses to slot memory and they are race-free by construction.
 type circArray struct {
+	buf  []atomic.Pointer[tcell]
 	size int64
 	mask int64
-	buf  []atomic.Pointer[tcell]
 }
 
 func newCircArray(logSize uint) *circArray {
@@ -75,9 +75,9 @@ func (a *circArray) grow(top, bottom int64) *circArray {
 // Nardelli (2013); Go's sequentially consistent sync/atomic on top, bottom
 // and the per-slot atomic pointers subsumes every required fence.
 type deque struct {
+	array  atomic.Pointer[circArray]
 	bottom atomic.Int64
 	top    atomic.Int64
-	array  atomic.Pointer[circArray]
 }
 
 func newDeque(logInitialSize uint) *deque {

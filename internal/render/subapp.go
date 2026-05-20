@@ -22,22 +22,20 @@ var ErrExtractReentry = errors.New("render: extract ran more than once this fram
 // resource prep lands in T-4A04); App-plugin wiring is a later integration
 // (this type is internal/render-scoped per spec §Go Package).
 type RenderSubApp struct {
-	backend  gpu.RenderBackend
-	server   *Server
-	tracker  *ResourceTracker
-	render   *world.World
-	graph    *RenderGraph
-	extracts extractRegistry
-
-	features []RenderFeature
-	views    []*RenderView
-	data     *RenderDataHolder
-
+	backend    gpu.RenderBackend
+	server     *Server
+	tracker    *ResourceTracker
+	render     *world.World
+	graph      *RenderGraph
+	data       *RenderDataHolder
+	features   []RenderFeature
+	views      []*RenderView
+	extracts   extractRegistry
+	trace      []Stage
 	frame      uint64
 	bound      bool
-	extractRun bool    // per-frame INV-4 guard
-	trace      []Stage // stages entered this frame (diagnostics/tests)
-	passStage  Stage   // stage during which graph passes executed
+	extractRun bool
+	passStage  Stage
 }
 
 // NewRenderSubApp returns a RenderSubApp fronting backend with a fresh

@@ -23,8 +23,8 @@ func (s *DynamicScene) Entities() []DynamicEntity { return s.entities }
 // DynamicEntity is the per-entity snapshot: the original EntityID and a list
 // of deep-copied component values together with their type metadata.
 type DynamicEntity struct {
-	ID         entity.EntityID
 	Components []ReflectedComponent
+	ID         entity.EntityID
 }
 
 // ReflectedComponent holds one component snapshot for a DynamicEntity.

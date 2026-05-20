@@ -29,8 +29,8 @@ func (id AssetID) IsValid() bool { return id != (AssetID{}) }
 // rc is the reference-count cell shared by all strong Handles for one slot.
 // onZero fires exactly once when the count reaches zero.
 type rc struct {
-	n      atomic.Int64
 	onZero func()
+	n      atomic.Int64
 }
 
 // Handle[A] is a typed reference-counted pointer to an asset slot.
@@ -38,8 +38,8 @@ type rc struct {
 //
 // Handles are value types — clone with Clone(), not assignment.
 type Handle[A any] struct {
+	r  *rc
 	id AssetID
-	r  *rc // nil = weak handle
 }
 
 // ID returns the slot identifier.

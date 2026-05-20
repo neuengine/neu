@@ -31,14 +31,12 @@ type command func()
 // server goroutine execute directly (no queue hop); calls from any other
 // goroutine are pushed onto a mutex-guarded queue and drained by [Server.Drain].
 type Server struct {
-	backend gpu.RenderBackend
-
-	mu     sync.Mutex
-	queue  []command
-	closed bool
-
-	nextIndex atomic.Uint64 // dense RID index source
-	srvGID    atomic.Int64  // 0 = unbound; set by Bind
+	backend   gpu.RenderBackend
+	queue     []command
+	nextIndex atomic.Uint64
+	srvGID    atomic.Int64
+	mu        sync.Mutex
+	closed    bool
 }
 
 // NewServer returns a Server fronting backend. Call [Server.Bind] from the

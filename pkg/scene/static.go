@@ -35,8 +35,8 @@ var (
 // It carries the build hash alongside the actual payload so the decoder can
 // reject stale blobs before attempting to interpret any data.
 type staticBlob struct {
-	Hash    uint64
 	Payload []byte
+	Hash    uint64
 }
 
 // StaticScene is an opaque snapshot of arbitrary serializable data.

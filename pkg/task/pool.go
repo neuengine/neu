@@ -34,10 +34,10 @@ const (
 // TaskPoolConfig configures pool sizing. Zero value is valid: compute auto =
 // NumCPU-1, IO 1..512.
 type TaskPoolConfig struct {
-	ComputeThreads *uint    // nil ⇒ auto (NumCPU-1)
-	IOMinThreads   uint     // default 1
-	IOMaxThreads   uint     // default 512
-	PercentOfCores *float64 // overrides ComputeThreads when set
+	ComputeThreads *uint
+	PercentOfCores *float64
+	IOMinThreads   uint
+	IOMaxThreads   uint
 }
 
 func (c TaskPoolConfig) resolveCompute() int {
@@ -69,32 +69,23 @@ func (c TaskPoolConfig) resolveIO() (minT, maxT uint) {
 // worker owns one local deque and runs on a single long-lived goroutine
 // (INV-1: no goroutine is spawned after NewTaskPools).
 type worker struct {
-	id    int
 	pool  *ComputePool
 	local *deque
+	id    int
 }
 
 // ComputePool is a bounded work-stealing pool. Exactly len(workers) goroutines
 // exist for its whole lifetime.
 type ComputePool struct {
-	workers []*worker
-	prio    [numPriorities]*deque // Critical, Normal, Low
-	notify  chan struct{}         // wake-one signal for parked workers
-	quit    chan struct{}
-	closed  atomic.Bool
-	wg      sync.WaitGroup
-
-	// submitMu serializes external pushes onto the shared priority deques.
-	// Chase-Lev pushBottom is single-owner; workers only ever steal() the
-	// head of prio (never popBottom), so a serialized pusher + many thieves
-	// is a valid configuration.
-	submitMu sync.Mutex
-
-	// Active RunScope deques. Workers steal from these so scope children run
-	// in parallel; the owning RunScope goroutine drains only its own deque
-	// (see scope.go) which keeps structured joins deadlock- and livelock-free.
-	scopeMu  sync.Mutex
+	prio     [numPriorities]*deque
+	notify   chan struct{}
+	quit     chan struct{}
+	workers  []*worker
 	scopeDqs []*deque
+	wg       sync.WaitGroup
+	submitMu sync.Mutex
+	scopeMu  sync.Mutex
+	closed   atomic.Bool
 }
 
 func (p *ComputePool) registerScope(d *deque) {

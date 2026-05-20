@@ -107,8 +107,8 @@ type (
 	}
 	// BindGroupDesc binds resources for a pipeline.
 	BindGroupDesc struct {
-		Layout    uint64
 		Resources []RID
+		Layout    uint64
 	}
 	// RenderPassDesc opens a render pass against the given color/depth targets.
 	RenderPassDesc struct {
@@ -117,8 +117,8 @@ type (
 	}
 	// DrawCmd is a single batched draw submission.
 	DrawCmd struct {
-		Pipeline    RID
 		BindGroups  []RID
+		Pipeline    RID
 		Vertex      RID
 		Index       RID
 		InstanceCnt uint32

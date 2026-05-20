@@ -22,14 +22,14 @@ type SerializedScene struct {
 
 // SerializedEntity is a single entity in the portable format.
 type SerializedEntity struct {
-	NameIdx    int                   `json:"nameIdx"`
 	Components []SerializedComponent `json:"components"`
+	NameIdx    int                   `json:"nameIdx"`
 }
 
 // SerializedComponent holds the type index and its field (name, value) index pairs.
 type SerializedComponent struct {
-	TypeIdx int      `json:"typeIdx"`
 	Props   [][2]int `json:"props"`
+	TypeIdx int      `json:"typeIdx"`
 }
 
 // EntityCount returns the number of entities in the scene.

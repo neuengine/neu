@@ -11,9 +11,9 @@ const DefaultMaxAccumulation = time.Second
 // Time is the primary per-frame time resource for gameplay logic.
 // It mirrors VirtualTime: it is pausable and scales with relativeSpeed.
 type Time struct {
+	startupTime time.Time
 	delta       time.Duration
 	elapsed     time.Duration
-	startupTime time.Time
 	frameCount  uint64
 }
 
@@ -38,10 +38,10 @@ func (t *Time) FrameCount() uint64 { return t.frameCount }
 // RealTime tracks unscaled wall-clock time. It never pauses, reverses, or scales.
 // Used for UI animations, audio, and profiling.
 type RealTime struct {
-	delta       time.Duration
-	elapsed     time.Duration
 	startupTime time.Time
 	lastInstant time.Time
+	delta       time.Duration
+	elapsed     time.Duration
 }
 
 // newRealTime creates a RealTime anchored to now.

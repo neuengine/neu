@@ -29,8 +29,8 @@ var ErrRenderGraphNotBuilt = errors.New("render: graph not built")
 // Minimal in 0.1.0 — the full frame context (extracted world, views) is wired
 // by T-4A03 (SubApp + 4-phase schedule). [Bootstrap]
 type PassContext struct {
-	Frame   uint64
 	Backend gpu.RenderBackend
+	Frame   uint64
 }
 
 // RenderPass is a single node in the [RenderGraph]. A pass declares the
@@ -59,9 +59,9 @@ type Barrier struct {
 // DAG, C30). Build is idempotent until passes change.
 type RenderGraph struct {
 	passes   []RenderPass
-	built    bool
 	order    []int
 	barriers []Barrier
+	built    bool
 }
 
 // AddPass registers p. Invalidates a prior Build.

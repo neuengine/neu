@@ -50,10 +50,10 @@ type HotReloadFailed struct {
 // ReloadMetrics carries timing breakdowns for a completed hot-reload cycle.
 type ReloadMetrics struct {
 	Type         Kind     `json:"type"`
+	EntitiesLost []string `json:"entities_lost"`
 	SnapshotMS   int64    `json:"snapshot_ms"`
 	BuildMS      int64    `json:"build_ms"`
 	RestoreMS    int64    `json:"restore_ms"`
-	EntitiesLost []string `json:"entities_lost"`
 }
 
 // ShaderError reports a runtime shader compilation error.
@@ -73,14 +73,14 @@ type ShaderReloaded struct {
 type NetworkAlert struct {
 	Type    Kind       `json:"type"`
 	Metric  string     `json:"metric"`
-	Level   AlertLevel `json:"level"`
-	Value   float64    `json:"value"`
 	Message string     `json:"message"`
+	Value   float64    `json:"value"`
+	Level   AlertLevel `json:"level"`
 }
 
 // DiagnosticSnapshot is a point-in-time metrics dump from the DiagnosticsStore.
 type DiagnosticSnapshot struct {
+	Metrics   map[string]float64 `json:"metrics"`
 	Type      Kind               `json:"type"`
 	Timestamp int64              `json:"timestamp"`
-	Metrics   map[string]float64 `json:"metrics"`
 }

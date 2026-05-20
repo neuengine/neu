@@ -8,20 +8,20 @@ import (
 // assetSlot holds one entry in the typed store.
 type assetSlot[A any] struct {
 	val   A
-	state LoadState
 	err   error
-	r     *rc // shared refcount; nil for programmatically-added entries
+	r     *rc
+	state LoadState
 }
 
 // Assets[A] is a typed ECS resource that stores and retrieves assets of type A
 // by AssetID. It tracks slot lifetimes via the refcount carried in Handle[A].
 // Not safe for concurrent read+write — the schedule executor serialises access.
 type Assets[A any] struct {
-	mu    sync.RWMutex
 	slots map[AssetID]*assetSlot[A]
-	gens  map[uint32]uint32 // idx → current generation for generational invalidation
-	free  []uint32          // reusable slot indices
-	next  uint32            // monotonically allocated when free list is empty
+	gens  map[uint32]uint32
+	free  []uint32
+	mu    sync.RWMutex
+	next  uint32
 }
 
 // NewAssets returns an empty Assets store.

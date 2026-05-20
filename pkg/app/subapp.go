@@ -11,9 +11,9 @@ import (
 // the sub-schedules execute (e.g. for a render SubApp).
 type SubApp struct {
 	w         *world.World
-	order     []string
 	schedules map[string]*scheduler.Schedule
 	extract   ExtractFn
+	order     []string
 	built     bool
 }
 

@@ -18,13 +18,12 @@ type inFlight struct {
 // VFS. It delegates IO work to the IOPool so asset decoding never blocks
 // compute workers.
 type AssetServer struct {
-	vfs     *VFS
-	io      *task.IOPool
-	loaders *loaderRegistry
-
+	vfs      *VFS
+	io       *task.IOPool
+	loaders  *loaderRegistry
+	stores   map[reflect.Type]any
+	inflight map[string]*inFlight
 	mu       sync.Mutex
-	stores   map[reflect.Type]any // reflect.Type(A) → *Assets[A]
-	inflight map[string]*inFlight // path → active load entry
 }
 
 // NewAssetServer returns a server backed by vfs and the IO pool.

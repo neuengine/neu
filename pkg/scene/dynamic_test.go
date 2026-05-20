@@ -39,9 +39,9 @@ func (m *mockWorldReader) EachArchetype(fn func(ArchetypeView) bool) {
 
 // mockWorldWriter implements WorldWriter and records spawned components.
 type mockWorldWriter struct {
+	components map[entity.EntityID][]any
 	nextIdx    uint32
 	nextGen    uint32
-	components map[entity.EntityID][]any // entity → component values
 }
 
 func newMockWorldWriter() *mockWorldWriter {

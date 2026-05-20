@@ -14,8 +14,8 @@ var (
 
 // mount associates a path prefix with a backing fs.FS provider.
 type mount struct {
-	prefix string
 	fsys   fs.FS
+	prefix string
 	rw     bool
 }
 

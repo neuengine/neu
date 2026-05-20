@@ -28,10 +28,10 @@ type RenderObject struct {
 // skip redundant work when its state has not advanced (l1-render-core §4.9
 // frame-counter tracking). VisibleObjects is reused across frames (0-alloc).
 type RenderView struct {
+	VisibleObjects     []int
+	LastFrameCollected uint64
 	ViewProjection     math.Mat4
 	CullingMask        RenderGroup
-	LastFrameCollected uint64
-	VisibleObjects     []int // DataIndex values that survived culling
 }
 
 // VisibilityGroup owns a set of render objects and culls them against views

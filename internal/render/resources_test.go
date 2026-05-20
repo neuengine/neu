@@ -9,8 +9,8 @@ import (
 
 // recBackend records Destroy calls for deferred-deletion assertions.
 type recBackend struct {
-	mu        sync.Mutex
 	destroyed []gpu.RID
+	mu        sync.Mutex
 }
 
 func (*recBackend) CreateBuffer(gpu.BufferDesc) gpu.RID       { return 0 }

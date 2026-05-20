@@ -4,8 +4,8 @@ import neu "github.com/neuengine/neu/pkg/math"
 
 // GizmoHit describes the result of a ray intersection with a gizmo.
 type GizmoHit struct {
+	Handle   string
 	Distance float32
-	Handle   string // which gizmo sub-handle was hit (e.g. "axis.x", "ring.y")
 }
 
 // GizmoWriter is the drawing API passed to GizmoPlugin.Draw. Defined as an

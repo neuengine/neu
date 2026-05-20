@@ -10,10 +10,11 @@ import (
 func tex(i uint32) gpu.RID { return gpu.MakeRID(gpu.KindTexture, i, 1) }
 
 type fakePass struct {
-	name     string
-	phase    gpu.RenderPhase
-	in, out  []gpu.RID
 	recorder *[]string
+	name     string
+	in       []gpu.RID
+	out      []gpu.RID
+	phase    gpu.RenderPhase
 }
 
 func (p *fakePass) Name() string           { return p.name }

@@ -16,9 +16,9 @@ const (
 type Timer struct {
 	duration      time.Duration
 	elapsed       time.Duration
+	timesFinished int
 	mode          TimerMode
 	finished      bool
-	timesFinished int
 	paused        bool
 }
 

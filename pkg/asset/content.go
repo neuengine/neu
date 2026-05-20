@@ -12,8 +12,8 @@ type resourceRecord struct {
 // When a refcount drops to zero the record is evicted from the cache.
 // All methods are goroutine-safe.
 type ContentManager struct {
-	mu     sync.Mutex
 	loaded map[string]*resourceRecord
+	mu     sync.Mutex
 }
 
 // NewContentManager returns an empty ContentManager.

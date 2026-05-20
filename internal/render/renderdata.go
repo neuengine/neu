@@ -36,9 +36,9 @@ func (c *typedColumn[T]) length() int { return len(c.data) }
 // across distinct dataIndex values are disjoint and lock-free (the cull relies
 // on this).
 type RenderDataHolder struct {
-	arrays      []dataColumn
 	definitions map[string]int
-	count       int // logical object count (every column is grown to this)
+	arrays      []dataColumn
+	count       int
 }
 
 // NewRenderDataHolder returns an empty holder.

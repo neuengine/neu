@@ -27,26 +27,26 @@ type RenderFeature interface {
 // (Draw) the command server. Minimal in 0.1.0 — fields grow with features.
 type (
 	CollectContext struct {
-		Frame  uint64
 		Render *world.World
+		Frame  uint64
 	}
 	ExtractContext struct {
-		Frame  uint64
 		Main   *world.World
 		Render *world.World
 		Data   *RenderDataHolder
+		Frame  uint64
 	}
 	PrepareContext struct {
-		Frame  uint64
 		Render *world.World
 		Data   *RenderDataHolder
 		Server *Server
+		Frame  uint64
 	}
 	DrawContext struct {
-		Frame   uint64
 		Backend gpu.RenderBackend
 		Server  *Server
-		Graph   *RenderGraph // features contribute passes here
+		Graph   *RenderGraph
+		Frame   uint64
 	}
 	FlushContext struct {
 		Frame uint64

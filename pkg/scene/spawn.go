@@ -111,8 +111,8 @@ func (s *SceneSpawner) DespawnInstance(id InstanceID, despawn func(entity.Entity
 // ─── internal helpers ────────────────────────────────────────────────────────
 
 type spawnedEntry struct {
-	scene  DynamicEntity
 	copies []reflect.Value
+	scene  DynamicEntity
 	entity entity.Entity
 }
 

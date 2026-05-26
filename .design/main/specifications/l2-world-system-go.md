@@ -428,6 +428,12 @@ var (
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| `world` | `internal/ecs/world/world.go` | Central World struct and execution runner. |
+| `archetype` | `internal/ecs/world/archetype.go` | Archetype definition and transition graph. |
+| `deferred` | `internal/ecs/world/deferred.go` | Restricted world API for lifecycle hooks and systems. |
+| `entity_ops` | `internal/ecs/world/entity_ops.go` | Spawning, despawning, and structural mutations. |
+| `resource` | `internal/ecs/world/resource.go` | Resource storage, RWMutex guard, and CRUD. |
+| `removed` | `internal/ecs/world/removed.go` | Removed components tracking logic. |
 
 <!-- Empty table = no canonical sources yet. Populate one row per authoritative file
      when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->

@@ -1,4 +1,4 @@
-﻿# Query System — Go Implementation
+# Query System — Go Implementation
 
 **Version:** 0.1.0
 **Status:** Stable
@@ -381,6 +381,16 @@ Commands are strictly buffered and only applied at explicit synchronization poin
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| `query` | `internal/ecs/query/query.go` | QueryState1 definition and modern iterator integrations. |
+| `query1` | `internal/ecs/query/query1.go` | Arity-1 generic query implementations. |
+| `query2` | `internal/ecs/query/query2.go` | Arity-2 generic query implementations. |
+| `query3` | `internal/ecs/query/query3.go` | Arity-3 generic query implementations. |
+| `access` | `internal/ecs/query/access.go` | Access descriptors and schedule conflict detection logic. |
+| `filter` | `internal/ecs/query/filter.go` | Concrete query filters: With, Without, Changed, Added. |
+| `mask` | `internal/ecs/query/mask.go` | Query bitmask archetype matching engine. |
+| `par` | `internal/ecs/query/par.go` | Multi-core parallel iteration using errgroups. |
+| `resolver` | `internal/ecs/query/resolver.go` | Type-to-column pointer caching resolver. |
+| `tuple` | `internal/ecs/query/tuple.go` | High-arity iteration tuple structures. |
 
 <!-- Empty table = no canonical sources yet. Populate one row per authoritative file
      when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->

@@ -1,4 +1,4 @@
-﻿# Component System — Go Implementation
+# Component System — Go Implementation
 
 **Version:** 0.1.0
 **Status:** Stable
@@ -348,6 +348,14 @@ func validateQueryAccess(registry, access Access) error:
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| `component` | `internal/ecs/component/component.go` | ComponentID and StorageType definitions. |
+| `registry` | `internal/ecs/component/registry.go` | ComponentRegistry mapping types to IDs. |
+| `bundle` | `internal/ecs/component/bundle.go` | Bundle interface and flattening logic. |
+| `hooks` | `internal/ecs/component/hooks.go` | Component lifecycle hooks definition. |
+| `required` | `internal/ecs/component/required.go` | Transitively resolved required components solver. |
+| `column` | `internal/ecs/component/column.go` | Type-erased column-based memory storage. |
+| `table` | `internal/ecs/component/table.go` | Table-based contiguous memory layout for archetypes. |
+| `sparseset` | `internal/ecs/component/sparseset.go` | Entity-indexed sparse set storage. |
 
 <!-- Empty table = no canonical sources yet. Populate one row per authoritative file
      when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->

@@ -39,4 +39,4 @@
 
 - [ ] сделать neuengine skills для разработчиков: Use our neuengine skills with your AI tools to generate high-performance neuengine code that follows best practices.
 - [ ] сделать расширения для ide vscode, jetbrains, zed и т.д.
-- [ ] сделать расширения для языков программирования, например для golang, python, js и т.д., чтобы разработчикам было проще использовать наш движок
+- [ ] сделать расширения для языков программирования, например для rust, python, js и т.д., чтобы разработчикам было проще использовать наш движок

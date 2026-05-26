@@ -1,4 +1,4 @@
-﻿# Entity System — Go Implementation
+# Entity System — Go Implementation
 
 **Version:** 0.1.0
 **Status:** Stable
@@ -258,6 +258,10 @@ func (a *EntityAllocator) AllocateMany(n int) []Entity
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| `entity` | `internal/ecs/entity/entity.go` | Generational EntityID and Entity structures. |
+| `allocator` | `internal/ecs/entity/allocator.go` | Generational freelist arena entity allocator. |
+| `set` | `internal/ecs/entity/set.go` | Dense array + sparse index EntitySet and generic EntityMap. |
+| `tags` | `internal/ecs/entity/tags.go` | Abstract entity tags and markers. |
 
 <!-- Empty table = no canonical sources yet. Populate one row per authoritative file
      when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->

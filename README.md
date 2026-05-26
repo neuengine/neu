@@ -1,6 +1,6 @@
 # Neu Engine
 
-![Engine Version](https://img.shields.io/badge/engine-v1.5.206-blue)
+![Engine Version](https://img.shields.io/badge/engine-v2.1.28-blue)
 ![Go Version](https://img.shields.io/badge/go-1.26.3-00ADD8)
 ![License](https://img.shields.io/badge/license-MIT-green)
 

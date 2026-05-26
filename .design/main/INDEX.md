@@ -146,5 +146,5 @@ Local registry of specifications for this workspace. Organized by priority batch
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-18
 - **Total Specifications**: 94 (65 L1 concept + 27 L2 Go + 1 test + 1 tool) | Stable: 38 | RFC: 0 | Draft: 56
-- **Engine Version:** 2.1.27
+- **Engine Version:** 2.1.28
 - **Last Stabilization:** 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

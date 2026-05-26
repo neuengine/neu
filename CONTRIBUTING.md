@@ -264,6 +264,45 @@ editor/
 └── CONTRIBUTING.md
 ```
 
+## 🛠️ Specification-Driven Development (SDD) & Automation
+
+This repository strictly follows the **Specification-Driven Development (SDD)** methodology powered by the **Magic Spec** engine. Code changes MUST always be preceded by or synchronized with formal architecture specifications under `.design/main/specifications/`.
+
+Developers and AI agents interact with the SDD system using the cross-platform executor (`node .magic/scripts/executor.js`) via the following core workflows:
+
+### 1. Project Ventilation (Analyze)
+
+Performs a deep scan of spec-to-code alignment, identifies gaps, rule violations, and shadow logic (design comments in code not captured in specs).
+
+* **Execution**:
+
+    ```bash
+    node .magic/scripts/executor.js analyze-coverage
+    # or build the spec dependency graph:
+    node .magic/scripts/executor.js build-spec-graph
+    ```
+
+* **Goal**: Ensure spec/code parity and detect architectural hotspots (God Nodes).
+
+### 2. Specification Management (Spec)
+
+Used to create, amend, and promote specifications from `Draft` -> `RFC` -> `Stable`. A spec is promoted to `Stable` only after satisfying validation criteria and populating the `Canonical References` section with concrete files.
+
+### 3. Task Planning & Execution (Task & Run)
+
+Orchestrates implementation tasks based on the active plan.
+
+* **Tasks**: Decomposes approved specs into atomic checklist items inside `TASKS.md` and phase task files.
+* **Run**: Guides the execution of tasks in strict phase-gate progression.
+
+### 4. Engine Integrity (C14)
+
+Any modification to the core engine/kernel files (inside `.magic/`) must trigger the engine version bump and metadata update:
+
+```bash
+node .magic/scripts/executor.js update-engine-meta
+```
+
 ## 🗝️ Core Architectural Decisions
 
 ### ECS Kernel Isolation

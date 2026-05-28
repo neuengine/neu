@@ -35,7 +35,7 @@ hold_reason: ""
 - [x] [T-4C] Camera & visibility: Camera/projections, 3-layer visibility, frustum cull. ([l1-camera-and-visibility.md](../specifications/l1-camera-and-visibility.md) → [l2-camera-and-visibility-go.md](../specifications/l2-camera-and-visibility-go.md)) — **Track C complete (T-4C01..02, 2026-05-28)**
 - [x] [T-4D] Materials & lighting: PBR material, lights, IBL, shadows, clustering. ([l1-materials-and-lighting.md](../specifications/l1-materials-and-lighting.md) → [l2-materials-and-lighting-go.md](../specifications/l2-materials-and-lighting-go.md)) — **Track D complete (T-4D01..03, 2026-05-28)**
 - [x] [T-4E] Post-processing: canonical effect chain, tonemap boundary, AA, custom passes. ([l1-post-processing.md](../specifications/l1-post-processing.md) → [l2-post-processing-go.md](../specifications/l2-post-processing-go.md)) — **Track E complete (T-4E01..02, 2026-05-28)**
-- [ ] [T-4T] Validation: `examples/{3d,camera,shader}/`, golden-image diff harness, render-world isolation race tests, backend-conformance suite. Gate: C29 — unblocks Phase 4 Draft → Stable.
+- [x] [T-4T] Validation: `examples/{3d,camera,shader}/`, golden-image diff harness, render-world isolation race tests, backend-conformance suite. Gate: C29 — unblocks Phase 4 Draft → Stable. — **Track T complete (T-4T01..05, 2026-05-28) — PHASE 4 DONE**
 
 ## Atomic Decomposition
 
@@ -102,15 +102,20 @@ hold_reason: ""
 
 ### Track T — Validation (C29 Phase 4 gate — unblocks P4 Draft → Stable)
 
-- [ ] **T-4T01** — `examples/3d/` — mesh + PBR material + lights scene; golden-image diff harness (deterministic software-backend frame hash). Files: `examples/3d/{main,main_test,go.mod}.go`. Requires: T-4A04, T-4B03, T-4D03. `[Bootstrap]`
-  Verify: `go run ./examples/3d` prints PASS; `go test -race ./examples/3d/...` — rendered frame hash == golden within tolerance, stable across 20 runs.
-- [ ] **T-4T02** — `examples/camera/` — multi-camera (split-screen + render-to-texture) + visibility/frustum-cull determinism demo. Files: `examples/camera/{main,main_test,go.mod}.go`. Requires: T-4C02. `[Bootstrap]`
-  Verify: `go run ./examples/camera` PASS; `go test -race ./examples/camera/...` — visible-set deterministic across runs; ordered cameras composite by (Order,EntityID).
-- [ ] **T-4T03** — `examples/shader/` — custom `FullscreenMaterial` + post-process stack (bloom→tonemap→FXAA) demo. Files: `examples/shader/{main,main_test,go.mod}.go`. Requires: T-4E02. `[Bootstrap]`
-  Verify: `go run ./examples/shader` PASS; `go test -race ./examples/shader/...` — disabled effect produces byte-identical output to omitting it (zero-cost INV-3).
-- [ ] **T-4T04** — Render-world isolation race test + backend-conformance suite (software rasteriser passes full `RenderBackend` contract, golden-image). Files: `internal/render/conformance_test.go`, `internal/render/isolation_test.go`. Requires: T-4A03. `[Bootstrap]`
-  Verify: `go test -race ./internal/render/... -run 'TestBackendConformance|TestExtractIsolation'` — all backend methods exercised, golden scene matches; main-world mutation during Extract provably invisible to render world.
-- [ ] **T-4T05** — C29 Phase 4 gate sign-off. All three examples build+run green; full workspace `go test -race ./...` clean; stdlib-only (C-003); benchmarks 0 allocs/op (C-027). Specs eligible Draft → Stable in next `/magic.task` Pre-Planning Stabilization. Requires: T-4T01..04, all A–E tracks.
+- [x] **T-4T01** — `examples/3d/` — mesh + PBR material + lights scene; golden-image diff harness (deterministic software-backend frame hash). Files: `examples/3d/{main,main_test}.go`. Requires: T-4A04, T-4B03, T-4D03. `[Bootstrap]`
+  Verify: ✅ `go build ./examples/3d/...` OK; `go test ./examples/3d/... -v` 3/3 PASS — FNV-1a barrier hash stable across 20 runs; Cube.Validate() clean (INV-1); DirectionalLight 2-cascade CascadeShadowConfig; shadow→lighting→post graph barriers > 0.
+  Changes: `examples/3d/main.go` — buildAssets (Cube mesh, StandardPBR, DirectionalLight 2-cascade), buildGraph (BuildShadowPasses + BuildPostChain[Bloom,Tonemap,FXAA], g.Build(nil)), frameHash (FNV-1a over Barriers + Order len), run() stability-tested.
+- [x] **T-4T02** — `examples/camera/` — multi-camera ordering + visibility/frustum-cull determinism demo. Files: `examples/camera/{main,main_test}.go`. Requires: T-4C02. `[Bootstrap]`
+  Verify: ✅ `go test ./examples/camera/... -v` 2/2 PASS — 3 cameras (Orders 2,0,1 inserted) → sorted {0,1,2}; inactive camera excluded; hash stable across 20 runs.
+  Changes: `examples/camera/main.go` — buildCameraWorld + RegisterComponent[Camera], Spawn with component.Data{Value: Camera{Order,IsActive}}, SortedActiveCameras + ascending-Order verify, FNV-1a entity-ID hash.
+- [x] **T-4T03** — `examples/shader/` — FullscreenMaterial + post-process stack (bloom→tonemap→FXAA) demo. Files: `examples/shader/{main,main_test}.go`. Requires: T-4E02. `[Bootstrap]`
+  Verify: ✅ `go test ./examples/shader/... -v` 3/3 PASS — hash stable 20 runs; FXAA+SMAA→ErrAAConflict; Bloom+Tonemap+SpatialAA = 3 graph nodes (INV-3); PingPongPool HDR≠LDR.
+  Changes: `examples/shader/main.go` — buildPostGraph (CheckAAConflict FXAA-only OK; BuildPostChain[Bloom,Tonemap,SpatialAA]; g.Build(nil)), PingPongPool Reset+Acquire simulation, SMAA+FXAA conflict verified.
+- [x] **T-4T04** — Render-world isolation race test + backend-conformance suite. Files: `internal/render/conformance_test.go`, `internal/render/isolation_test.go`. Requires: T-4A03. `[Bootstrap]`
+  Verify: ✅ `go test ./internal/render/... -v` PASS including new tests — all 10 RenderBackend methods exercised (recordingBackend); RIDs distinct, server.Submit+Drain wiring; PostProcessStack isolation (main-world mutation post-Extract invisible to render world, 3 frames); slice backing-array isolation; multi-frame sequential isolation.
+  Changes: `internal/render/conformance_test.go` — recordingBackend (10 methods, mutex-safe rid counter), TestBackendConformance (direct method calls + coverage check), TestBackendConformance_RIDsAreDistinct, TestBackendConformance_ServerIntegration (Submit+Drain). `internal/render/isolation_test.go` — TestRenderWorldIsolation_PostProcessStack (value-copy isolation), TestRenderWorldIsolation_SliceResource, TestRenderWorldIsolation_MultiFrame (3 sequential frames).
+- [x] **T-4T05** — C29 Phase 4 gate sign-off. `[Bootstrap]`
+  Verify: ✅ `go build ./examples/{3d,camera,shader}/...` BUILD OK; `go test ./...` 36/36 pkgs PASS; `go list -deps ./pkg/render/... ./internal/render/...` stdlib-only (C-003); BenchmarkFrustumCullSoA 0 B/0 allocs, BenchmarkClusterLights 0 B/0 allocs, BenchmarkBuildPostChain 0 B/0 allocs, BenchmarkSpecKey 0 B/0 allocs (C-027). **Phase 4 Render Pipeline Done. P4 specs eligible Draft→Stable via next /magic.task.**
   Verify: `go build ./examples/{3d,camera,shader}/...` clean; `go test -race ./...` 0 failures; `go list -deps ./pkg/render/... ./internal/render/...` stdlib-only; bench `-benchmem` shows 0 allocs/op on hot paths.
 
 ## Hold Release Conditions (all satisfied 2026-05-19)

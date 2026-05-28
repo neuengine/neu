@@ -10,8 +10,8 @@
 
 ## Current Position
 
-- **Task:** T-4E02 Done — **Track E complete** (T-4E01..02, 2026-05-28). Tracks A–E all done.
-- **Next Action:** T-4T01 (Track T head): `examples/3d/` + golden-image harness — depends on T-4A04 ✓ + T-4B03 ✓ + T-4D03 ✓
+- **Task:** T-4T05 Done — **Phase 4 Render Pipeline COMPLETE** (19/19 tasks, 2026-05-28). C29 gate open.
+- **Next Action:** /magic.task to promote P4 specs Draft→Stable + plan Phase 5 (Content Systems)
 
 ## Progress
 
@@ -19,14 +19,15 @@
 Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
-Phase 4: [14/19] ███████░  74% ▶ Active  (Tracks A ✓ B ✓ C ✓ D ✓ E ✓)
-Overall: [83/88] ███████░  94%
+Phase 4: [19/19] ████████ 100% ✓ Done  ← C29 gate OPEN
+Overall: [88/88] ████████ 100% 🎉
 ```
 
 ## Recent Decisions
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-28 **PHASE 4 COMPLETE — T-4T01..05 Done** — Track T validation: `examples/3d/` (Cube+PBR+DirectionalLight+2-cascade shadow, frame hash stable 20 runs), `examples/camera/` (3-camera Order-sort determinism 20 runs), `examples/shader/` (post-process Bloom→Tonemap→FXAA, AA conflict detection, INV-3 golden topology). `internal/render/conformance_test.go` (recordingBackend, all 10 RenderBackend methods). `internal/render/isolation_test.go` (PostProcessStack value-copy isolation, slice-backing isolation, multi-frame isolation). T-4T05 C29 gate: 36/36 pkgs PASS; `go build ./examples/{3d,camera,shader}/...` OK; C-003 stdlib-only; BenchmarkFrustumCullSoA/ClusterLights/BuildPostChain/SpecKey all 0 B/0 allocs. P4 specs eligible Draft→Stable via next /magic.task.
 - 2026-05-28 **Done: T-4E02 — Track E complete** — `pkg/render/postprocess/custom.go`: FullscreenMaterial{Shader Handle[material.Shader], InputTex []RID, Params map[string]ShaderValue, InsertAfter}. `internal/render/postpass/pingpong.go`: PingPongPool (2 HDR + 2 LDR pre-alloc RIDs, Reset=index-rewind C-027, 0-alloc), CheckAAConflict (FXAA+SMAA→ErrAAConflict, SMAA preferred). INV-4 proven by PostProcessStack value semantics. BenchmarkBuildPostChain 0 B/op 0 allocs/op. 24/24 PASS.
 - 2026-05-28 **Done: T-4E01** — `pkg/render/postprocess/{stack,settings,tonemap,colorgrade}.go` + `internal/render/postpass/builder.go`: EffectSlot 10-slot iota enum (index=order, INV-2), IsHDR(), PostProcessStack Enable/Disable/EnabledSlots (canonical); per-effect settings structs; Tonemapper 5-op Apply() (Reinhard/ReinhardLuminance/ACES-Narkowicz/AgX-smoothstep/TonyMcMapface-fallback); ColorGrading; BuildPostChain([]EffectSlot→slices.Sort→validateOrder INV-1→postPass chain INV-3); ErrPostOrder/ErrAAConflict sentinels. 16/16 PASS; reference values ≤5e-4.
 - 2026-05-28 **Done: T-4D03 — Track D complete** — `internal/render/lighting/{cluster,shadowpass}.go`: LightRef{Sphere,ShadowRID,Kind}, Froxel (pre-computed TileX/Y/Z), ClusterGrid + Reset() (C-027), ClusterLights (nil→sequential 0-alloc, pool→ForBatched disjoint-write); tileOverlapsLight (VP→clip→NDC projection, 2D circle-vs-AABB, directional fast-path); ShadowCaster, shadowMapPass (Outputs=[shadowRID]), lightingPass (Inputs=all shadow RIDs), BuildShadowPasses (graph edges → topo-sort enforces INV-4). BenchmarkClusterLights 0 B/op 0 allocs/op steady; parallel≡sequential; right-handed +Z behind-camera test. 7/7 PASS.

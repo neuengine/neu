@@ -1,7 +1,7 @@
 # Render Core
 
-**Version:** 0.5.0
-**Status:** Draft
+**Version:** 0.6.0
+**Status:** RFC
 **Layer:** concept
 
 ## Overview
@@ -93,13 +93,16 @@ RenderBackend
   EndRenderPass()
   Submit()
   Present()
+  Destroy(handle)
 ```
 
-Concrete backends (OpenGL, Vulkan, WebGPU, software rasteriser) implement this interface. The active backend is selected at app initialisation and cannot change at runtime.
+`Destroy` releases all GPU-side resources associated with the handle. Callers must ensure the handle is no longer referenced by in-flight commands before calling `Destroy`; the backend must not free resources that may still be used by the current frame. Concrete backends (OpenGL, Vulkan, WebGPU, software rasteriser) implement this interface. The active backend is selected at app initialisation and cannot change at runtime.
 
 ### 4.5 Server Pattern and Handle-Based API
 
 The render SubApp exposes its functionality through an opaque handle-based API. Callers never hold pointers to internal GPU objects — they hold `RID` (Resource ID) values, 64-bit opaque handles. The server owns all actual objects; callers interact exclusively through handles and a command queue.
+
+**Handle structure**: A resource handle packs three fields into a single opaque value: a **kind tag** (buffer, texture, pipeline, bind group, scenario, render view), a **dense index** (the server's internal slot number), and a **generation counter** (detects stale handles after slot reuse). Callers compare handles by value; they never inspect internal fields.
 
 **Command queue**: All calls from the main app to the render server are serialized through a thread-safe command queue. If the caller is on the server's dedicated goroutine, calls execute directly. Otherwise, the command is pushed onto the queue and (optionally) blocks for a return value.
 
@@ -230,23 +233,28 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 
 ## 5. Open Questions
 
-1. Should transient texture allocation use a pool or per-frame linear allocator?
-2. How should async pipeline compilation failures be surfaced to the developer?
-3. What is the maximum number of render passes before performance degrades on target hardware?
-4. Should physics and audio servers follow the same RID + command queue pattern as the render server, or is a simpler interface sufficient?
-5. Should the physics server use callback inversion (pushing a state context into body callbacks during integration) rather than exposing query-from-game-thread APIs?
+1. Should transient resource allocation use a pool or a per-frame linear allocator? The reference-counting tracker (§4.6) pins resources for pass duration; a linear allocator could reduce fragmentation for short-lived render targets.
+2. How should async pipeline compilation failures be surfaced to the developer? (Fallback pipeline is used in the interim — surfacing channel TBD.)
+3. What is the maximum number of render passes before performance degrades on target hardware? Profile-driven; no hard limit defined yet.
+
+> **Resolved — Q4**: Physics and audio servers follow the same handle + command queue pattern as the render server (stated in §4.5). This provides consistent thread-safe separation of frontend logic from backend computation across all server subsystems.
+>
+> **Resolved — Q5**: Physics callback inversion (pushing a state context into body callbacks during integration) is a physics-specific architecture decision. Moved to `l1-physics-system.md`.
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- Downstream agents: read ALL files below before implementing or extending the render core. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| `[BACKEND]` | `pkg/render/backend.go` | `RenderBackend` interface, `RID`, `ResourceKind`, descriptors — public contract |
+| `[GRAPH]` | `internal/render/graph.go` | `RenderGraph`, Kahn DAG build, barrier insertion, `ErrRenderGraphCycle` |
+| `[SERVER]` | `internal/render/server.go` | `Server`: RID allocator, command queue, two-phase create pattern |
+| `[RESOURCES]` | `internal/render/resources.go` | `ResourceTracker`: ref-count lifecycle, deferred deletion |
+| `[PHASES]` | `internal/render/phases.go` | Four-phase render schedule (Collect / Extract / Prepare / Draw) |
+| `[FEATURE]` | `internal/render/feature.go` | `RenderFeature` interface, `RenderObject` proxy pattern |
+| `[VISIBILITY]` | `internal/render/visibility.go` | `VisibilityGroup`, parallel frustum cull, culling mask |
+| `[RENDERDATA]` | `internal/render/renderdata.go` | `RenderDataHolder` SoA: `StaticKey`/`DynamicKey` arrays |
 
 ## Document History
 
@@ -256,4 +264,4 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 | 0.3.0 | 2026-03-26 | Added server pattern (RID + command queue), two-phase resource creation, Scenario concept, physics callback open questions |
 | 0.4.0 | 2026-03-26 | Added multi-phase pipeline (Collect/Extract/Prepare/Draw), RenderFeature, visibility culling, struct-of-arrays render data |
 | 0.5.0 | 2026-03-29 | Synchronized version with INDEX.md and applied registry sanitization (MD032/MD022) |
-| — | — | Planned examples: `examples/3d/` and `examples/shader/` |
+| 0.6.0 | 2026-05-28 | RFC promotion: added `Destroy(handle)` to backend interface (§4.4); added handle bit-layout note (§4.5); resolved Q4 (server pattern parity) and Q5 (physics callbacks moved to l1-physics-system.md); populated Canonical References with Phase 4 bootstrap files. Planned examples: `examples/3d/`, `examples/shader/`. |

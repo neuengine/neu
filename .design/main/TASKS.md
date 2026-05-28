@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.10.0
-**Generated:** 2026-05-19
-**Based on:** .design/main/PLAN.md v1.10.0
+**Version:** 1.11.0
+**Generated:** 2026-05-28
+**Based on:** .design/main/PLAN.md v1.11.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Phases 1–3 specs → `Stable` (38/94). Phase 3 **Done**. **Phase 4 Active** — all 3 Hold Release Conditions met; atomic-decomposed 2026-05-19 (19 tasks, Tracks A–E + T; critical path A → {B‖C} → D → E → T). P4 specs `Draft [Bootstrap]` — C29 holds Stable until `examples/{3d,camera,shader}/` validate (T-4T05). Execute via `/magic.run main`.
+**Mode:** Phases 1–3 specs → `Stable` (40/96). Phase 3 **Done**. **Phase 4 Active** — all 3 Hold Release Conditions met; atomic-decomposed 2026-05-19 (19 tasks, Tracks A–E + T; critical path A → {B‖C} → D → E → T). `l1-render-core` → **RFC** (2026-05-28). P4 L2 specs `Draft [Bootstrap]` — C29 holds Stable until `examples/{3d,camera,shader}/` validate (T-4T05). 2 retroactive P1 L2 specs Stable (`l2-pool-go`, `l2-view-go`). Execute via `/magic.run main`.
 
 ## Overview
 
@@ -33,7 +33,7 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 
 ## Cross-Phase Status Counters
 
-- **Total atomic tasks (Phase 1)**: 27 (Tracks A–I + T) — Done
+- **Total atomic tasks (Phase 1)**: 27 (Tracks A–I + T) — Done *(+2 retroactive Stable L2 specs: `l2-pool-go`, `l2-view-go` — debt-recovery, no new atomic tasks required)*
 - **Total atomic tasks (Phase 2)**: 24 (Tracks A–G + T) — decomposed 2026-05-16; critical path E → F
 - **Total atomic tasks (Phase 3)**: 18 (Tracks A:3 / B:3 / C:3 / D:4 / T:5) — **Done 2026-05-18** (18/18; critical path A → B held; C29 P3 gate closed by T-3T05)
 - **Total atomic tasks (Phase 4)**: 19 (Tracks A:4 / B:3 / C:2 / D:3 / E:2 / T:5) — decomposed 2026-05-19; critical path A → {B‖C} → D → E → T
@@ -42,8 +42,9 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 
 ## Meta Information
 
-- **Last Updated**: 2026-05-19
+- **Last Updated**: 2026-05-28
 - **Maintainer**: Core Team
+- **Registry Sync (2026-05-28)**: INDEX v2.28.0 → v2.29.0 (94 → 96 specs). Resolved ORPHANED_SPEC ×2 + SYNC_GAP: placed `l2-pool-go` and `l2-view-go` (Stable, debt-recovery P1 L2 specs) into Phase 1. `l1-render-core` promoted Draft → RFC (v0.5.0 → v0.6.0). PLAN.md v1.10.0 → v1.11.0. Pre-Planning Stabilization: 0 newly promoted (pool/view already Stable from magic.spec session; Phase 4-8 Draft specs not yet MVC-promotable without C29 gate). No new atomic task IDs — retroactive specs require no implementation work.
 - **Phase 4 Atomic Decomposition (2026-05-19)**: 19 atomic tasks written to `tasks/phase-4.md` — Track A (Render Core, 4: server/RID+backend, Kahn-DAG graph, SubApp+4-phase extract, RenderFeature+SoA cull — critical-path head), Track B (Mesh & Image, 3: mesh/layout, primitives/skin, image/atlas/upload — consumes A server), Track C (Camera & Visibility, 2: camera/projection/frustum, 3-layer visibility/cull), Track D (Materials & Lighting, 3: material/PBR/speckey, lights/IBL/shadow, clustering/shadow-pass), Track E (Post-Processing, 2: effect-chain/tonemap, ping-pong/custom/AA), Track T (Validation, 5: examples/{3d,camera,shader} + isolation/conformance + C29 gate sign-off). Scoped+Guided `/magic.task main "decompose phase-4"` — all 3 Hold Release Conditions met (POC + App Framework Stable + 5 L2 specs authored 2026-05-18). Resolved Pre-flight ORPHANED_SPEC ×5 + SYNC_GAP (placed L2 render specs into Phase 4, INDEX v2.27.0 → v2.28.0). Pre-Planning Stabilization: 0 promoted (C29 P4 gate unmet — Bootstrap retained). Execute via `/magic.run main`.
 - **Phase 3 Atomic Decomposition (2026-05-18)**: 18 atomic tasks written to `tasks/phase-3.md` — Track A (Task System, 3: deque/pool, scope/handle, executor/plugin — critical-path head), Track B (Asset System, 3: handle/store, loader/VFS/async, content/watch — consumes A's pool), Track C (Scene System, 3: static/codec, dynamic/spawner, remap), Track D (Math System, 4: linear, affine/primitives, color/curves, SIMD-parity), Track T (Validation, 5: async/asset/scene/math examples + C29 gate sign-off). Deferral condition (Phase 2 ≥ 50% Done) satisfied — Phase 2 is 100% Done. Resolved PLAN↔workbook drift: PLAN v1.7.0 prose claimed decomposition complete while the workbook still read "Pending". Pre-Planning Stabilization: 0 specs promoted (C29 P3 `examples/` gate unmet — Bootstrap retained for P3+). Execute via `/magic.run main`.
 - **RULES Parity (✅ resolved 2026-05-18)**: `.design/RULES.md` header now reads `**Version:** 1.8.0`, consistent with its Document History (C31 — sync-docs Safety Gate) and §7 body. Prior header/content drift (1.7.1 lagging 1.8.0) reconciled. Recorded parity in this header: RULES v1.8.0.

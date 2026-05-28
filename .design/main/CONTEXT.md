@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-05-19
+**Generated:** 2026-05-28
 
 ## Active Technologies
 
@@ -11,13 +11,10 @@
 ```plaintext
 .
 ├── .design/
-│   ├── .cache/
-│   ├── .graph-cache/
 │   ├── .version
 │   ├── INDEX.md
 │   ├── RULES.md
 │   ├── main/
-│   ├── wiki/
 │   └── workspace.json
 ├── cmd/
 │   └── cli/
@@ -39,7 +36,8 @@
 │   ├── ui/
 │   └── world/
 ├── internal/
-│   └── ecs/
+│   ├── ecs/
+│   └── render/
 └── pkg/
     ├── app/
     ├── asset/
@@ -47,6 +45,7 @@
     ├── editor/
     ├── math/
     ├── protocol/
+    ├── render/
     ├── scene/
     └── task/
 ```
@@ -54,3 +53,4 @@
 ## Recent Changes
 
 No recent changelog found.
+

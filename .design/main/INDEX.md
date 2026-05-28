@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.28.0
+**Version:** 2.29.0
 **Status:** Active
 
 ## Overview
@@ -17,9 +17,11 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-entity-system-go.md](specifications/l2-entity-system-go.md) | Entity Go implementation: EntityID, Entity, EntityAllocator, EntitySet, EntityMap | Stable | go | 0.1.0 |
 | [l1-component-system.md](specifications/l1-component-system.md) | Component registration, storage strategies, hooks, required components | Stable | concept | 0.4.0 |
 | [l2-component-system-go.md](specifications/l2-component-system-go.md) | Component Go implementation: ComponentID, ComponentRegistry, hooks, bundles, storage types | Stable | go | 0.1.0 |
-| [l1-query-system.md](specifications/l1-query-system.md) | Data access: queries, filters, iteration, access tracking | Stable | concept | 0.1.0 |
+| [l1-query-system.md](specifications/l1-query-system.md) | Data access: queries, filters, iteration, access tracking | Stable | concept | 0.2.1 |
 | [l2-query-system-go.md](specifications/l2-query-system-go.md) | Query Go implementation: QueryState, filters, Access, ParIter, multi-arity generics | Stable | go | 0.1.0 |
-| [l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Stable | concept | 0.2.0 |
+| [l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md) | ECS Optimization: bitmask tagging, destructors, cached views, frame delay mitigation, object pooling | Stable | concept | 0.3.1 |
+| [l2-pool-go.md](specifications/l2-pool-go.md) | Pool Go impl: `Pool[T]`, `SlicePool[T]` sync.Pool wrappers, C27 hot-path compliance (Implements: l1-ecs-lifecycle-patterns) | Stable | go | 0.1.0 |
+| [l2-view-go.md](specifications/l2-view-go.md) | Entity view cache Go impl: reactive archetype subscription, range-over-func iteration, tagger helpers (Implements: l1-ecs-lifecycle-patterns) | Stable | go | 0.1.0 |
 | [l1-system-scheduling.md](specifications/l1-system-scheduling.md) | System execution, DAG scheduling, parallel executor, system sets | Stable | concept | 0.4.0 |
 | [l2-system-scheduling-go.md](specifications/l2-system-scheduling-go.md) | Go impl: System interface, DAG scheduler, executors, run conditions | Stable | go | 0.1.0 |
 | [l1-command-system.md](specifications/l1-command-system.md) | Deferred mutations, command buffers, apply points | Stable | concept | 0.1.0 |
@@ -66,7 +68,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | Draft | concept | 0.5.0 |
+| [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | RFC | concept | 0.6.0 |
 | [l2-render-core-go.md](specifications/l2-render-core-go.md) | Go impl: RID+command-queue server, RenderBackend interface, Kahn-DAG graph, SubApp extract isolation, 4-phase schedule, SoA RenderDataHolder (Implements: l1-render-core) | Draft | go | 0.1.0 |
 | [l1-mesh-and-image.md](specifications/l1-mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Draft | concept | 0.1.0 |
 | [l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md) | Go impl: immutable attribute-map Mesh, validated index/skin invariants, FNV layout hash, stdlib decode on IOPool, shelf-pack DynamicAtlas (Implements: l1-mesh-and-image) | Draft | go | 0.1.0 |
@@ -144,7 +146,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-05-18
-- **Total Specifications**: 94 (65 L1 concept + 27 L2 Go + 1 test + 1 tool) | Stable: 38 | RFC: 0 | Draft: 56
+- **Last Updated**: 2026-05-28
+- **Total Specifications**: 96 (65 L1 concept + 29 L2 Go + 1 test + 1 tool) | Stable: 40 | RFC: 1 | Draft: 55
 - **Engine Version:** 2.1.28
-- **Last Stabilization:** 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)
+- **Last Stabilization:** 2026-05-28 — P1 ECS (2 new L2: `l2-pool-go`, `l2-view-go`) promoted directly to Stable (L1 parent Stable + MVC + C9 Trust Mode). `l1-render-core` promoted Draft → RFC (v0.6.0: +`Destroy`, +handle layout, +Canonical References, Q4/Q5 resolved). Prior: 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

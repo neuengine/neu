@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.10.0
-**Generated:** 2026-05-19
-**Based on:** .design/main/INDEX.md v2.28.0
+**Version:** 1.11.0
+**Generated:** 2026-05-28
+**Based on:** .design/main/INDEX.md v2.29.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Status:** Active
-**Mode:** Phases 1–3 specs `Stable` (38/94). Phase 3 **Done**. **Phase 4 Active** — all 3 Hold Release Conditions met (POC validated + App Framework Stable + 5 L2 render specs authored 2026-05-18); atomic-decomposed 2026-05-19 (19 tasks, Tracks A–E + T; critical path A → {B‖C} → D → E → T). P4 specs `Draft [Bootstrap]` — C29 holds Stable promotion until `examples/{3d,camera,shader}/` validate (T-4T05).
+**Mode:** Phases 1–3 specs `Stable` (40/96). Phase 3 **Done**. **Phase 4 Active** — all 3 Hold Release Conditions met (POC validated + App Framework Stable + 5 L2 render specs authored 2026-05-18); atomic-decomposed 2026-05-19 (19 tasks, Tracks A–E + T; critical path A → {B‖C} → D → E → T). `l1-render-core` promoted Draft → **RFC** (2026-05-28). P4 L2 specs `Draft [Bootstrap]` — C29 holds Stable promotion until `examples/{3d,camera,shader}/` validate (T-4T05). 2 retroactive P1 L2 specs added (`l2-pool-go`, `l2-view-go`, Stable — debt recovery 2026-05-28).
 
 ## Overview
 
@@ -41,6 +41,8 @@ Dependency analysis (Implements: chains):
 - [x] **Type Registry** ([l1-type-registry.md](specifications/l1-type-registry.md)) [L1] `Stable`
 - [x] **Type Registry (Go)** ([l2-type-registry-go.md](specifications/l2-type-registry-go.md)) [L2] `Stable`
 - [x] **ECS Lifecycle Patterns** ([l1-ecs-lifecycle-patterns.md](specifications/l1-ecs-lifecycle-patterns.md)) [L1] `Stable`
+- [x] **Object Pool (Go)** ([l2-pool-go.md](specifications/l2-pool-go.md)) [L2] `Stable` *(retroactive 2026-05-28 — C27 sync.Pool wrappers; code pre-existed in `internal/ecs/pool/`)*
+- [x] **Entity View Cache (Go)** ([l2-view-go.md](specifications/l2-view-go.md)) [L2] `Stable` *(retroactive 2026-05-28 — T-1I01 reactive archetype cache; code pre-existed in `internal/ecs/view/`)*
 
 ## Phase 2 — Framework Primitives (Done) `[Bootstrap]`
 
@@ -79,12 +81,12 @@ Dependency analysis (Implements: chains):
 
 *Render graph, mesh/image, materials, camera, post-processing. **Active** — all 3 Hold Release Conditions met (Phase 1 POC validated + Phase 2 App Framework `Stable` + 5 L2 render specs authored 2026-05-18). **Atomic decomposition complete (2026-05-19) — 19 tasks across Tracks A (Render Core, 4 — critical-path head), B (Mesh & Image, 3), C (Camera & Visibility, 2), D (Materials & Lighting, 3), E (Post-Processing, 2), T (Validation, 5); see [tasks/phase-4.md](tasks/phase-4.md). Critical path: A → {B‖C} → D → E → T.** First phase under the full C29 unblock — promotion requires `examples/{3d,camera,shader}/` (T-4T05).*
 
-- [ ] **Render Core** ([l1-render-core.md](specifications/l1-render-core.md)) [L1] `[Bootstrap]`
+- [ ] **Render Core** ([l1-render-core.md](specifications/l1-render-core.md)) [L1] `RFC [Bootstrap]` *(Draft → RFC 2026-05-28: +Destroy, +RID layout, +Canonical Refs, Q4/Q5 resolved)*
 - [ ] **Render Core (Go)** ([l2-render-core-go.md](specifications/l2-render-core-go.md)) [L2] `[Bootstrap]`
-- [ ] **Mesh & Image** ([l1-mesh-and-image.md](specifications/l1-mesh-and-image.md)) [L1] `[Bootstrap]`
-- [ ] **Mesh & Image (Go)** ([l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md)) [L2] `[Bootstrap]`
-- [ ] **Camera & Visibility** ([l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md)) [L1] `[Bootstrap]`
-- [ ] **Camera & Visibility (Go)** ([l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md)) [L2] `[Bootstrap]`
+- [x] **Mesh & Image** ([l1-mesh-and-image.md](specifications/l1-mesh-and-image.md)) [L1] `[Bootstrap]` *(Track B code complete 2026-05-28: T-4B01/B02/B03 Done)*
+- [x] **Mesh & Image (Go)** ([l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md)) [L2] `[Bootstrap]` *(Track B code complete 2026-05-28)*
+- [x] **Camera & Visibility** ([l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md)) [L1] `[Bootstrap]` *(Track C code complete 2026-05-28: T-4C01/C02 Done)*
+- [x] **Camera & Visibility (Go)** ([l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md)) [L2] `[Bootstrap]` *(Track C code complete 2026-05-28)*
 - [ ] **Materials & Lighting** ([l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md)) [L1] `[Bootstrap]`
 - [ ] **Materials & Lighting (Go)** ([l2-materials-and-lighting-go.md](specifications/l2-materials-and-lighting-go.md)) [L2] `[Bootstrap]`
 - [ ] **Post-Processing** ([l1-post-processing.md](specifications/l1-post-processing.md)) [L1] `[Bootstrap]`

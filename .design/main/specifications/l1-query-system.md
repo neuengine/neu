@@ -1,6 +1,6 @@
 ﻿# Query System
 
-**Version:** 0.1.0
+**Version:** 0.2.1
 **Status:** Stable
 **Layer:** concept
 
@@ -125,15 +125,12 @@ Special query types with broader access:
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- Downstream agents: read ALL files below before implementing or extending the query system. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| `[QUERY]` | `internal/ecs/query/` | `QueryState`, `Mask`, `Access`, `ErrInvalidAccess` — core query primitives |
+| `[VIEW]` | `internal/ecs/view/view.go` | `View` — reactive archetype cache built on top of `QueryState` (INV-3) |
 
 ## Document History
 
@@ -141,3 +138,4 @@ Special query types with broader access:
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft |
 | 0.2.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |
+| 0.2.1 | 2026-05-28 | Patch: synced file header to 0.2.0 (missed bump); populated Canonical References with `internal/ecs/query/` and `view.go`. |

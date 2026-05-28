@@ -1,6 +1,6 @@
 ﻿# ECS Lifecycle and Optimization Patterns
 
-**Version:** 0.2.0
+**Version:** 0.3.1
 **Status:** Stable
 **Layer:** concept
 
@@ -166,15 +166,13 @@ Function Release(pool, entity):
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- Downstream agents: read ALL files below before implementing or extending lifecycle patterns. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| `[POOL]` | `internal/ecs/pool/pool.go` | `Pool[T]`, `SlicePool[T]` — C27 hot-path sync.Pool wrappers (§5.6) |
+| `[VIEW]` | `internal/ecs/view/view.go` | `View` reactive archetype cache — INV-3 implementation (§5.3) |
+| `[TAGGER]` | `internal/ecs/view/tagger.go` | `TagOf[T]`, `MaskOf[T]` component ID helpers used by view construction |
 
 ## Document History
 
@@ -183,4 +181,4 @@ Function Release(pool, entity):
 | 0.1.0 | 2026-03-27 | Initial Draft of lifecycle and optimization patterns |
 | 0.2.0 | 2026-03-28 | Added frame delay mitigation strategies, entity object pooling pattern |
 | 0.3.0 | 2026-05-14 | Phase 1 implementation complete; validated by `examples/ecs/poc` |
-| [example](examples/ecs-lifecycle) | | TBD: Placeholder for correlation |
+| 0.3.1 | 2026-05-28 | Patch: synced file header to 0.3.0 (missed bump); populated Canonical References with `pool.go`, `view.go`, `tagger.go` following L2 spec creation. |

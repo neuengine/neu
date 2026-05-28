@@ -89,8 +89,8 @@ Dependency analysis (Implements: chains):
 - [x] **Camera & Visibility (Go)** ([l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md)) [L2] `[Bootstrap]` *(Track C code complete 2026-05-28)*
 - [x] **Materials & Lighting** ([l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md)) [L1] `[Bootstrap]` *(Track D code complete 2026-05-28: T-4D01/D02/D03 Done)*
 - [x] **Materials & Lighting (Go)** ([l2-materials-and-lighting-go.md](specifications/l2-materials-and-lighting-go.md)) [L2] `[Bootstrap]` *(Track D code complete 2026-05-28)*
-- [ ] **Post-Processing** ([l1-post-processing.md](specifications/l1-post-processing.md)) [L1] `[Bootstrap]`
-- [ ] **Post-Processing (Go)** ([l2-post-processing-go.md](specifications/l2-post-processing-go.md)) [L2] `[Bootstrap]`
+- [x] **Post-Processing** ([l1-post-processing.md](specifications/l1-post-processing.md)) [L1] `[Bootstrap]` *(Track E code complete 2026-05-28: T-4E01/E02 Done)*
+- [x] **Post-Processing (Go)** ([l2-post-processing-go.md](specifications/l2-post-processing-go.md)) [L2] `[Bootstrap]` *(Track E code complete 2026-05-28)*
 
 ## Phase 5 — Content Systems `[Hold]` `[Bootstrap]`
 

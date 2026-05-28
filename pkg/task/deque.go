@@ -140,12 +140,3 @@ func (d *deque) steal() (t task, ok bool) {
 	}
 	return consume(c), true
 }
-
-// approxLen reports a non-authoritative element count for metrics/heuristics.
-func (d *deque) approxLen() int64 {
-	n := d.bottom.Load() - d.top.Load()
-	if n < 0 {
-		return 0
-	}
-	return n
-}

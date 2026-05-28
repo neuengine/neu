@@ -241,7 +241,7 @@ func TestVFSPriorityShadow(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	b, _ := io.ReadAll(f)
 	if string(b) != "patched" {
 		t.Errorf("got %q, want %q (priority shadowing broken)", b, "patched")

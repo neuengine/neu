@@ -62,11 +62,11 @@ func run() (uint64, error) {
 	loopTarget := &tweenTarget{}
 	done, _ = internaltween.AdvanceTween(loop, acc, loopTarget, 1.5)
 	if done {
-		return 0, fmt.Errorf("Loop tween should never report done")
+		return 0, fmt.Errorf("loop tween should never report done")
 	}
 	// After 1.5 cycles the linear easing should put X near 5.
 	if math.Abs(float64(loopTarget.X-5)) > 0.02 {
-		return 0, fmt.Errorf("Loop at 1.5s: X=%v, want ~5", loopTarget.X)
+		return 0, fmt.Errorf("loop at 1.5s: X=%v, want ~5", loopTarget.X)
 	}
 
 	// --- PingPong: reverses at duration.
@@ -77,9 +77,11 @@ func run() (uint64, error) {
 		LoopMode:   pkgtween.PingPong,
 	}
 	ppTarget := &tweenTarget{}
-	internaltween.AdvanceTween(pp, acc, ppTarget, 1.5)
+	if _, err := internaltween.AdvanceTween(pp, acc, ppTarget, 1.5); err != nil {
+		return 0, fmt.Errorf("pingpong advance: %w", err)
+	}
 	if math.Abs(float64(ppTarget.X-5)) > 0.02 {
-		return 0, fmt.Errorf("PingPong at 1.5s: X=%v, want ~5", ppTarget.X)
+		return 0, fmt.Errorf("pingpong at 1.5s: X=%v, want ~5", ppTarget.X)
 	}
 
 	// --- INV-1 self-cleanup assertion (despawn-on-done).

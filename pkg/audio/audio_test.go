@@ -54,7 +54,7 @@ func TestAudioSource_ZeroValue(t *testing.T) {
 func TestSpatialAudioSink_EmbedsSink(t *testing.T) {
 	var s SpatialAudioSink
 	s.Volume = 0.5
-	if s.AudioSink.Volume != 0.5 {
+	if s.Volume != 0.5 {
 		t.Error("SpatialAudioSink should embed AudioSink by value")
 	}
 }

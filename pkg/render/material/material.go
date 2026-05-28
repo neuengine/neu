@@ -88,13 +88,11 @@ func (p *MaterialParameters) Sanitize() {
 // Material is a surface description: shader + typed parameters + alpha mode.
 // The zero value is invalid; build via StandardPBR() or populate Shader directly.
 type Material struct {
+	Params      MaterialParameters
+	PhaseHint   *gpu.RenderPhase
 	Shader      asset.Handle[Shader]
 	Alpha       AlphaMode
 	DoubleSided bool
-	Params      MaterialParameters
-	// PhaseHint allows intra-phase reordering only. Crossing the opaque/transparent
-	// boundary is silently rejected and the AlphaMode-mapped phase is used (INV-5).
-	PhaseHint *gpu.RenderPhase
 }
 
 // Validate checks material invariants before pipeline build (INV-1).

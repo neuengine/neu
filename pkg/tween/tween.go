@@ -37,13 +37,13 @@ const (
 // StartValue / EndValue must be the same type: float32, [2]float32, [3]float32, or Color.
 // A type mismatch surfaces as ErrTweenTypeMismatch at insertion time — the tween is not activated.
 type Tween struct {
-	TargetField   string
 	StartValue    any
 	EndValue      any
+	Easing        EasingFn
+	TargetField   string
 	Duration      float64
 	Elapsed       float64
-	Easing        EasingFn // nil → Linear
 	LoopMode      LoopMode
 	TimeDimension TimeDimension
-	DespawnOnDone bool // despawn the entity instead of just removing the Tween
+	DespawnOnDone bool
 }

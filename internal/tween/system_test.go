@@ -127,7 +127,9 @@ func TestAdvanceTween_PingPong(t *testing.T) {
 	acc := makeAccessor(t, "X")
 
 	// At t=1.5 in PingPong: beat 1 → reverse → t=0.5 of reverse → X=5.
-	AdvanceTween(tw, acc, target, 1.5)
+	if _, err := AdvanceTween(tw, acc, target, 1.5); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	if math.Abs(float64(target.X-5)) > 1e-4 {
 		t.Errorf("PingPong at 1.5s: X = %v, want ~5", target.X)
 	}

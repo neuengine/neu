@@ -101,7 +101,7 @@ func LoadWithSettings[A any, S any](s *AssetServer, path string, settings S) Han
 			store.mu.Unlock()
 			return
 		}
-		defer f.Close()
+		defer func() { _ = f.Close() }()
 
 		loader, err := s.loaders.find(loadPath)
 		if err != nil {

@@ -36,9 +36,9 @@ func TestMeshValidate(t *testing.T) {
 	const n = 3
 
 	tests := []struct {
-		name    string
-		build   func() *Mesh
 		wantErr error
+		build   func() *Mesh
+		name    string
 	}{
 		{
 			name: "valid non-indexed",

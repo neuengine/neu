@@ -9,9 +9,6 @@ import (
 	"time"
 )
 
-//go:fix inline
-func uptr(v uint) *uint { return new(v) }
-
 func TestConfigResolution(t *testing.T) {
 	pct := 0.5
 	cases := []struct {
@@ -104,7 +101,7 @@ func TestPoolDrainsOnShutdown(t *testing.T) {
 
 func TestPoolPanicIsolation(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(2))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	var after atomic.Int64
 	_ = cp.submit(func() { panic("boom") })

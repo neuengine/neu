@@ -35,14 +35,14 @@ const (
 // Sprites require a Transform component for world placement.
 // A Sprite without a valid Image handle produces no draw call (INV-1).
 type Sprite struct {
+	CustomSize *pkgmath.Vec2
+	Rect       *Rect2D
 	Image      asset.Handle[renderimage.Image]
-	Color      pkgmath.LinearRgba // multiplicative tint; default {1,1,1,1}
+	Color      pkgmath.LinearRgba
+	AnchorVec  pkgmath.Vec2
 	FlipX      bool
 	FlipY      bool
 	Anchor     Anchor
-	AnchorVec  pkgmath.Vec2  // used when Anchor == AnchorCustom
-	CustomSize *pkgmath.Vec2 // overrides image dimensions when non-nil
-	Rect       *Rect2D       // sub-region (atlas frame); nil = whole image
 }
 
 // ScaleMode controls how the center or edges of a 9-slice are scaled.

@@ -58,9 +58,10 @@ type shelf struct {
 // DynamicAtlas is a run-time growable texture atlas that uses the shelf-pack
 // algorithm. When full it doubles in size and re-packs all existing allocations.
 type DynamicAtlas struct {
-	width, height uint32
-	shelves       []shelf
-	allocs        []AtlasRegion // ordered history for re-pack
+	shelves []shelf
+	allocs  []AtlasRegion
+	width   uint32
+	height  uint32
 }
 
 // NewDynamicAtlas creates an atlas of the given dimensions. Both must be ≥ 1.

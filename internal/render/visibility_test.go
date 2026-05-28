@@ -52,7 +52,7 @@ func expectedEven(n int) []int {
 func TestVisibilityGroup_ParallelEqualsSequential(t *testing.T) {
 	const n = 10_000
 	pool, _ := task.NewTaskPools(task.TaskPoolConfig{})
-	defer pool.Shutdown(context.Background())
+	defer func() { _ = pool.Shutdown(context.Background()) }()
 
 	par := buildGroup(n)
 	seq := buildGroup(n)

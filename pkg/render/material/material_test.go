@@ -63,11 +63,11 @@ func TestAlphaPhaseHintBoundary(t *testing.T) {
 func TestSanitize_Clamp(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
-		name   string
 		floats map[string]float32
 		colors map[string]pkgmath.LinearRgba
 		wantF  map[string]float32
 		wantC  map[string]pkgmath.LinearRgba
+		name   string
 	}{
 		{
 			name:   "metallic over 1",

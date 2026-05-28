@@ -19,9 +19,9 @@ const (
 
 // TonemappingConfig configures the tonemapping pass (SlotTonemapping, INV-1).
 type TonemappingConfig struct {
-	Operator Tonemapper
+	LUT      asset.Handle[renderimage.Image]
 	Exposure float32
-	LUT      asset.Handle[renderimage.Image] // used by TonemapTonyMcMapface
+	Operator Tonemapper
 }
 
 // Apply maps a linear-HDR RGB triplet to LDR [0,1] using this operator.

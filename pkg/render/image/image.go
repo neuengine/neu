@@ -52,12 +52,12 @@ type SamplerDesc struct {
 // Image holds decoded pixel data and GPU format metadata.
 // Immutable once created — a mutation produces a new Image with a new AssetID.
 type Image struct {
-	Format    ImageFormat
+	Data      []byte
+	Sampler   SamplerDesc
 	Width     uint32
 	Height    uint32
 	MipLevels uint32
-	Data      []byte
-	Sampler   SamplerDesc
+	Format    ImageFormat
 }
 
 // ErrImageFormatInvalid is returned when FormatInvalid is given to NewImage.

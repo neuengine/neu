@@ -37,10 +37,10 @@ func (d *HeadlessDriver) Close() error    { return nil }
 // It tracks sink creation/drop/param updates for deterministic test assertions.
 // All operations are goroutine-safe.
 type HeadlessBackend struct {
-	mu           sync.Mutex
-	seq          atomic.Uint64
 	active       map[pkgaudio.SinkHandle]sinkState
 	finished     []pkgaudio.SinkHandle
+	seq          atomic.Uint64
+	mu           sync.Mutex
 	masterVolume float32
 }
 

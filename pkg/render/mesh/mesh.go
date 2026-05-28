@@ -72,16 +72,16 @@ const (
 // VertexAttribute is one tightly-packed semantic stream.
 // len(Data) must equal Mesh.vertexCount * Format.Size().
 type VertexAttribute struct {
+	Data   []byte
 	Kind   AttrKind
 	Format VertexFormat
-	Data   []byte
 }
 
 // IndexBuffer holds index data for indexed draws.
 // Wide == false → uint16 indices; Wide == true → uint32.
 type IndexBuffer struct {
-	Wide bool
 	Data []byte
+	Wide bool
 }
 
 // SubMesh references a contiguous slice of the index buffer for multi-material draws.
@@ -98,12 +98,12 @@ var (
 // [Mesh.SetAttribute] / [Mesh.SetIndices] then call [Mesh.Validate] before
 // uploading to the GPU.
 type Mesh struct {
-	Topology    PrimitiveTopology
 	attrs       map[AttrKind]VertexAttribute
 	indices     *IndexBuffer
 	subMeshes   []SubMesh
+	layout      VertexLayout
 	vertexCount int
-	layout      VertexLayout // memoised; zero until Layout() is first called
+	Topology    PrimitiveTopology
 	layoutReady bool
 }
 
@@ -231,8 +231,8 @@ type Mesh2D struct{ Handle asset.Handle[Mesh] }
 
 // SkinnedMesh pairs a mesh with a skeleton joint entity list.
 type SkinnedMesh struct {
-	Mesh   asset.Handle[Mesh]
 	Joints []ecs.Entity
+	Mesh   asset.Handle[Mesh]
 }
 
 // MorphWeights drives morph-target animation on a SkinnedMesh.

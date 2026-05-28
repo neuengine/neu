@@ -39,12 +39,12 @@ func (SingleShadow) MapCount() int { return 1 }
 // Note: the struct field for manual split distances is ManualSplits (not Splits) to
 // avoid a name conflict with the Splits() method.
 type CascadeShadowConfig struct {
-	Count        uint8 // number of cascades: 1..4
+	ManualSplits []float32
+	Overlap      float32
+	MapSize      uint32
+	MaxDistance  float32
+	Count        uint8
 	SplitMode    SplitMode
-	ManualSplits []float32 // SplitManual only: Count ascending far-plane distances
-	Overlap      float32   // [0, 1) overlap fraction between adjacent cascades
-	MapSize      uint32    // shadow map resolution (pixels per side, per cascade)
-	MaxDistance  float32   // camera-space depth limit for shadow coverage
 }
 
 // Splits derives the per-cascade far-plane distances for this config (INV-3).

@@ -6,8 +6,8 @@ import "github.com/neuengine/neu/pkg/asset"
 // The audio system creates an AudioSink automatically when playback begins.
 // Removing this component stops playback and drops the sink (INV-2).
 type AudioPlayer struct {
-	Source   asset.Handle[AudioSource]
 	Settings PlaybackSettings
+	Source   asset.Handle[AudioSource]
 }
 
 // SpatialListener is a marker component placed on exactly one entity

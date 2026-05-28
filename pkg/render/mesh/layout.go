@@ -16,9 +16,9 @@ type layoutElement struct {
 // arrangement used as a fragment of the pipeline-specialisation key.
 // The hash is FNV-1a over the sorted element list — deterministic across runs.
 type VertexLayout struct {
-	stride   uint32
 	elements []layoutElement
-	Hash     uint64 // FNV-1a; part of pipeline-spec key (PipelineDesc.LayoutHash)
+	Hash     uint64
+	stride   uint32
 }
 
 // Stride returns the per-vertex byte stride (interleaved layout).

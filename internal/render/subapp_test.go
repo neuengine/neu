@@ -79,7 +79,7 @@ func TestFrameGuard(t *testing.T) {
 		ie := slices.Index(tr, StageExtract)
 		ip := slices.Index(tr, StagePrepare)
 		id := slices.Index(tr, StageDraw)
-		if !(ie < ip && ip < id) {
+		if ie >= ip || ip >= id {
 			t.Fatalf("frame %d: bad order Extract@%d Prepare@%d Draw@%d", f, ie, ip, id)
 		}
 		// Passes executed, and only in StageDraw.

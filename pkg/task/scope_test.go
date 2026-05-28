@@ -8,7 +8,7 @@ import (
 
 func TestRunScopeJoinsAllChildren(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	const n = 5000
 	var done atomic.Int64
@@ -27,7 +27,7 @@ func TestRunScopeJoinsAllChildren(t *testing.T) {
 // visible after RunScope returns (the borrow-safety contract).
 func TestRunScopeBorrowVisible(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	buf := make([]int, 1000) // borrowed stack-ish slice
 	RunScope(cp, func(s *Scope) {
@@ -44,7 +44,7 @@ func TestRunScopeBorrowVisible(t *testing.T) {
 
 func TestRunScopeNestedNoDeadlock(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(2))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	var leaves int64
 	RunScope(cp, func(outer *Scope) {
@@ -67,7 +67,7 @@ func TestRunScopeNestedNoDeadlock(t *testing.T) {
 
 func TestParChunkMap(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	in := make([]int, 1000)
 	for i := range in {
@@ -83,7 +83,7 @@ func TestParChunkMap(t *testing.T) {
 
 func TestParSplatMap(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	in := make([]int, 333)
 	for i := range in {
@@ -102,7 +102,7 @@ func TestParSplatMap(t *testing.T) {
 
 func TestForBatchedCoversExactlyOnce(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	const n = 10_000
 	hits := make([]int32, n)
@@ -127,7 +127,7 @@ func TestForBatchedCoversExactlyOnce(t *testing.T) {
 // drop work under interleaving).
 func TestForBatchedGoldenDeterminism(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	const n = 4096
 	items := make([]int, n)
@@ -155,7 +155,7 @@ func TestForBatchedGoldenDeterminism(t *testing.T) {
 
 func TestTaskHandleSpawnPollBlock(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(2))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	h := Spawn(cp, func() int { return 42 })
 	got := h.BlockOn(cp)
@@ -173,7 +173,7 @@ func TestTaskHandleSpawnPollBlock(t *testing.T) {
 
 func TestTaskHandlePanicRepanics(t *testing.T) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(2))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	h := Spawn(cp, func() int { panic("kaboom") })
 	defer func() {
@@ -192,7 +192,7 @@ func TestTaskHandlePanicRepanics(t *testing.T) {
 // allocation-free; O(numWorkers) setup amortizes to 0 allocs/op (C-027).
 func BenchmarkForBatched(b *testing.B) {
 	cp, _ := NewTaskPools(TaskPoolConfig{ComputeThreads: new(uint(4))})
-	defer cp.Shutdown(context.Background())
+	defer func() { _ = cp.Shutdown(context.Background()) }()
 
 	items := make([]int, b.N)
 	var sink int64

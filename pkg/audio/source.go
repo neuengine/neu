@@ -19,11 +19,11 @@ const (
 
 // PlaybackSettings are attached to an AudioPlayer to configure how a clip plays.
 type PlaybackSettings struct {
+	Bus     string
+	Volume  float32
+	Speed   float32
 	Mode    PlaybackMode
-	Volume  float32 // 0..1; default 1.0
-	Speed   float32 // playback rate multiplier; default 1.0
-	Spatial bool    // true requires a Transform on the entity
-	Bus     string  // target bus name; "" routes to "Master"
+	Spatial bool
 }
 
 // DefaultPlaybackSettings returns sensible defaults (once, full volume, non-spatial).

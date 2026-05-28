@@ -33,7 +33,9 @@ func TestRenderDataSoA(t *testing.T) {
 
 	// Slice must alias the SAME backing array across calls (GPU-bindable,
 	// zero-copy) — &slice[0] is stable.
-	if &wm.Slice(h)[0] != &wm.Slice(h)[0] {
+	p1 := &wm.Slice(h)[0]
+	p2 := &wm.Slice(h)[0]
+	if p1 != p2 {
 		t.Fatal("Slice returned a copy; must alias holder storage")
 	}
 

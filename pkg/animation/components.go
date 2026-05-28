@@ -9,9 +9,9 @@ type AnimationNodeIndex uint32
 type ActiveAnimation struct {
 	Clip        asset.Handle[AnimationClip]
 	Elapsed     float32
-	Speed       float32 // negative = reverse; default 1.0
+	Speed       float32
+	BlendWeight float32
 	Repeat      RepeatMode
-	BlendWeight float32 // 0..1 blend contribution for layered blending
 	Paused      bool
 }
 
@@ -28,8 +28,8 @@ type AnimationPlayer struct {
 
 // indexedAnimation pairs a node index with its playback state.
 type indexedAnimation struct {
-	Index AnimationNodeIndex
 	Anim  ActiveAnimation
+	Index AnimationNodeIndex
 }
 
 // Joint marks an entity as a skeleton joint. The Index maps into the parent

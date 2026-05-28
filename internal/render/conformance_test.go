@@ -12,8 +12,8 @@ import (
 // recordingBackend wraps nopBackend and records every method invocation.
 // Allocates a unique sequential RID per Create call.
 type recordingBackend struct {
-	mu     sync.Mutex
 	called map[string]int
+	mu     sync.Mutex
 	ridSeq uint32
 }
 

@@ -61,13 +61,11 @@ const (
 
 // Transition describes an edge in the animation graph state machine.
 type Transition struct {
-	Target    AnimationNodeIndex
-	Condition TransitionCondition
-	// ParamName is the parameter checked for Threshold/Trigger conditions.
-	ParamName string
-	// Threshold is compared against the named float parameter (Threshold condition).
+	ParamName     string
+	Target        AnimationNodeIndex
 	Threshold     float32
-	BlendDuration float32 // seconds to cross-fade
+	BlendDuration float32
+	Condition     TransitionCondition
 }
 
 // AnimationGraph is an asset defining a state machine of animation nodes.
@@ -75,10 +73,8 @@ type Transition struct {
 // The state machine is acyclic for non-looping edges; looping is expressed
 // via TransitionClipFinished edges back to self or an earlier node.
 type AnimationGraph struct {
+	Params      map[string]float32
+	Triggers    map[string]bool
 	Nodes       []AnimationNode
-	Transitions [][]Transition // per-node outgoing transitions
-	// Params holds float parameters driving blend/threshold conditions.
-	Params map[string]float32
-	// Triggers are one-shot boolean signals that reset after evaluation.
-	Triggers map[string]bool
+	Transitions [][]Transition
 }

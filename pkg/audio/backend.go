@@ -2,10 +2,10 @@ package audio
 
 // SinkSettings configures a sink at creation time.
 type SinkSettings struct {
-	Mode   PlaybackMode
+	Bus    string
 	Volume float32
 	Speed  float32
-	Bus    string
+	Mode   PlaybackMode
 }
 
 // SinkParams carries runtime mutations applied by audio_control_sync.

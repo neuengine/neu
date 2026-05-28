@@ -9,28 +9,29 @@ import pkgmath "github.com/neuengine/neu/pkg/math"
 // PointLight emits omnidirectionally from the entity's world position.
 // Shadow is optional; nil disables shadow casting.
 type PointLight struct {
-	Color     pkgmath.LinearRgba
-	Intensity float32 // luminous intensity (lux)
-	Radius    float32 // attenuation cutoff radius (metres)
 	Shadow    *CubeShadow
+	Color     pkgmath.LinearRgba
+	Intensity float32
+	Radius    float32
 }
 
 // SpotLight emits a cone of light from the entity's world position.
 // InnerAngle and OuterAngle are in radians; intensity falls off smoothly between them.
 // Shadow is optional; nil disables shadow casting.
 type SpotLight struct {
-	Color                  pkgmath.LinearRgba
-	Intensity              float32
-	InnerAngle, OuterAngle float32 // radians; OuterAngle >= InnerAngle
-	Shadow                 *SingleShadow
+	Shadow     *SingleShadow
+	Color      pkgmath.LinearRgba
+	Intensity  float32
+	InnerAngle float32
+	OuterAngle float32
 }
 
 // DirectionalLight emits parallel rays (e.g. sun); the entity's position is ignored.
 // Cascades controls cascaded shadow maps; nil disables shadow casting.
 type DirectionalLight struct {
+	Cascades  *CascadeShadowConfig
 	Color     pkgmath.LinearRgba
 	Intensity float32
-	Cascades  *CascadeShadowConfig
 }
 
 // AmbientLight adds a flat additive color term to all fragments — no directionality.

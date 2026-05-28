@@ -26,8 +26,8 @@ type EnvironmentMapLight struct {
 // as 9 consecutive pkgmath.Vec4 values (L0+L1 SH basis, RGB channels packed).
 // The lighting system validates the total probe count on upload.
 type IrradianceVolume struct {
+	Probes   []pkgmath.Vec4
 	GridSize [3]uint32
-	Probes   []pkgmath.Vec4 // 9 Vec4 SH coefficients per probe
 }
 
 // ProbeCount returns the expected number of probes for this grid (GridSize product).

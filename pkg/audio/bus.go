@@ -9,12 +9,11 @@ var ErrAudioBusCycle = errors.New("audio: bus graph contains a cycle")
 // Buses form a DAG rooted at the "Master" bus (Output == "").
 type AudioBus struct {
 	Name    string
-	Volume  float32 // 0..1 bus gain
+	Output  string
+	Effects []AudioEffectInstance
+	Volume  float32
 	Mute    bool
 	Solo    bool
-	Effects []AudioEffectInstance // ordered per-bus effect chain
-	// Output is the parent bus name. Empty string means the hardware output.
-	Output string
 }
 
 // AudioBusLayout is a world resource holding the full bus graph.

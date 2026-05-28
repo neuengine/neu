@@ -24,9 +24,9 @@ const (
 
 // RenderTarget describes where a Camera writes its output.
 type RenderTarget struct {
+	Image  asset.Handle[renderimage.Image]
+	Window ecs.Entity
 	Kind   TargetKind
-	Window ecs.Entity                      // valid when Kind == TargetWindow
-	Image  asset.Handle[renderimage.Image] // valid when Kind == TargetTexture
 }
 
 // Viewport specifies the normalised sub-rectangle [0,1]² of the render target
@@ -55,10 +55,10 @@ type ClearColorConfig struct {
 // Order determines draw sequence; lower values render first.
 // Multiple active cameras produce multiple render passes (split-screen, RTT, minimaps).
 type Camera struct {
+	Viewport *Viewport
 	Target   RenderTarget
-	Viewport *Viewport // nil = full target
 	Clear    ClearColorConfig
+	Order    int32
 	HDR      bool
-	Order    int32 // lower renders first; equal Order → EntityID tiebreak (INV-4)
 	IsActive bool
 }

@@ -34,8 +34,6 @@ func StereoPan(listenerRight, sourceDir [3]float32) (left, right float32) {
 	// dot ∈ [-1, 1]: -1 = full left, +1 = full right
 	angle := float32(math.Asin(float64(clamp1(dot))))
 	// Constant-power panning
-	right = float32(math.Cos(float64((1-angle)*math.Pi/4))) *
-		float32(math.Cos(float64(angle*math.Pi/4)))
 	right = float32(math.Cos(float64(angle*math.Pi/4 + math.Pi/4)))
 	left = float32(math.Sin(float64(angle*math.Pi/4 + math.Pi/4)))
 	return

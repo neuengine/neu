@@ -36,14 +36,14 @@ type VariableCurve struct {
 // AnimationEvent fires at a specific time during playback.
 // The Payload is dispatched through the event system when the playhead crosses Time.
 type AnimationEvent struct {
-	Time    float32
 	Payload any
+	Time    float32
 }
 
 // AnimationClip is an immutable asset of sampled curves and timed events.
 // Instances are loaded via the asset system; clips are never mutated at runtime.
 type AnimationClip struct {
-	Duration float32
 	Curves   []VariableCurve
 	Events   []AnimationEvent
+	Duration float32
 }

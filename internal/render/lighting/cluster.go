@@ -32,16 +32,20 @@ type LightRef struct {
 // TileX/Y/Z are pre-computed at construction so the parallel ForBatched
 // callback can compute NDC bounds without deriving global cell indices.
 type Froxel struct {
-	TileX, TileY, TileZ int
-	Lights              []int // indices into the frame's LightRef slice
+	Lights []int
+	TileX  int
+	TileY  int
+	TileZ  int
 }
 
 // ClusterGrid is a 3-D grid of Froxels (Nx × Ny × Nz).
 // Reuse across frames: ClusterLights calls Reset() internally, which trims
 // Lights to length zero while preserving backing-array capacity (C-027).
 type ClusterGrid struct {
-	Nx, Ny, Nz int
-	Cells      []Froxel // linearized [z*ny*nx + y*nx + x]
+	Cells []Froxel
+	Nx    int
+	Ny    int
+	Nz    int
 }
 
 // NewClusterGrid allocates a ClusterGrid and pre-computes tile coordinates.

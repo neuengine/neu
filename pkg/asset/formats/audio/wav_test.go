@@ -93,17 +93,17 @@ func TestWAVLoader_InvalidData(t *testing.T) {
 func TestWAVLoader_MissingDataChunk(t *testing.T) {
 	// Minimal RIFF+WAVE+fmt but no data chunk.
 	var buf bytes.Buffer
-	buf.Write([]byte{'R', 'I', 'F', 'F'})
-	binary.Write(&buf, binary.LittleEndian, uint32(36))
-	buf.Write([]byte{'W', 'A', 'V', 'E'})
-	buf.Write([]byte{'f', 'm', 't', ' '})
-	binary.Write(&buf, binary.LittleEndian, uint32(16))
-	binary.Write(&buf, binary.LittleEndian, uint16(1))     // PCM
-	binary.Write(&buf, binary.LittleEndian, uint16(2))     // channels
-	binary.Write(&buf, binary.LittleEndian, uint32(44100)) // sample rate
-	binary.Write(&buf, binary.LittleEndian, uint32(176400))
-	binary.Write(&buf, binary.LittleEndian, uint16(4))
-	binary.Write(&buf, binary.LittleEndian, uint16(16))
+	_, _ = buf.Write([]byte{'R', 'I', 'F', 'F'})
+	_ = binary.Write(&buf, binary.LittleEndian, uint32(36))
+	_, _ = buf.Write([]byte{'W', 'A', 'V', 'E'})
+	_, _ = buf.Write([]byte{'f', 'm', 't', ' '})
+	_ = binary.Write(&buf, binary.LittleEndian, uint32(16))
+	_ = binary.Write(&buf, binary.LittleEndian, uint16(1))     // PCM
+	_ = binary.Write(&buf, binary.LittleEndian, uint16(2))     // channels
+	_ = binary.Write(&buf, binary.LittleEndian, uint32(44100)) // sample rate
+	_ = binary.Write(&buf, binary.LittleEndian, uint32(176400))
+	_ = binary.Write(&buf, binary.LittleEndian, uint16(4))
+	_ = binary.Write(&buf, binary.LittleEndian, uint16(16))
 
 	l := WAVLoader{}
 	_, err := l.Load(&buf, LoadSettings{})

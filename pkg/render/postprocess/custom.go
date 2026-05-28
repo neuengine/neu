@@ -17,8 +17,8 @@ type ShaderValue = any
 // builder) and writes to the next. Params are bound as shader constants.
 // Compile failure → node omitted, chain reconnects (per Error Handling table).
 type FullscreenMaterial struct {
-	Shader      asset.Handle[material.Shader]
-	InputTex    []gpu.RID
 	Params      map[string]ShaderValue
-	InsertAfter EffectSlot // inject the pass immediately after this slot
+	InputTex    []gpu.RID
+	Shader      asset.Handle[material.Shader]
+	InsertAfter EffectSlot
 }

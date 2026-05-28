@@ -11,8 +11,8 @@ import (
 // A physics or UI system can play a sound without importing the audio package
 // by going through the service interface (L1 §4.13).
 type ServiceRegistry struct {
-	mu      sync.RWMutex
 	backend pkgaudio.AudioBackend
+	mu      sync.RWMutex
 }
 
 // NewServiceRegistry creates a registry backed by the given AudioBackend.

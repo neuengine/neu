@@ -10,10 +10,10 @@ import (
 // It sits between the ECS systems (frontend) and the AudioDriver (hardware).
 // All public methods are goroutine-safe.
 type AudioServer struct {
-	mu      sync.Mutex
 	driver  pkgaudio.AudioDriver
 	backend pkgaudio.AudioBackend
 	layout  pkgaudio.AudioBusLayout
+	mu      sync.Mutex
 }
 
 // NewAudioServer creates an AudioServer with the given driver and backend.

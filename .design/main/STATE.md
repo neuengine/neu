@@ -10,8 +10,8 @@
 
 ## Current Position
 
-- **Task:** T-4D03 Done — **Track D complete** (T-4D01..03, 2026-05-28).
-- **Next Action:** T-4E01 (Track E head): Canonical EffectSlot order, Tonemapper/ColorGrading, BuildPostChain — depends on T-4A02 ✓ + T-4C01 ✓
+- **Task:** T-4E01 Done — Track E begun: EffectSlot, Tonemapper, BuildPostChain (2026-05-28).
+- **Next Action:** T-4E02 (Track E tail): Pooled ping-pong targets, FullscreenMaterial, AA mutual-exclusion — depends on T-4E01 ✓
 
 ## Progress
 
@@ -19,14 +19,15 @@
 Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
-Phase 4: [12/19] ██████░░  63% ▶ Active  (Tracks A ✓ B ✓ C ✓ D ✓)
-Overall: [81/88] ███████░  92%
+Phase 4: [13/19] ██████░░  68% ▶ Active  (Tracks A ✓ B ✓ C ✓ D ✓ E01 ✓)
+Overall: [82/88] ███████░  93%
 ```
 
 ## Recent Decisions
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-28 **Done: T-4E01** — `pkg/render/postprocess/{stack,settings,tonemap,colorgrade}.go` + `internal/render/postpass/builder.go`: EffectSlot 10-slot iota enum (index=order, INV-2), IsHDR(), PostProcessStack Enable/Disable/EnabledSlots (canonical); per-effect settings structs; Tonemapper 5-op Apply() (Reinhard/ReinhardLuminance/ACES-Narkowicz/AgX-smoothstep/TonyMcMapface-fallback); ColorGrading; BuildPostChain([]EffectSlot→slices.Sort→validateOrder INV-1→postPass chain INV-3); ErrPostOrder/ErrAAConflict sentinels. 16/16 PASS; reference values ≤5e-4.
 - 2026-05-28 **Done: T-4D03 — Track D complete** — `internal/render/lighting/{cluster,shadowpass}.go`: LightRef{Sphere,ShadowRID,Kind}, Froxel (pre-computed TileX/Y/Z), ClusterGrid + Reset() (C-027), ClusterLights (nil→sequential 0-alloc, pool→ForBatched disjoint-write); tileOverlapsLight (VP→clip→NDC projection, 2D circle-vs-AABB, directional fast-path); ShadowCaster, shadowMapPass (Outputs=[shadowRID]), lightingPass (Inputs=all shadow RIDs), BuildShadowPasses (graph edges → topo-sort enforces INV-4). BenchmarkClusterLights 0 B/op 0 allocs/op steady; parallel≡sequential; right-handed +Z behind-camera test. 7/7 PASS.
 - 2026-05-28 **Done: T-4D02** — `pkg/render/light/{light,ibl,shadow}.go`: PointLight/SpotLight/DirectionalLight/AmbientLight (pure data, optional Shadow pointers); CubeShadow.FaceCount()=6, SingleShadow.MapCount()=1 (L1 §4.6 table); CascadeShadowConfig.Splits() — log: `near×(max/near)^(i/Count)` (INV-3 by construction), manual: INV-3 coverage guard → ErrCascadeCoverage, Count clamped 1..4; EnvironmentMapLight/IrradianceVolume (SH probes). Bootstrap: ManualSplits field (L2 spec `Splits` field renamed to avoid method/field name conflict). 14/14 tests PASS; go vet + modernize clean; C-003.
 - 2026-05-28 **Done: T-4D01** — `pkg/render/material/{material,pbr,speckey}.go`: `AlphaMode` (5 variants) + `Phase()` total switch (INV-5); `MaterialParameters.Sanitize()` (idempotent clamp: metallic/roughness/occlusion→[0,1], all color components→≥0, slog.Debug on change); `Material` + `Validate()` (INV-1 ErrMaterialNoShader); `resolvePhase()` (PhaseHint boundary guard — isOpaqueSide rejects cross-bucket hints silently); `StandardPBR()` (white/dielectric/0.5rough); `SetFloat/SetColor/SetTexture` chaining setters; `SpecializationKey` + `SpecKey(VertexLayout)` → pipeline cache bridge; `assetIDHash` (fmt+FNV-1a; zero-ID→0, 0-alloc fast path). 13/13 tests PASS; `BenchmarkSpecKey` 0 B/op 0 allocs/op; go vet + modernize clean; C-003 stdlib+engine. Next: T-4D02 (Light components + IBL + shadow config).

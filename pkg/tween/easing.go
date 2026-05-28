@@ -20,7 +20,7 @@ var (
 	}
 
 	EaseInCubic    EasingFn = func(t float64) float64 { return t * t * t }
-	EaseOutCubic   EasingFn = func(t float64) float64 { return (t - 1) * (t - 1) * (t - 1) + 1 }
+	EaseOutCubic   EasingFn = func(t float64) float64 { return (t-1)*(t-1)*(t-1) + 1 }
 	EaseInOutCubic EasingFn = func(t float64) float64 {
 		if t < 0.5 {
 			return 4 * t * t * t

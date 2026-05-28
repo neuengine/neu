@@ -78,7 +78,7 @@ func acesNarkowicz(x pkgmath.Vec3) pkgmath.Vec3 {
 			d float32 = 0.59
 			e float32 = 0.14
 		)
-		r := (v*(a*v+b)) / (v*(c*v+d) + e)
+		r := (v * (a*v + b)) / (v*(c*v+d) + e)
 		return max(float32(0), min(float32(1), r))
 	}
 	return pkgmath.Vec3{X: apply(x.X), Y: apply(x.Y), Z: apply(x.Z)}

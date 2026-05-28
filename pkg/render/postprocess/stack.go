@@ -19,16 +19,16 @@ var (
 type EffectSlot uint8
 
 const (
-	SlotSSAO               EffectSlot = iota // screen-space ambient occlusion (HDR)
-	SlotSSR                                  // screen-space reflections (HDR)
-	SlotBloom                                // bloom (HDR)
-	SlotDepthOfField                         // depth of field (HDR)
-	SlotMotionBlur                           // motion blur (HDR)
-	SlotChromaticAberration                  // chromatic aberration (HDR)
-	SlotFilmGrain                            // film grain (HDR)
-	SlotColorGrading                         // color grading / LUT (HDR)
-	SlotTonemapping                          // HDR → LDR boundary (INV-1)
-	SlotSpatialAA                            // FXAA / SMAA (LDR)
+	SlotSSAO                EffectSlot = iota // screen-space ambient occlusion (HDR)
+	SlotSSR                                   // screen-space reflections (HDR)
+	SlotBloom                                 // bloom (HDR)
+	SlotDepthOfField                          // depth of field (HDR)
+	SlotMotionBlur                            // motion blur (HDR)
+	SlotChromaticAberration                   // chromatic aberration (HDR)
+	SlotFilmGrain                             // film grain (HDR)
+	SlotColorGrading                          // color grading / LUT (HDR)
+	SlotTonemapping                           // HDR → LDR boundary (INV-1)
+	SlotSpatialAA                             // FXAA / SMAA (LDR)
 	slotCount
 )
 

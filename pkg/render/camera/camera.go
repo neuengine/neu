@@ -9,8 +9,8 @@ import (
 	"github.com/neuengine/neu/pkg/asset"
 	renderimage "github.com/neuengine/neu/pkg/render/image"
 
-	pkgmath "github.com/neuengine/neu/pkg/math"
 	"github.com/neuengine/neu/pkg/ecs"
+	pkgmath "github.com/neuengine/neu/pkg/math"
 )
 
 // TargetKind discriminates the render destination of a Camera.
@@ -25,8 +25,8 @@ const (
 // RenderTarget describes where a Camera writes its output.
 type RenderTarget struct {
 	Kind   TargetKind
-	Window ecs.Entity                            // valid when Kind == TargetWindow
-	Image  asset.Handle[renderimage.Image]       // valid when Kind == TargetTexture
+	Window ecs.Entity                      // valid when Kind == TargetWindow
+	Image  asset.Handle[renderimage.Image] // valid when Kind == TargetTexture
 }
 
 // Viewport specifies the normalised sub-rectangle [0,1]² of the render target
@@ -56,9 +56,9 @@ type ClearColorConfig struct {
 // Multiple active cameras produce multiple render passes (split-screen, RTT, minimaps).
 type Camera struct {
 	Target   RenderTarget
-	Viewport *Viewport         // nil = full target
+	Viewport *Viewport // nil = full target
 	Clear    ClearColorConfig
 	HDR      bool
-	Order    int32              // lower renders first; equal Order → EntityID tiebreak (INV-4)
+	Order    int32 // lower renders first; equal Order → EntityID tiebreak (INV-4)
 	IsActive bool
 }

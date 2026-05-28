@@ -26,7 +26,7 @@ type writeAccessor struct {
 func resolveField(root reflect.Value, path []string) (reflect.Value, bool) {
 	v := root
 	for _, seg := range path {
-		if v.Kind() == reflect.Ptr {
+		if v.Kind() == reflect.Pointer {
 			if v.IsNil() {
 				return reflect.Value{}, false
 			}
@@ -49,7 +49,7 @@ func resolveField(root reflect.Value, path []string) (reflect.Value, bool) {
 // Returns false if the path cannot be resolved (INV-4 silent skip).
 func (a *writeAccessor) Apply(target any, val any) bool {
 	rv := reflect.ValueOf(target)
-	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+	if rv.Kind() != reflect.Pointer || rv.IsNil() {
 		return false
 	}
 	field, ok := resolveField(rv.Elem(), a.path)

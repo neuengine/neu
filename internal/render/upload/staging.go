@@ -11,8 +11,8 @@ package upload
 
 import (
 	"github.com/neuengine/neu/internal/ecs/pool"
-	renderimage "github.com/neuengine/neu/pkg/render/image"
 	gpu "github.com/neuengine/neu/pkg/render"
+	renderimage "github.com/neuengine/neu/pkg/render/image"
 )
 
 // StagingBuffer is a poolable byte buffer used to transfer image data to the

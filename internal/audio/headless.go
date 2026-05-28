@@ -25,11 +25,11 @@ func (d *HeadlessDriver) Init(mixRate, channels uint32) error {
 	d.channels = channels
 	return nil
 }
-func (d *HeadlessDriver) Start()           {}
-func (d *HeadlessDriver) MixRate() uint32  { return d.mixRate }
-func (d *HeadlessDriver) Lock()            { d.mu.Lock() }
-func (d *HeadlessDriver) Unlock()          { d.mu.Unlock() }
-func (d *HeadlessDriver) Close() error     { return nil }
+func (d *HeadlessDriver) Start()          {}
+func (d *HeadlessDriver) MixRate() uint32 { return d.mixRate }
+func (d *HeadlessDriver) Lock()           { d.mu.Lock() }
+func (d *HeadlessDriver) Unlock()         { d.mu.Unlock() }
+func (d *HeadlessDriver) Close() error    { return nil }
 
 // ── Headless backend ─────────────────────────────────────────────────────────
 

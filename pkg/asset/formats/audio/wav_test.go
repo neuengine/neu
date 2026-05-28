@@ -20,8 +20,8 @@ func encodeWAV(sampleRate uint32, channels uint16, bitsPerSample uint16, samples
 	_, _ = buf.Write([]byte{'W', 'A', 'V', 'E'})
 	// fmt chunk
 	_, _ = buf.Write([]byte{'f', 'm', 't', ' '})
-	_ = binary.Write(&buf, binary.LittleEndian, uint32(16))          // chunk size
-	_ = binary.Write(&buf, binary.LittleEndian, uint16(1))           // PCM
+	_ = binary.Write(&buf, binary.LittleEndian, uint32(16)) // chunk size
+	_ = binary.Write(&buf, binary.LittleEndian, uint16(1))  // PCM
 	_ = binary.Write(&buf, binary.LittleEndian, channels)
 	_ = binary.Write(&buf, binary.LittleEndian, sampleRate)
 	byteRate := sampleRate * uint32(channels) * uint32(bitsPerSample) / 8

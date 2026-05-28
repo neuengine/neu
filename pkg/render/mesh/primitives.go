@@ -74,8 +74,18 @@ func Cube(size float32) *Mesh {
 		}
 		// Two triangles: (0,1,2) and (0,2,3).
 		b := uint32(base)
-		putU32(idx, ii, b); ii++; putU32(idx, ii, b+1); ii++; putU32(idx, ii, b+2); ii++
-		putU32(idx, ii, b); ii++; putU32(idx, ii, b+2); ii++; putU32(idx, ii, b+3); ii++
+		putU32(idx, ii, b)
+		ii++
+		putU32(idx, ii, b+1)
+		ii++
+		putU32(idx, ii, b+2)
+		ii++
+		putU32(idx, ii, b)
+		ii++
+		putU32(idx, ii, b+2)
+		ii++
+		putU32(idx, ii, b+3)
+		ii++
 	}
 
 	m := NewMesh(TopologyTriangleList).
@@ -140,10 +150,20 @@ func Sphere(radius float32, sectors, stacks int) *Mesh {
 			k1 := uint32(si*row + sec)
 			k2 := k1 + uint32(row)
 			if si != 0 {
-				putU32(idx, ii, k1); ii++; putU32(idx, ii, k2); ii++; putU32(idx, ii, k1+1); ii++
+				putU32(idx, ii, k1)
+				ii++
+				putU32(idx, ii, k2)
+				ii++
+				putU32(idx, ii, k1+1)
+				ii++
 			}
 			if si != stacks-1 {
-				putU32(idx, ii, k1+1); ii++; putU32(idx, ii, k2); ii++; putU32(idx, ii, k2+1); ii++
+				putU32(idx, ii, k1+1)
+				ii++
+				putU32(idx, ii, k2)
+				ii++
+				putU32(idx, ii, k2+1)
+				ii++
 			}
 		}
 	}
@@ -191,8 +211,18 @@ func Plane(size float32, subdivisions int) *Mesh {
 	for row := range n {
 		for col := range n {
 			k := uint32(row*rowStride + col)
-			putU32(idx, ii, k); ii++; putU32(idx, ii, k+1); ii++; putU32(idx, ii, k+uint32(rowStride)+1); ii++
-			putU32(idx, ii, k); ii++; putU32(idx, ii, k+uint32(rowStride)+1); ii++; putU32(idx, ii, k+uint32(rowStride)); ii++
+			putU32(idx, ii, k)
+			ii++
+			putU32(idx, ii, k+1)
+			ii++
+			putU32(idx, ii, k+uint32(rowStride)+1)
+			ii++
+			putU32(idx, ii, k)
+			ii++
+			putU32(idx, ii, k+uint32(rowStride)+1)
+			ii++
+			putU32(idx, ii, k+uint32(rowStride))
+			ii++
 		}
 	}
 	m := NewMesh(TopologyTriangleList).
@@ -243,8 +273,18 @@ func Cylinder(radius, height float32, sectors int) *Mesh {
 	for sec := range sectors {
 		b := uint32(sec)
 		t := b + uint32(sectors+1)
-		putU32(idx, ii, b); ii++; putU32(idx, ii, t); ii++; putU32(idx, ii, b+1); ii++
-		putU32(idx, ii, b+1); ii++; putU32(idx, ii, t); ii++; putU32(idx, ii, t+1); ii++
+		putU32(idx, ii, b)
+		ii++
+		putU32(idx, ii, t)
+		ii++
+		putU32(idx, ii, b+1)
+		ii++
+		putU32(idx, ii, b+1)
+		ii++
+		putU32(idx, ii, t)
+		ii++
+		putU32(idx, ii, t+1)
+		ii++
 	}
 
 	// Caps (bottom, top).
@@ -271,9 +311,19 @@ func Cylinder(radius, height float32, sectors int) *Mesh {
 			b := uint32(ring0 + sec + 1)
 			c := uint32(centre)
 			if sign > 0 {
-				putU32(idx, ii, c); ii++; putU32(idx, ii, b); ii++; putU32(idx, ii, a); ii++
+				putU32(idx, ii, c)
+				ii++
+				putU32(idx, ii, b)
+				ii++
+				putU32(idx, ii, a)
+				ii++
 			} else {
-				putU32(idx, ii, c); ii++; putU32(idx, ii, a); ii++; putU32(idx, ii, b); ii++
+				putU32(idx, ii, c)
+				ii++
+				putU32(idx, ii, a)
+				ii++
+				putU32(idx, ii, b)
+				ii++
 			}
 		}
 	}
@@ -338,8 +388,8 @@ func Capsule(radius, height float32, sectors, stacks int) *Mesh {
 		cosPhi := float32(math.Cos(phi))
 		sinPhi := float32(math.Sin(phi))
 		rings = append(rings, ring{
-			y:   -midH + radius*sinPhi,
-			rx:  cosPhi, ry: sinPhi, rz: cosPhi,
+			y:  -midH + radius*sinPhi,
+			rx: cosPhi, ry: sinPhi, rz: cosPhi,
 			uvV: float32(s) * uvStep,
 		})
 	}
@@ -352,8 +402,8 @@ func Capsule(radius, height float32, sectors, stacks int) *Mesh {
 		cosPhi := float32(math.Cos(phi))
 		sinPhi := float32(math.Sin(phi))
 		rings = append(rings, ring{
-			y:   midH + radius*sinPhi,
-			rx:  cosPhi, ry: sinPhi, rz: cosPhi,
+			y:  midH + radius*sinPhi,
+			rx: cosPhi, ry: sinPhi, rz: cosPhi,
 			uvV: float32(stacks+3+s) * uvStep,
 		})
 	}
@@ -379,8 +429,18 @@ func Capsule(radius, height float32, sectors, stacks int) *Mesh {
 		for sec := range sectors {
 			k1 := uint32(r*stride + sec)
 			k2 := k1 + uint32(stride)
-			putU32(idx, ii, k1); ii++; putU32(idx, ii, k2); ii++; putU32(idx, ii, k1+1); ii++
-			putU32(idx, ii, k1+1); ii++; putU32(idx, ii, k2); ii++; putU32(idx, ii, k2+1); ii++
+			putU32(idx, ii, k1)
+			ii++
+			putU32(idx, ii, k2)
+			ii++
+			putU32(idx, ii, k1+1)
+			ii++
+			putU32(idx, ii, k1+1)
+			ii++
+			putU32(idx, ii, k2)
+			ii++
+			putU32(idx, ii, k2+1)
+			ii++
 		}
 	}
 	idx = idx[:ii*4]
@@ -442,8 +502,18 @@ func Torus(majorR, minorR float32, majorSectors, minorSectors int) *Mesh {
 		for min := range minorSectors {
 			k1 := uint32(maj*stride + min)
 			k2 := k1 + uint32(stride)
-			putU32(idx, ii, k1); ii++; putU32(idx, ii, k2); ii++; putU32(idx, ii, k1+1); ii++
-			putU32(idx, ii, k1+1); ii++; putU32(idx, ii, k2); ii++; putU32(idx, ii, k2+1); ii++
+			putU32(idx, ii, k1)
+			ii++
+			putU32(idx, ii, k2)
+			ii++
+			putU32(idx, ii, k1+1)
+			ii++
+			putU32(idx, ii, k1+1)
+			ii++
+			putU32(idx, ii, k2)
+			ii++
+			putU32(idx, ii, k2+1)
+			ii++
 		}
 	}
 	m := NewMesh(TopologyTriangleList).

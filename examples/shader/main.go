@@ -14,8 +14,8 @@ import (
 
 	internalrender "github.com/neuengine/neu/internal/render"
 	"github.com/neuengine/neu/internal/render/postpass"
-	"github.com/neuengine/neu/pkg/render/postprocess"
 	gpu "github.com/neuengine/neu/pkg/render"
+	"github.com/neuengine/neu/pkg/render/postprocess"
 )
 
 // buildPostGraph constructs the post-process render graph for one frame and

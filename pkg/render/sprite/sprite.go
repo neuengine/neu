@@ -23,12 +23,12 @@ type Rect2D struct {
 type Anchor uint8
 
 const (
-	AnchorCenter      Anchor = iota
-	AnchorTopLeft            // origin at top-left corner
+	AnchorCenter  Anchor = iota
+	AnchorTopLeft        // origin at top-left corner
 	AnchorTopRight
 	AnchorBottomLeft
 	AnchorBottomRight
-	AnchorCustom      // AnchorVec field is used
+	AnchorCustom // AnchorVec field is used
 )
 
 // Sprite is an ECS component that renders a 2D image attached to an entity.
@@ -40,9 +40,9 @@ type Sprite struct {
 	FlipX      bool
 	FlipY      bool
 	Anchor     Anchor
-	AnchorVec  pkgmath.Vec2    // used when Anchor == AnchorCustom
-	CustomSize *pkgmath.Vec2   // overrides image dimensions when non-nil
-	Rect       *Rect2D         // sub-region (atlas frame); nil = whole image
+	AnchorVec  pkgmath.Vec2  // used when Anchor == AnchorCustom
+	CustomSize *pkgmath.Vec2 // overrides image dimensions when non-nil
+	Rect       *Rect2D       // sub-region (atlas frame); nil = whole image
 }
 
 // ScaleMode controls how the center or edges of a 9-slice are scaled.

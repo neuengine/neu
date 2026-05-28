@@ -85,9 +85,8 @@ type postPass struct {
 	output gpu.RID
 }
 
-func (p *postPass) Name() string              { return p.slot.String() }
-func (p *postPass) Phase() gpu.RenderPhase    { return gpu.PhaseNone }
-func (p *postPass) Inputs() []gpu.RID         { return []gpu.RID{p.input} }
-func (p *postPass) Outputs() []gpu.RID        { return []gpu.RID{p.output} }
+func (p *postPass) Name() string                          { return p.slot.String() }
+func (p *postPass) Phase() gpu.RenderPhase                { return gpu.PhaseNone }
+func (p *postPass) Inputs() []gpu.RID                     { return []gpu.RID{p.input} }
+func (p *postPass) Outputs() []gpu.RID                    { return []gpu.RID{p.output} }
 func (p *postPass) Execute(_ *internalrender.PassContext) {}
-

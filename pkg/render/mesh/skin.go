@@ -16,8 +16,8 @@ type JointMatrix struct {
 // MorphTarget describes one morph target (blend shape) stored as a separate Mesh asset.
 // The base mesh and all targets must share the same vertex layout.
 type MorphTarget struct {
-	Mesh   asset.Handle[Mesh]
-	Name   string // e.g. "blink_L", "smile"
+	Mesh asset.Handle[Mesh]
+	Name string // e.g. "blink_L", "smile"
 }
 
 // MorphTargetList is the set of morph targets registered for a SkinnedMesh.

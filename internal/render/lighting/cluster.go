@@ -14,7 +14,7 @@ const clusterBatchSize = 4 // froxels per ForBatched work unit
 type LightKind uint8
 
 const (
-	LightKindPoint       LightKind = iota
+	LightKindPoint LightKind = iota
 	LightKindSpot
 	LightKindDirectional // infinite range; affects every froxel in the view
 	LightKindAmbient
@@ -33,7 +33,7 @@ type LightRef struct {
 // callback can compute NDC bounds without deriving global cell indices.
 type Froxel struct {
 	TileX, TileY, TileZ int
-	Lights               []int // indices into the frame's LightRef slice
+	Lights              []int // indices into the frame's LightRef slice
 }
 
 // ClusterGrid is a 3-D grid of Froxels (Nx × Ny × Nz).
@@ -41,7 +41,7 @@ type Froxel struct {
 // Lights to length zero while preserving backing-array capacity (C-027).
 type ClusterGrid struct {
 	Nx, Ny, Nz int
-	Cells       []Froxel // linearized [z*ny*nx + y*nx + x]
+	Cells      []Froxel // linearized [z*ny*nx + y*nx + x]
 }
 
 // NewClusterGrid allocates a ClusterGrid and pre-computes tile coordinates.

@@ -3,8 +3,8 @@ package audio
 import (
 	"sync"
 
-	pkgaudio "github.com/neuengine/neu/pkg/audio"
 	"github.com/neuengine/neu/pkg/asset"
+	pkgaudio "github.com/neuengine/neu/pkg/audio"
 )
 
 // ServiceRegistry provides cross-cutting audio access without direct coupling.

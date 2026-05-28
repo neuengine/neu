@@ -9,8 +9,8 @@ var ErrAtlasOverlap = errors.New("atlas: overlapping region")
 // AtlasRegion is a named axis-aligned rectangle within a texture atlas.
 // Min and Max are texel coordinates (left-inclusive, right-exclusive).
 type AtlasRegion struct {
-	Name       string
-	Min, Max   [2]uint32 // [x, y]
+	Name     string
+	Min, Max [2]uint32 // [x, y]
 }
 
 // TextureAtlasLayout is an immutable set of non-overlapping named regions.

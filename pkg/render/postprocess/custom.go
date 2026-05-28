@@ -2,8 +2,8 @@ package postprocess
 
 import (
 	"github.com/neuengine/neu/pkg/asset"
-	"github.com/neuengine/neu/pkg/render/material"
 	gpu "github.com/neuengine/neu/pkg/render"
+	"github.com/neuengine/neu/pkg/render/material"
 )
 
 // ShaderValue is a typed shader parameter value for FullscreenMaterial.

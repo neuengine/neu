@@ -18,14 +18,14 @@ import (
 type AttrKind uint8
 
 const (
-	AttrPosition AttrKind = iota // vec3 world/model position (INV-1: required)
-	AttrNormal                   // vec3 unit normal
-	AttrUV0                      // vec2 primary texcoord
-	AttrUV1                      // vec2 secondary texcoord
-	AttrTangent                  // vec4 tangent + handedness
-	AttrColor                    // vec4 vertex color
-	AttrJointWeights             // vec4 skin joint weights  (INV-3)
-	AttrJointIndices             // uvec4 skin joint indices (INV-3)
+	AttrPosition     AttrKind = iota // vec3 world/model position (INV-1: required)
+	AttrNormal                       // vec3 unit normal
+	AttrUV0                          // vec2 primary texcoord
+	AttrUV1                          // vec2 secondary texcoord
+	AttrTangent                      // vec4 tangent + handedness
+	AttrColor                        // vec4 vertex color
+	AttrJointWeights                 // vec4 skin joint weights  (INV-3)
+	AttrJointIndices                 // uvec4 skin joint indices (INV-3)
 	attrKindCount
 )
 
@@ -62,7 +62,7 @@ func (f VertexFormat) Size() uint32 {
 type PrimitiveTopology uint8
 
 const (
-	TopologyTriangleList  PrimitiveTopology = iota
+	TopologyTriangleList PrimitiveTopology = iota
 	TopologyTriangleStrip
 	TopologyLineList
 	TopologyLineStrip

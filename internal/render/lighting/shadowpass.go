@@ -16,10 +16,10 @@ type ShadowCaster struct {
 // before the lighting pass). Phase is PhaseNone — it is a pre-scene utility pass.
 type shadowMapPass struct{ shadowRID gpu.RID }
 
-func (p *shadowMapPass) Name() string              { return "shadow_map" }
-func (p *shadowMapPass) Phase() gpu.RenderPhase    { return gpu.PhaseNone }
-func (p *shadowMapPass) Inputs() []gpu.RID         { return nil }
-func (p *shadowMapPass) Outputs() []gpu.RID        { return []gpu.RID{p.shadowRID} }
+func (p *shadowMapPass) Name() string                          { return "shadow_map" }
+func (p *shadowMapPass) Phase() gpu.RenderPhase                { return gpu.PhaseNone }
+func (p *shadowMapPass) Inputs() []gpu.RID                     { return nil }
+func (p *shadowMapPass) Outputs() []gpu.RID                    { return []gpu.RID{p.shadowRID} }
 func (p *shadowMapPass) Execute(_ *internalrender.PassContext) {}
 
 // lightingPass reads all shadow maps and performs the clustered lighting shading.
@@ -27,10 +27,10 @@ func (p *shadowMapPass) Execute(_ *internalrender.PassContext) {}
 // producer→consumer edge per RID, enforcing shadow Before lighting (INV-4).
 type lightingPass struct{ inputs []gpu.RID }
 
-func (p *lightingPass) Name() string              { return "lighting" }
-func (p *lightingPass) Phase() gpu.RenderPhase    { return gpu.PhaseOpaque }
-func (p *lightingPass) Inputs() []gpu.RID         { return p.inputs }
-func (p *lightingPass) Outputs() []gpu.RID        { return nil }
+func (p *lightingPass) Name() string                          { return "lighting" }
+func (p *lightingPass) Phase() gpu.RenderPhase                { return gpu.PhaseOpaque }
+func (p *lightingPass) Inputs() []gpu.RID                     { return p.inputs }
+func (p *lightingPass) Outputs() []gpu.RID                    { return nil }
 func (p *lightingPass) Execute(_ *internalrender.PassContext) {}
 
 // BuildShadowPasses registers one shadowMapPass per caster plus one lightingPass

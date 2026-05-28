@@ -105,9 +105,9 @@ func TestTonemapper_ACES_ReferenceValues(t *testing.T) {
 	t.Parallel()
 	type tc struct{ v, exp, want float32 }
 	cases := []tc{
-		{1.0, 1.0, 0.67330},  // Narkowicz 2015: x=0.6 → 0.9216/1.3688
-		{0.5, 1.0, 0.43845},  // x=0.3 → 0.2349/0.5357
-		{0.0, 1.0, 0.0},      // black → black
+		{1.0, 1.0, 0.67330}, // Narkowicz 2015: x=0.6 → 0.9216/1.3688
+		{0.5, 1.0, 0.43845}, // x=0.3 → 0.2349/0.5357
+		{0.0, 1.0, 0.0},     // black → black
 	}
 	const tol = float32(5e-4)
 	for _, c := range cases {

@@ -4,7 +4,7 @@ package postprocess
 type BokehShape uint8
 
 const (
-	BokehCircle  BokehShape = iota
+	BokehCircle BokehShape = iota
 	BokehHexagon
 )
 

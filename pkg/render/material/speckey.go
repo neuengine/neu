@@ -14,8 +14,8 @@ import (
 // A changed key triggers async pipeline recompile with a fallback pipeline meanwhile.
 // The struct is comparable — safe as a map key.
 type SpecializationKey struct {
-	Shader uint64          // hash of shader AssetID
-	Layout uint64          // mesh.VertexLayout.Hash (FNV-1a over sorted elements)
+	Shader uint64 // hash of shader AssetID
+	Layout uint64 // mesh.VertexLayout.Hash (FNV-1a over sorted elements)
 	Alpha  AlphaMode
 	Phase  gpu.RenderPhase
 }

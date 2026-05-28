@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.31.0
+**Version:** 2.32.0
 **Status:** Active
 
 ## Overview
@@ -84,10 +84,15 @@ Local registry of specifications for this workspace. Organized by priority batch
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
 | [l1-audio-system.md](specifications/l1-audio-system.md) | Audio playback, spatial audio, backend abstraction | Draft | concept | 0.3.0 |
+| [l2-audio-system-go.md](specifications/l2-audio-system-go.md) | Go impl: AudioBackend/AudioDriver split, bus-graph DAG, effect factory/instance, spatial systems, headless stub driver (Implements: l1-audio-system) | Draft | go | 0.1.0 |
 | [l1-asset-formats.md](specifications/l1-asset-formats.md) | Asset loaders: glTF, images, audio codecs, scene files | Draft | concept | 0.1.0 |
+| [l2-asset-formats-go.md](specifications/l2-asset-formats-go.md) | Go impl: stdlib-first image/audio loaders, build-tag-gated optional formats, glTF multi-asset fan-out + stable GltfAssetLabel, scene.json codec (Implements: l1-asset-formats) | Draft | go | 0.1.0 |
 | [l1-2d-rendering.md](specifications/l1-2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Draft | concept | 0.2.0 |
+| [l2-2d-rendering-go.md](specifications/l2-2d-rendering-go.md) | Go impl: Sprite2DFeature reusing render-core SoA+VisibilityGroup, deterministic Z→Y→entity sort, atlas batching, 2D ortho+pixel-perfect camera (Implements: l1-2d-rendering) | Draft | go | 0.1.0 |
 | [l1-animation-system.md](specifications/l1-animation-system.md) | Animation graphs, clips, curves, skeletal animation, morph targets | Draft | concept | 0.1.0 |
+| [l2-animation-system-go.md](specifications/l2-animation-system-go.md) | Go impl: clip/curve sampling, AnimationGraph (clip/blend/add + cross-fade), skeletal Joint/Skin, morph, reflection targets, per-root parallel deterministic eval (Implements: l1-animation-system) | Draft | go | 0.1.0 |
 | [l1-tweening-system.md](specifications/l1-tweening-system.md) | Interpolation, easing curves, asynchronous animations | Draft | concept | 0.1.0 |
+| [l2-tweening-system-go.md](specifications/l2-tweening-system-go.md) | Go impl: Tween component, easing library + generic Lerp, Tweening-schedule advance (Real/Virtual delta), self-cleanup on completion/despawn (Implements: l1-tweening-system) | Draft | go | 0.1.0 |
 
 ## P6 — UI & Tools
 
@@ -147,6 +152,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-28
-- **Total Specifications**: 96 (65 L1 concept + 29 L2 Go + 1 test + 1 tool) | Stable: 50 | RFC: 0 | Draft: 46
+- **Total Specifications**: 101 (65 L1 concept + 34 L2 Go + 1 test + 1 tool) | Stable: 50 | RFC: 0 | Draft: 51
 - **Engine Version:** 2.1.28
+- **Last Authoring:** 2026-05-28 — **5 new L2 Go contracts authored for Phase 5** (`/magic.spec`): `l2-{audio-system,asset-formats,2d-rendering,animation-system,tweening-system}-go` — each `Implements:` its Draft L1 parent, status `Draft` (L1 parent Draft + no implementation → Canonical References stub → Stable correctly blocked). Achieves L1+L2 parity with Phases 1–4 ahead of Phase 5 execution. 5 new hard L2→L1 edges (29 total), 1:1, acyclic. `l2-2d-rendering-go` references the now-Stable render-core SoA infra.
 - **Last Stabilization:** 2026-05-28 — **Render Core ratified: `l1-render-core` RFC → Stable + `l2-render-core-go` Draft → Stable** (`/magic.spec`). Evidence: Phase 4 complete (19/19) + C29 P4 gate closed by T-4T05; L1 Canonical References already filled, Q4/Q5 resolved, Q1–Q3 annotated non-blocking; L2 Canonical References populated with 11 verified source files + 2 conformance/isolation tests. Bootstrap fully deactivated for **all 10 P4 render specs** — Phase 4 = 10/10 Stable. Phase 5 gate ("Render Core Stable") now cleared. Prior: **P4 Render Pipeline: 8 specs promoted Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) via Pre-Planning Stabilization — C29 P4 gate satisfied by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, 0-alloc hot paths). Prior: P1 ECS (2 new L2: `l2-pool-go`, `l2-view-go`) promoted directly to Stable (L1 parent Stable + MVC + C9 Trust Mode). `l1-render-core` promoted Draft → RFC (v0.6.0: +`Destroy`, +handle layout, +Canonical References, Q4/Q5 resolved). Prior: 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

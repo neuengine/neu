@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.13.0
+**Version:** 1.14.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/INDEX.md v2.31.0
+**Based on:** .design/main/INDEX.md v2.32.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Status:** Active
-**Mode:** Specs `Stable` 50/96. **Phase 4 Done** (19/19 tasks) — **all 10 render specs Stable**. `l1-render-core` ratified RFC → Stable + `l2-render-core-go` Draft → Stable via `/magic.spec` (2026-05-28); RFC count now 0. **Phase 5 gate cleared** ("Render Core Stable" satisfied) — ready to activate; full atomic decomposition complete (18 tasks, Tracks A–E + T; critical path {A‖D} → B → T; Track C now unblocked). Recommended next: author L2 Go contracts for P5 specs via `/magic.spec`, then `/magic.run main`.
+**Mode:** Specs `Stable` 50/101. **Phase 4 Done** (19/19 tasks) — **all 10 render specs Stable** (render-core ratified 2026-05-28). **Phase 5 Ready** — gate cleared + **5 L2 Go contracts authored** (`l2-{audio,asset-formats,2d-rendering,animation,tweening}-go`, Draft); full L1+L2 parity with P1–P4. 18 tasks decomposed (Tracks A–E + T; critical path {A‖D} → B → T). Next: activate Phase 5 via `/magic.task`, then `/magic.run main`.
 
 ## Overview
 
@@ -94,13 +94,18 @@ Dependency analysis (Implements: chains):
 
 ## Phase 5 — Content Systems `[Ready]` `[Bootstrap]`
 
-*Audio, asset format codecs, 2D rendering, animation graphs, tweening. **Atomic decomposition complete (2026-05-28) — 18 tasks across Tracks A (Audio, 3), B (Asset Formats, 3), C (2D Rendering, 2), D (Animation, 3), E (Tweening, 2), T (Validation, 5); see [tasks/phase-5.md](tasks/phase-5.md). Critical path: {A‖D} → B → T** (glTF/audio loaders consume the AnimationClip + AudioSource asset types; Track E independent). **Gate CLEARED 2026-05-28** — render-core ratified Stable, so Track C (2D) is now unblocked along with Tracks A/B/D/E. Ready to activate via `/magic.task` (Hold → Active). **Recommended pre-execution step:** author L2 Go contracts for the 5 P5 specs via `/magic.spec` (parity with Phases 1–4 — tasks currently reference L1 directly under Bootstrap).*
+*Audio, asset format codecs, 2D rendering, animation graphs, tweening. **Atomic decomposition complete (2026-05-28) — 18 tasks across Tracks A (Audio, 3), B (Asset Formats, 3), C (2D Rendering, 2), D (Animation, 3), E (Tweening, 2), T (Validation, 5); see [tasks/phase-5.md](tasks/phase-5.md). Critical path: {A‖D} → B → T** (glTF/audio loaders consume the AnimationClip + AudioSource asset types; Track E independent). **Gate CLEARED + L2 contracts authored 2026-05-28** — render-core Stable unblocks Track C; all 5 L2 Go specs now authored (Draft), giving full L1+L2 parity with Phases 1–4. Ready to activate via `/magic.task` (Hold → Active).*
 
-- [ ] **Audio System** ([l1-audio-system.md](specifications/l1-audio-system.md)) [L1] `[Bootstrap]` *(Track A: T-5A01..03)*
-- [ ] **Asset Formats** ([l1-asset-formats.md](specifications/l1-asset-formats.md)) [L1] `[Bootstrap]` *(Track B: T-5B01..03 — joins A+D)*
-- [ ] **2D Rendering** ([l1-2d-rendering.md](specifications/l1-2d-rendering.md)) [L1] `[Bootstrap]` *(Track C: T-5C01..02 — gated on render-core Stable)*
-- [ ] **Animation System** ([l1-animation-system.md](specifications/l1-animation-system.md)) [L1] `[Bootstrap]` *(Track D: T-5D01..03 — largest track)*
-- [ ] **Tweening System** ([l1-tweening-system.md](specifications/l1-tweening-system.md)) [L1] `[Bootstrap]` *(Track E: T-5E01..02 — independent)*
+- [ ] **Audio System** ([l1-audio-system.md](specifications/l1-audio-system.md)) [L1] `[Bootstrap]`
+- [ ] **Audio System (Go)** ([l2-audio-system-go.md](specifications/l2-audio-system-go.md)) [L2] `Draft [Bootstrap]` *(Track A: T-5A01..03)*
+- [ ] **Asset Formats** ([l1-asset-formats.md](specifications/l1-asset-formats.md)) [L1] `[Bootstrap]`
+- [ ] **Asset Formats (Go)** ([l2-asset-formats-go.md](specifications/l2-asset-formats-go.md)) [L2] `Draft [Bootstrap]` *(Track B: T-5B01..03 — joins A+D)*
+- [ ] **2D Rendering** ([l1-2d-rendering.md](specifications/l1-2d-rendering.md)) [L1] `[Bootstrap]`
+- [ ] **2D Rendering (Go)** ([l2-2d-rendering-go.md](specifications/l2-2d-rendering-go.md)) [L2] `Draft [Bootstrap]` *(Track C: T-5C01..02 — consumes render-core SoA)*
+- [ ] **Animation System** ([l1-animation-system.md](specifications/l1-animation-system.md)) [L1] `[Bootstrap]`
+- [ ] **Animation System (Go)** ([l2-animation-system-go.md](specifications/l2-animation-system-go.md)) [L2] `Draft [Bootstrap]` *(Track D: T-5D01..03 — largest track)*
+- [ ] **Tweening System** ([l1-tweening-system.md](specifications/l1-tweening-system.md)) [L1] `[Bootstrap]`
+- [ ] **Tweening System (Go)** ([l2-tweening-system-go.md](specifications/l2-tweening-system-go.md)) [L2] `Draft [Bootstrap]` *(Track E: T-5E01..02 — independent)*
 
 ## Phase 6 — UI, Tooling & Quality `[Hold]` `[Bootstrap]`
 
@@ -206,5 +211,6 @@ Dependency analysis (Implements: chains):
 | 1.9.0 | 2026-05-18 | Post-Run Replan (rules/magic.md §5): Phase 3 → **Done** (18/18); resolved PLAN↔STATE mechanical drift (PLAN listed Phase 3 Active with unchecked items while STATE/TASKS/git = Done). Pre-Planning Stabilization promoted 8 P3 specs Draft → Stable (4 L1 + 4 L2: task, asset, scene, math) — C29 P3 gate satisfied by T-3T05 (`examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Phase 4 STOP FACTOR [C-002] lifted; remains `Hold` on Release Cond. #3 (L2 render specs absent) — decomposition deferred per TASKS.md per-phase policy. INDEX v2.27.0 (Stable 38/89), RULES parity v1.8.0 |
 | 1.10.0 | 2026-05-19 | Scoped+Guided `/magic.task main "decompose phase-4"`. Phase 4 `Hold` → **Active** — all 3 Hold Release Conditions met (POC validated + App Framework Stable + 5 L2 render specs authored 2026-05-18 via `/magic.spec`). Placed 5 orphan L2 render specs into Phase 4 under their L1 parents (resolves Pre-flight ORPHANED_SPEC ×5 + SYNC_GAP). Atomic decomposition: 19 tasks across Tracks A:4 Render Core / B:3 Mesh&Image / C:2 Camera / D:3 Materials / E:2 Post / T:5 Validation — critical path A → {B‖C} → D → E → T. Pre-Planning Stabilization: 0 promoted (C29 P4 `examples/{3d,camera,shader}/` gate unmet — Bootstrap retained). 5 new hard L2→L1 edges (24 total), acyclic. INDEX sync v2.27.0 → v2.28.0 (94 specs, Stable 38/94). |
 | 1.11.0 | 2026-05-28 | Registry sync (backfilled — header bumped without history row): INDEX v2.28.0 → v2.29.0 (94 → 96 specs). Placed 2 retroactive P1 L2 specs `l2-pool-go` + `l2-view-go` (Stable, debt-recovery — code pre-existed in `internal/ecs/{pool,view}/`) into Phase 1. `l1-render-core` promoted Draft → RFC (v0.5.0 → v0.6.0: +`Destroy`, +RID layout, +Canonical Refs, Q4/Q5 resolved). Pre-Planning Stabilization: 0 newly promoted (C29 P4 gate still unmet at that point). Stable 40/96. |
+| 1.14.0 | 2026-05-28 | `/magic.spec` authoring. **5 new L2 Go contracts for Phase 5**: `l2-{audio-system,asset-formats,2d-rendering,animation-system,tweening-system}-go` — each `Implements:` its Draft L1 parent, status `Draft` (parent Draft + no impl → Canonical Refs stub → Stable correctly blocked). Full L1+L2 parity with Phases 1–4 ahead of P5 execution; 5 new 1:1 hard L2→L1 edges (29 total), acyclic. `l2-2d-rendering-go` consumes the now-Stable render-core SoA infra. INDEX v2.31.0 → v2.32.0 (96 → 101 specs, Stable 50, Draft 51). Phase 5 stays `Ready`; activate via `/magic.task` then `/magic.run main`. |
 | 1.13.0 | 2026-05-28 | `/magic.spec` ratification. **`l1-render-core` RFC → Stable + `l2-render-core-go` Draft → Stable** — completes the deferred ratification from 1.12.0. Evidence: Phase 4 complete + C29 gate (T-4T05); L1 Canonical Refs already filled + Q4/Q5 resolved + Q1–Q3 annotated non-blocking; L2 Canonical Refs populated (11 source + 2 test files, verified on disk). **Phase 4 = 10/10 specs Stable**, RFC count → 0. **Phase 5 gate cleared** (`Hold` → `Ready`) — Track C (2D) unblocked. INDEX v2.30.0 → v2.31.0 (Stable 48 → 50 / 96). Recommended next: author L2 Go contracts for P5 specs via `/magic.spec`, then activate Phase 5. |
 | 1.12.0 | 2026-05-28 | `/magic.task` full planning. **Pre-Planning Stabilization: 8 P4 render specs Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) — C29 P4 gate closed by T-4T05 (`examples/{3d,camera,shader}/` validated). **Phase 4 → Done** (19/19 tasks). Per user decision, `l1-render-core` kept **RFC** + `l2-render-core-go` Draft (layer-blocked) — RFC→Stable ratification deferred to `/magic.spec`; tasks already Done so promotion-quarantine only (C12.1, not task-quarantine). **Phase 5 full atomic decomposition** (explicit user request): 18 tasks across Tracks A:3 Audio / B:3 Asset Formats / C:2 2D / D:3 Animation / E:2 Tweening / T:5 Validation — critical path {A‖D} → B → T; Track C externally gated on render-core Stable. Phase 5 stays `Hold`. INDEX v2.29.0 → v2.30.0 (Stable 40 → 48 / 96). RULES parity v1.8.0. |

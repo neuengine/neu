@@ -4,14 +4,14 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-28 16:42
+**Updated:** 2026-05-28 17:05
 **Phase:** 5 — Content Systems
 **Status:** Ready
 
 ## Current Position
 
-- **Task:** `/magic.spec` ratification Done — **render-core RFC → Stable** (+ L2). **Phase 4 = 10/10 specs Stable**, RFC count → 0. **Phase 5 gate cleared** (Hold → Ready); 18 tasks decomposed, Track C (2D) now unblocked.
-- **Next Action:** Author L2 Go contracts for the 5 P5 specs via `/magic.spec` (parity with P1–P4), then activate Phase 5 via `/magic.task` and execute `/magic.run main`. Critical path {A‖D} → B → T.
+- **Task:** `/magic.spec` authoring Done — **5 P5 L2 Go contracts authored** (audio, asset-formats, 2d-rendering, animation, tweening; all Draft). Full L1+L2 parity with P1–P4. Phase 5 gate fully open (render-core Stable).
+- **Next Action:** Activate Phase 5 via `/magic.task` (Hold → Active), then `/magic.run main`. Critical path {A‖D} → B → T. Implement against the new L2 contracts (Go Package + Type Definitions), not L1 directly.
 
 ## Progress
 
@@ -28,6 +28,7 @@ Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-28 **`/magic.spec` — Phase 5 L2 contracts authored** — Created 5 new L2 Go specs: `l2-{audio-system,asset-formats,2d-rendering,animation-system,tweening-system}-go` (all Draft, each `Implements:` its L1 parent). Resolves the "P5 L1-only" gap → full L1+L2 parity with P1–P4. Each carries: Invariant Compliance table (L1→Go mapping), Go Package layout (`pkg/` public data + `internal/` logic), Type Definitions (Go contracts — permitted), Performance Strategy (C-027 0-alloc), Error Handling, Testing Strategy. Status Draft correct (parents Draft + no impl → Canonical Refs stub → Stable blocked). Key design choices: audio = headless stub driver default (C-003); asset-formats = stdlib-first + build-tag-gated optional codecs; 2d = `Sprite2DFeature` reuses render-core SoA; animation = reflection-cached property accessors + per-root parallel determinism; tween = single `any`-typed component + cached setter. INDEX v2.32.0 (101 specs, Stable 50/Draft 51), PLAN/TASKS v1.14.0. Post-Update Review (Critic): no impl code (Go contracts permitted), Invariant Compliance substantive, links valid.
 - 2026-05-28 **`/magic.spec` — Render Core ratified Stable** — `l1-render-core` **RFC → Stable** + `l2-render-core-go` **Draft → Stable**, completing the ratification deferred in the prior `/magic.task`. Justification: Phase 4 complete + C29 gate (T-4T05); L1 Canonical Refs already filled + Q4/Q5 resolved; Q1–Q3 annotated non-blocking (forward-looking refinements — ref-counting tracker chosen per §4.6 and validated 0-alloc). L2 Canonical Refs populated with 11 source + 2 test files (all verified on disk via glob — Path Validity check). **Phase 4 = 10/10 Stable, RFC count → 0.** Phase 5 gate ("Render Core Stable") cleared → `Hold` → `Ready`, Track C (2D) unblocked. INDEX v2.31.0 (Stable 50/96), PLAN/TASKS v1.13.0. Post-Update Review (Critic): invariants intact, no impl code in spec (Go contracts permitted), links accurate. **Remaining recommended step:** author L2 Go contracts for the 5 P5 specs (still L1-only).
 - 2026-05-28 **`/magic.task` — P4 Stabilization + P5 Decomposition** — Pre-Planning Stabilization promoted **8 P4 render specs Draft → Stable** (l1/l2 × mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) — C29 P4 gate closed by T-4T05. **Phase 4 → Done** (19/19). **User decision:** `l1-render-core` kept **RFC** + `l2-render-core-go` Draft (layer-blocked) — RFC→Stable ratification deferred to `/magic.spec`. This is a *promotion-quarantine* only — tasks T-4A01..04 are Done (C12.1 exception, nothing moved to Backlog). **Phase 5 full atomic decomposition** (18 tasks → `tasks/phase-5.md`): Track A:3 Audio / B:3 Asset Formats / C:2 2D / D:3 Animation / E:2 Tweening / T:5 Validation. Critical path **{A‖D} → B → T** (glTF/audio loaders consume AnimationClip + AudioSource types); Track E independent; **Track C externally gated** on render-core Stable. Skeptic flags: Animation (D) under-sizing risk; P5 specs are L1-only (L2 Go contracts pending /magic.spec); phase `Hold` condition over-broad (only Track C truly needs render-core). INDEX v2.30.0 (Stable 48/96), PLAN/TASKS v1.12.0.
 - 2026-05-28 **PHASE 4 COMPLETE — T-4T01..05 Done** — Track T validation: `examples/3d/` (Cube+PBR+DirectionalLight+2-cascade shadow, frame hash stable 20 runs), `examples/camera/` (3-camera Order-sort determinism 20 runs), `examples/shader/` (post-process Bloom→Tonemap→FXAA, AA conflict detection, INV-3 golden topology). `internal/render/conformance_test.go` (recordingBackend, all 10 RenderBackend methods). `internal/render/isolation_test.go` (PostProcessStack value-copy isolation, slice-backing isolation, multi-frame isolation). T-4T05 C29 gate: 36/36 pkgs PASS; `go build ./examples/{3d,camera,shader}/...` OK; C-003 stdlib-only; BenchmarkFrustumCullSoA/ClusterLights/BuildPostChain/SpecKey all 0 B/0 allocs. P4 specs eligible Draft→Stable via next /magic.task.
@@ -46,7 +47,8 @@ Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 
 <!-- Empty if none. Format: [severity] description -->
 
 <!-- [resolved 2026-05-28] render-core RFC blocker — ratified RFC → Stable via /magic.spec; Phase 5 gate cleared. -->
-- [low] **Phase 5 specs are L1-only.** No `l2-*-go.md` contracts for audio/asset-formats/2d/animation/tweening. Recommended `/magic.spec` step before `/magic.run` so tasks implement against a Go-level contract (parity with Phases 1–4).
+<!-- [resolved 2026-05-28] P5 L1-only blocker — 5 L2 Go contracts authored via /magic.spec; full L1+L2 parity. -->
+- [advisory] **8 P4 render specs may have empty Canonical References.** Promoted via task.md relaxed-MVC (not spec.md strict checklist). For full spec.md compliance, populate `## Canonical References` on mesh/materials/camera/post L1+L2 (impl exists in `pkg/render/...`). Non-blocking; hygiene pass.
 
 ## Blocking Constraints
 

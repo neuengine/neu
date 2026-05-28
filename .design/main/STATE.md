@@ -4,14 +4,14 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-28 17:20
+**Updated:** 2026-05-28 18:05
 **Phase:** 5 — Content Systems
 **Status:** Active
 
 ## Current Position
 
-- **Task:** `/magic.task` activation Done — **Phase 5 Active** (Ready → Active). All unfreeze conditions met: render-core Stable + 5 L2 contracts authored + 18 tasks ready. Stabilization promoted 0 (C29 P5 gate unmet — Bootstrap retained).
-- **Next Action:** **`/magic.run main`** to execute Phase 5. Critical path {A‖D} → B → T (Track E independent; Track B joins A+D). Implement against L2 contracts. T-5T05 closes the C29 P5 gate → next `/magic.task` promotes P5 specs Draft → Stable.
+- **Task:** Tracks A/D/E + T-5T01/02/03/05 Done (11/18). C29 P5 gate **OPEN** for render-core-independent cohort (44/44 pkgs PASS, BenchmarkLerpVec3 0 B/op 0 allocs/op).
+- **Next Action:** T-5B01/02/03 (Asset Formats — joins A+D) → T-5C01/02 (2D) → T-5T04 (codec golden + 2D example) → next `/magic.task` P5 Draft→Stable promotion.
 
 ## Progress
 
@@ -20,14 +20,15 @@ Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
 Phase 4: [19/19] ████████ 100% ✓ Done  ← all 10 specs Stable (render-core ratified)
-Phase 5: [0/18]  ░░░░░░░░   0%   Active ← gate cleared + L2 contracts; ready for /magic.run
-Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 6 = 46 tasks, far-future Hold)
+Phase 5: [11/18] █████░░░  61%   Active ← Tracks A/D/E + T-5T01/02/03/05 Done; B/C/T04 pending
+Overall: [99/106] ███████░  93% (phases 1–4 done; P5 11/18 in progress)
 ```
 
 ## Recent Decisions
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-28 **`/magic.run` — Phase 5 Tracks A/D/E + T-5T01/02/03/05 Done (11/18)** — Tracks executed: **A** (`pkg/audio/` + `internal/audio/` — source/components/sink, backend/driver/bus/effect, HeadlessBackend+Server, spatial attenuation/panning, ServiceRegistry); **D** (`pkg/animation/` + `internal/animation/` — clip/curve/target, components/graph, skeletal SkinData/ValidateSkin, SampleCurve sampler with Step/Linear/CubicSpline/Hermite + slerp); **E** (`pkg/tween/` + `internal/tween/` — Tween/EasingFn/Lerp generic, 11+ easing functions, AdvanceTween with Loop/PingPong/LoopOnce, writeAccessor reflection path). Validation: **T-5T01** audio hash ×20, **T-5T02** animation pose hash ×20, **T-5T03** tweening LoopMode/PingPong/despawn hash ×20, **T-5T05** C29 P5 gate OPEN (44/44 pkgs PASS, BenchmarkLerpVec3 **0 B/op 0 allocs/op**, C-003 stdlib-only, modernize clean). **Remaining:** T-5B (Asset Formats — joins A+D), T-5C (2D — Track C), T-5T04 (codec golden + 2D example). Race detector unavailable in this env (CGO/C-compiler missing); all tests pass without `-race`.
 - 2026-05-28 **`/magic.task` — Phase 5 Activated** — `Ready` → **Active**. All unfreeze conditions met (render-core Stable + 5 L2 contracts + 18 tasks). Pre-Planning Stabilization: **0 promoted** — C29 P5 gate unmet (no `examples/{audio,animation,tweening,2d}/` yet); all 10 P5 specs stay `Draft [Bootstrap]`, consistent with P1–P4 (specs promote only after the validation track closes the gate). `phase-5.md` status Active; High-Level Checklist links L2. PLAN/TASKS v1.15.0, INDEX unchanged (v2.32.0). **Handoff: `/magic.run main`** — critical path {A‖D} → B → T. T-5T05 will close the gate → following `/magic.task` promotes P5 Draft → Stable.
 - 2026-05-28 **`/magic.spec` — Phase 5 L2 contracts authored** — Created 5 new L2 Go specs: `l2-{audio-system,asset-formats,2d-rendering,animation-system,tweening-system}-go` (all Draft, each `Implements:` its L1 parent). Resolves the "P5 L1-only" gap → full L1+L2 parity with P1–P4. Each carries: Invariant Compliance table (L1→Go mapping), Go Package layout (`pkg/` public data + `internal/` logic), Type Definitions (Go contracts — permitted), Performance Strategy (C-027 0-alloc), Error Handling, Testing Strategy. Status Draft correct (parents Draft + no impl → Canonical Refs stub → Stable blocked). Key design choices: audio = headless stub driver default (C-003); asset-formats = stdlib-first + build-tag-gated optional codecs; 2d = `Sprite2DFeature` reuses render-core SoA; animation = reflection-cached property accessors + per-root parallel determinism; tween = single `any`-typed component + cached setter. INDEX v2.32.0 (101 specs, Stable 50/Draft 51), PLAN/TASKS v1.14.0. Post-Update Review (Critic): no impl code (Go contracts permitted), Invariant Compliance substantive, links valid.
 - 2026-05-28 **`/magic.spec` — Render Core ratified Stable** — `l1-render-core` **RFC → Stable** + `l2-render-core-go` **Draft → Stable**, completing the ratification deferred in the prior `/magic.task`. Justification: Phase 4 complete + C29 gate (T-4T05); L1 Canonical Refs already filled + Q4/Q5 resolved; Q1–Q3 annotated non-blocking (forward-looking refinements — ref-counting tracker chosen per §4.6 and validated 0-alloc). L2 Canonical Refs populated with 11 source + 2 test files (all verified on disk via glob — Path Validity check). **Phase 4 = 10/10 Stable, RFC count → 0.** Phase 5 gate ("Render Core Stable") cleared → `Hold` → `Ready`, Track C (2D) unblocked. INDEX v2.31.0 (Stable 50/96), PLAN/TASKS v1.13.0. Post-Update Review (Critic): invariants intact, no impl code in spec (Go contracts permitted), links accurate. **Remaining recommended step:** author L2 Go contracts for the 5 P5 specs (still L1-only).

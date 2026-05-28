@@ -1,12 +1,12 @@
 ---
 phase: 5
 name: "Content Systems"
-status: Hold
+status: Active
 subsystem: "pkg/audio, pkg/asset/formats, pkg/render/sprite, pkg/animation, pkg/tween"
 requires:
-  - "Phase 4 Render Core Stable (Track C only — render-core is RFC)"
-  - "Phase 4 Mesh & Image / Camera & Visibility Stable"
-  - "Phase 3 Asset System / Math System Stable"
+  - "Phase 4 Render Core Stable (met — ratified 2026-05-28)"
+  - "Phase 4 Mesh & Image / Camera & Visibility Stable (met)"
+  - "Phase 3 Asset System / Math System Stable (met)"
 provides:
   - "Audio playback + spatial audio + bus graph backend abstraction"
   - "Asset format codecs (glTF, images, audio, fonts, scenes)"
@@ -19,29 +19,29 @@ key_files:
 patterns_established: []
 duration_minutes: ~
 bootstrap: true
-hold_reason: "Unfreezes after Phase 4 Render Core (RFC) reaches Stable. Tracks A/B/D/E are render-core-independent and only gate on the now-Stable Mesh/Camera/Asset/Math specs; Track C (2D) is the sole render-core-coupled track."
+activated: "2026-05-28 — gate cleared (render-core Stable) + L2 contracts authored; status Hold → Active via /magic.task."
 ---
 
 # Stage 5 Tasks — Content Systems
 
 **Phase:** 5
-**Status:** Hold
+**Status:** Active
 **Strategic Goal:** End-user content runtime: audio, format codecs, 2D rendering, animation, tweening.
 
 ## High-Level Checklist
 
-- [ ] [T-5A] Audio: backend/driver abstraction, bus graph, spatial audio, ECS pipeline. ([l1-audio-system.md](../specifications/l1-audio-system.md))
-- [ ] [T-5B] Asset format codecs: images, audio, fonts, glTF, scene.json. ([l1-asset-formats.md](../specifications/l1-asset-formats.md))
-- [ ] [T-5C] 2D pipeline: sprites, 9-slice, text, sort+batch as RenderFeature. ([l1-2d-rendering.md](../specifications/l1-2d-rendering.md)) **[gated on render-core Stable]**
-- [ ] [T-5D] Animation: clips, curves, graph, skeletal, morph, events. ([l1-animation-system.md](../specifications/l1-animation-system.md))
-- [ ] [T-5E] Tweening: tween component, easing library, execution+lifecycle. ([l1-tweening-system.md](../specifications/l1-tweening-system.md))
+- [ ] [T-5A] Audio: backend/driver abstraction, bus graph, spatial audio, ECS pipeline. ([l1-audio-system.md](../specifications/l1-audio-system.md) → [l2-audio-system-go.md](../specifications/l2-audio-system-go.md))
+- [ ] [T-5B] Asset format codecs: images, audio, fonts, glTF, scene.json. ([l1-asset-formats.md](../specifications/l1-asset-formats.md) → [l2-asset-formats-go.md](../specifications/l2-asset-formats-go.md))
+- [ ] [T-5C] 2D pipeline: sprites, 9-slice, text, sort+batch as RenderFeature. ([l1-2d-rendering.md](../specifications/l1-2d-rendering.md) → [l2-2d-rendering-go.md](../specifications/l2-2d-rendering-go.md)) **[render-core gate cleared]**
+- [ ] [T-5D] Animation: clips, curves, graph, skeletal, morph, events. ([l1-animation-system.md](../specifications/l1-animation-system.md) → [l2-animation-system-go.md](../specifications/l2-animation-system-go.md))
+- [ ] [T-5E] Tweening: tween component, easing library, execution+lifecycle. ([l1-tweening-system.md](../specifications/l1-tweening-system.md) → [l2-tweening-system-go.md](../specifications/l2-tweening-system-go.md))
 - [ ] [T-5T] Validation: codec round-trip golden tests, animation determinism, audio/2D headless-stub examples.
 
 ## Atomic Decomposition
 
 > Decomposed 2026-05-28 (explicit `/magic.task main "decompose phase-5"` intent — full atomic decomposition requested). 18 atomic tasks across Tracks A–E + T.
 > **Execution Mode:** Parallel (C3). **Critical path:** {A (Audio) ‖ D (Animation)} → B (Asset Formats — glTF/audio loaders consume the AnimationClip + AudioSource asset types). Track E (Tweening) is fully independent. **Track C (2D) is off the critical path and externally gated** on render-core RFC→Stable ratification. Track T joins all on the C29 P5 gate.
-> **Status note:** Phase remains `Hold` until render-core reaches Stable. Decomposition is authored ahead of execution (precedent: Phase 6 decomposed while Hold). Execute via `/magic.run main` only after the hold lifts.
+> **Status note:** Phase is **Active** (2026-05-28) — gate cleared (render-core Stable) and all 5 L2 Go contracts authored. **Ready to execute via `/magic.run main`.** Implement each task against its L2 contract (Go Package + Type Definitions + Invariant Compliance), not directly from L1.
 
 ### Track A — Audio System (`pkg/audio/`) — render-core-independent
 

@@ -4,14 +4,14 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-28 18:20
-**Phase:** 5 — Content Systems
+**Updated:** 2026-05-28 19:05
+**Phase:** 5 — Content Systems (specs Stable)
 **Status:** Done
 
 ## Current Position
 
-- **Task:** T-5B01/02 + T-5C01/02 + T-5T04 Done — **Phase 5 COMPLETE** (18/18 tasks, 2026-05-28). C29 P5 gate closed.
-- **Next Action:** `/magic.task` to promote P5 specs Draft→Stable (C29 P5 gate closed by T-5T05 — 46/46 pkgs PASS)
+- **Task:** `/magic.task` Pre-Planning Stabilization — **8 P5 specs promoted Draft → Stable** (audio, animation, tweening, 2d-rendering — L1+L2). `asset-formats` (L1+L2) **held Draft** (glTF/scene/font unimplemented). Phase 5 = 18/18 Done.
+- **Next Action:** `/magic.spec` to author + stabilize missing **Phase 6** L2 Go contracts (UI, window, definition, build, CLI, platform, AI, plugins, visual-graph) before activating Phase 6 (currently `Hold`). Optionally: implement glTF loader to unblock `asset-formats` promotion.
 
 ## Progress
 
@@ -20,7 +20,7 @@ Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
 Phase 4: [19/19] ████████ 100% ✓ Done  ← all 10 specs Stable (render-core ratified)
-Phase 5: [18/18] ████████ 100% ✓ Done  ← C29 P5 gate OPEN (46/46 pkgs PASS)
+Phase 5: [18/18] ████████ 100% ✓ Done  ← 8 specs Stable (asset-formats held Draft)
 Overall: [106/106] ████████ 100% 🎉
 ```
 
@@ -28,6 +28,7 @@ Overall: [106/106] ████████ 100% 🎉
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-28 **`/magic.task` — P5 Stabilization (8 specs Draft → Stable)** — Pre-Planning Stabilization promoted **4 L1 + 4 L2** (audio, animation, tweening, 2d-rendering) after re-verifying the C29 P5 gate (`go test ./...` 46/46 PASS, all 4 examples hash-stable ×20). The 4 promoted L2 specs' **Canonical References populated** with on-disk-verified source + test + example files — deliberately closing the P4-style empty-refs advisory debt for P5. **`l1-asset-formats` + `l2-asset-formats-go` HELD Draft**: the spec's headline glTF multi-asset fan-out (INV-4), `.scene.json` codec, and font loaders have zero implementation (only stdlib image + WAV loaders landed); no end-to-end example in the C29 gate. C24 Skeptic cleared the hold — no Stable spec hard-depends on asset-formats (it is a downstream *consumer* of audio/animation, so no broken Stable→Draft edge), and all 4 promoted L2s now have Stable L1 parents (layer integrity intact). INDEX v2.33.0 (Stable 50 → 58, Draft 51 → 43), PLAN/TASKS v1.16.0. **Next:** Phase 6 stays `Hold` — author + stabilize missing P6 L2 contracts via `/magic.spec` before activation.
 - 2026-05-28 **`/magic.run` — Phase 5 COMPLETE (18/18)** — **Tracks B/C/T04 Done**: **Track B** (`pkg/asset/formats/image/` StdlibImageLoader PNG/JPEG, `pkg/asset/formats/audio/` WAVLoader PCM decode + normalisation, PNG/WAV golden tests pass); **Track C** (`pkg/render/sprite/` Sprite/Anchor/Rect2D/TextureSlicer/SpriteMesh, `internal/render/sprite2d/` Sprite2DFeature+ExtractedSprite+SortSprites+BatchKey+PickSprite — headless, no GPU); **T-5T04** (`examples/2d/` sort-key hash stable ×20, 3 batches from 6 sprites, pick hit). **T-5T05 C29 P5 gate CLOSED**: `go test ./... → 46/46 PASS`; `go build ./examples/{audio,animation,tweening,2d}/... OK`; `modernize → clean`; C-003 stdlib-only. **Phase 5 = 18/18 Done**, total **106/106** 🎉
 - 2026-05-28 **`/magic.run` — Phase 5 Tracks A/D/E + T-5T01/02/03/05 Done (11/18)** — Tracks executed: **A** (`pkg/audio/` + `internal/audio/` — source/components/sink, backend/driver/bus/effect, HeadlessBackend+Server, spatial attenuation/panning, ServiceRegistry); **D** (`pkg/animation/` + `internal/animation/` — clip/curve/target, components/graph, skeletal SkinData/ValidateSkin, SampleCurve sampler with Step/Linear/CubicSpline/Hermite + slerp); **E** (`pkg/tween/` + `internal/tween/` — Tween/EasingFn/Lerp generic, 11+ easing functions, AdvanceTween with Loop/PingPong/LoopOnce, writeAccessor reflection path). Validation: **T-5T01** audio hash ×20, **T-5T02** animation pose hash ×20, **T-5T03** tweening LoopMode/PingPong/despawn hash ×20, **T-5T05** C29 P5 gate OPEN (44/44 pkgs PASS, BenchmarkLerpVec3 **0 B/op 0 allocs/op**, C-003 stdlib-only, modernize clean). **Remaining:** T-5B (Asset Formats — joins A+D), T-5C (2D — Track C), T-5T04 (codec golden + 2D example). Race detector unavailable in this env (CGO/C-compiler missing); all tests pass without `-race`.
 - 2026-05-28 **`/magic.task` — Phase 5 Activated** — `Ready` → **Active**. All unfreeze conditions met (render-core Stable + 5 L2 contracts + 18 tasks). Pre-Planning Stabilization: **0 promoted** — C29 P5 gate unmet (no `examples/{audio,animation,tweening,2d}/` yet); all 10 P5 specs stay `Draft [Bootstrap]`, consistent with P1–P4 (specs promote only after the validation track closes the gate). `phase-5.md` status Active; High-Level Checklist links L2. PLAN/TASKS v1.15.0, INDEX unchanged (v2.32.0). **Handoff: `/magic.run main`** — critical path {A‖D} → B → T. T-5T05 will close the gate → following `/magic.task` promotes P5 Draft → Stable.
@@ -52,6 +53,7 @@ Overall: [106/106] ████████ 100% 🎉
 <!-- [resolved 2026-05-28] render-core RFC blocker — ratified RFC → Stable via /magic.spec; Phase 5 gate cleared. -->
 <!-- [resolved 2026-05-28] P5 L1-only blocker — 5 L2 Go contracts authored via /magic.spec; full L1+L2 parity. -->
 - [advisory] **8 P4 render specs may have empty Canonical References.** Promoted via task.md relaxed-MVC (not spec.md strict checklist). For full spec.md compliance, populate `## Canonical References` on mesh/materials/camera/post L1+L2 (impl exists in `pkg/render/...`). Non-blocking; hygiene pass.
+- [hold] **`asset-formats` (L1+L2) held Draft.** glTF multi-asset fan-out (INV-4 `GltfAssetLabel`), `.scene.json` codec, and font loaders are unimplemented — only `pkg/asset/formats/image` (PNG/JPEG) + `pkg/asset/formats/audio` (WAV) landed (T-5B03 glTF was a Bootstrap stub). Promotion would overclaim. Unblock: implement the glTF loader + a round-trip golden/example, then `/magic.task` promotes both.
 
 ## Blocking Constraints
 
@@ -68,4 +70,4 @@ Overall: [106/106] ████████ 100% 🎉
 
 **Last Session Ended:** 2026-05-28 16:42
 **Handoff File:** none
-**Bootstrap Mode:** true (P5+ remain `[Bootstrap]`; P1–P4 fully deactivated — all 10 P4 specs Stable)
+**Bootstrap Mode:** true (P6+ remain `[Bootstrap]`; P1–P5 deactivated — 8 of 10 P5 specs Stable, `asset-formats` L1+L2 held Draft pending glTF impl)

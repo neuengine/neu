@@ -1,7 +1,7 @@
 # Tweening System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-tweening-system.md](l1-tweening-system.md)
 
@@ -168,13 +168,19 @@ var ErrTweenTypeMismatch = errors.New("tween: Start/End value types differ or un
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 5 Track E). Stable promotion blocked until: (1) examples/tweening/
-     validates easing + LoopMode + time dimension + self-cleanup (T-5T03);
-     (2) C29 P5 gate (T-5T05). -->
+<!-- All paths verified on disk; easing + LoopMode + time-dimension + self-cleanup
+     validated by examples/tweening (hash ×20, T-5T03) + the C29 P5 gate (T-5T05).
+     BenchmarkLerpVec3 = 0 B/op 0 allocs/op (C-027). -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [TWEEN] | `pkg/tween/tween.go` | `Tween` component, `LoopMode`, `TimeDimension`. |
+| [EASING] | `pkg/tween/easing.go` | `EasingFn` + easing library (quad / cubic / sine / bounce / elastic). |
+| [LERP] | `pkg/tween/lerp.go` | Generic `Lerp[T]`, `LerpAny`, `ErrTweenTypeMismatch`. |
+| [SYSTEM] | `internal/tween/system.go` | `writeAccessor` (reflection path), `AdvanceTween` (Loop / PingPong / LoopOnce). |
+| [SYSTEM_TEST] | `internal/tween/system_test.go` | Advance / loop / ping-pong / despawn + reflection write tests. |
+| [CONTRACT] | `pkg/tween/tween_test.go` | Easing + generic `Lerp` 0-alloc contract tests. |
+| [EXAMPLE] | `examples/tweening/main.go` | EaseOutQuad LoopOnce, Loop wrap, PingPong, despawn — hash stable ×20 (T-5T03). |
 
 ## Document History
 

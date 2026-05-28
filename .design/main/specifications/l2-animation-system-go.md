@@ -1,7 +1,7 @@
 # Animation System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-animation-system.md](l1-animation-system.md)
 
@@ -227,12 +227,21 @@ var (
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 5 Track D). Stable promotion blocked until: (1) examples/animation/
-     validates clip+graph+skeletal determinism (T-5T02); (2) C29 P5 gate (T-5T05). -->
+<!-- All paths verified on disk; clip+graph+skeletal determinism validated by
+     examples/animation (pose hash ×20, T-5T02) + the C29 P5 gate (T-5T05). -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [CLIP] | `pkg/animation/clip.go` | `Interpolation`, `Keyframes`, `VariableCurve`, `AnimationClip` asset. |
+| [TARGET] | `pkg/animation/target.go` | `RepeatMode`, `AnimationTargetId` (entity path + property). |
+| [COMPONENTS] | `pkg/animation/components.go` | `AnimationPlayer`, `ActiveAnimation`, `Joint`, `Skin`, `MorphWeights`. |
+| [GRAPH] | `pkg/animation/graph.go` | `AnimationGraph` (clip / blend / add nodes + transitions), `ErrAnimGraphCycle`. |
+| [EVENT] | `pkg/animation/event.go` | `AnimationEvent` timed callbacks. |
+| [PLAYER] | `internal/animation/player.go` | `SampleCurve` / `sampleKeyframes` (Step/Linear/CubicSpline/Hermite), `slerpQuat`. |
+| [SKELETAL] | `internal/animation/skeletal.go` | `SkinData`, `JointTransform`, `ValidateSkin`, `ErrSkinMismatch`. |
+| [SAMPLER] | `internal/animation/player_test.go` | Curve sampling + slerp determinism tests. |
+| [CONTRACT] | `pkg/animation/animation_test.go` | Clip / graph / component contract tests. |
+| [EXAMPLE] | `examples/animation/main.go` | 3-keyframe clip sampled at t=0.5/1.0/1.5, skin-mismatch guard — pose hash stable ×20 (T-5T02). |
 
 ## Document History
 

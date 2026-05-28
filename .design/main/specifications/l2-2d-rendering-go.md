@@ -1,7 +1,7 @@
 # 2D Rendering — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-2d-rendering.md](l1-2d-rendering.md)
 
@@ -191,13 +191,18 @@ func PickSprite(view *render.RenderView, worldRay math.Ray2D) (entity.EntityID, 
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 5 Track C). Stable promotion blocked until: (1) examples/2d/ validates
-     batching + sort + atlas (T-5T04); (2) C29 P5 gate (T-5T05). Track C consumes
-     render-core SoA infra (now Stable). -->
+<!-- All paths verified on disk; sort/batch/pick algorithms validated by examples/2d
+     (sort-key hash ×20, T-5T04) + the C29 P5 gate (T-5T05). Scope note: the
+     Sprite2DFeature is headless — Extract/Collect/Draw are no-ops pending ECS-query +
+     GPU-backend wiring (mirrors render-core's nopBackend); world-space text rendering
+     and pixel-perfect camera are deferred follow-ups. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [SPRITE] | `pkg/render/sprite/sprite.go` | `Sprite`, `Anchor`, `Rect2D`, `TextureSlicer`, `SpriteMesh` components. |
+| [FEATURE] | `internal/render/sprite2d/feature.go` | `Sprite2DFeature` (RenderFeature), `ExtractedSprite`, `SortSprites`, `BuildSortKey`, `BatchKey`, `PickSprite`. |
+| [EXAMPLE] | `examples/2d/main.go` | 6 sprites → 3 batches, Z→Y→entity sort, pick hit — sort-key hash stable ×20 (T-5T04). |
+| [CONFORMANCE] | `examples/2d/main_test.go` | INV-2 sort determinism + INV-3 batch count ×20. |
 
 ## Document History
 

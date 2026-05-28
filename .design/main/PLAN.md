@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.15.0
+**Version:** 1.16.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/INDEX.md v2.32.0
+**Based on:** .design/main/INDEX.md v2.33.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Status:** Active
-**Mode:** Specs `Stable` 50/101. **Phase 4 Done** (19/19). **Phase 5 ACTIVE** (2026-05-28) — gate cleared (render-core Stable) + 5 L2 Go contracts authored; 18 tasks ready (Tracks A–E + T; critical path {A‖D} → B → T). P5 specs stay `Draft [Bootstrap]` until C29 P5 gate (T-5T05 `examples/{audio,animation,tweening,2d}/`). **Execute via `/magic.run main`.**
+**Mode:** Specs `Stable` 58/101. **Phases 1–5 Done.** **Phase 5 Done** (18/18, 2026-05-28) — C29 P5 gate closed by T-5T05 (46/46 pkgs PASS). **8 P5 specs promoted Draft → Stable** (audio, animation, tweening, 2d-rendering — L1+L2); the 4 L2 specs' Canonical References populated + on-disk-verified. **Held Draft:** `l1-asset-formats` + `l2-asset-formats-go` — glTF multi-asset fan-out (INV-4), `.scene.json` codec, and font loaders unimplemented (only stdlib image + WAV landed). **Next:** Phase 6 stays `Hold` — needs missing P6 L2 Go contracts authored + stabilized via `/magic.spec` before activation.
 
 ## Overview
 

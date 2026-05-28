@@ -1,7 +1,7 @@
 # Audio System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-audio-system.md](l1-audio-system.md)
 
@@ -220,12 +220,26 @@ var (
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 5 Track A). Stable promotion blocked until: (1) examples/audio/ validates
-     the headless backend (T-5T01); (2) the C29 P5 gate (T-5T05) is green. -->
+<!-- All paths verified on disk; runtime validated by examples/audio (hash ×20, T-5T01)
+     and the C29 P5 gate (T-5T05). The default backend is the headless stub (C-003):
+     real hardware drivers are opt-in plugins. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [SOURCE] | `pkg/audio/source.go` | `PlaybackMode`, `PlaybackSettings`, `AudioSource` asset (samples + format). |
+| [COMPONENTS] | `pkg/audio/components.go` | `AudioPlayer`, `SpatialListener`, `GlobalVolume` ECS components. |
+| [SINK] | `pkg/audio/sink.go` | `SinkHandle`, `AudioSink`, `SpatialAudioSink` playback handles. |
+| [BACKEND] | `pkg/audio/backend.go` | `AudioBackend` interface (Create/Update/Drop sink, master volume, `PollFinished`). |
+| [DRIVER] | `pkg/audio/driver.go` | `AudioDriver` hardware abstraction (init / start / mix-rate / lock). |
+| [BUS] | `pkg/audio/bus.go` | `AudioBus`, `AudioBusLayout`, `ValidateDAG` cycle detection (INV bus graph). |
+| [EFFECT] | `pkg/audio/effect.go` | Audio effect factory / instance split. |
+| [HEADLESS] | `internal/audio/headless.go` | `HeadlessDriver` + `HeadlessBackend`: zero-hardware deterministic sink accounting (C-003). |
+| [SERVER] | `internal/audio/server.go` | `AudioServer` wiring driver + backend + layout; `SetLayout` runs `ValidateDAG`. |
+| [SPATIAL] | `internal/audio/spatial.go` | `Attenuation` (inverse/linear), `StereoPan` constant-power. |
+| [SERVICE] | `internal/audio/service.go` | Audio service registry. |
+| [CONFORMANCE] | `internal/audio/headless_test.go` | Headless backend sink lifecycle + master-volume tests. |
+| [CONTRACT] | `pkg/audio/audio_test.go` | Bus DAG, playback settings, sink contract tests. |
+| [EXAMPLE] | `examples/audio/main.go` | 4-bus DAG, 3 sinks, attenuation, DESPAWN via `PollFinished` — hash stable ×20 (T-5T01). |
 
 ## Document History
 

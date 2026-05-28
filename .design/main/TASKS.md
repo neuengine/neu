@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.11.0
+**Version:** 1.12.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.11.0
+**Based on:** .design/main/PLAN.md v1.12.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Phases 1–3 specs → `Stable` (40/96). Phase 3 **Done**. **Phase 4 Active** — all 3 Hold Release Conditions met; atomic-decomposed 2026-05-19 (19 tasks, Tracks A–E + T; critical path A → {B‖C} → D → E → T). `l1-render-core` → **RFC** (2026-05-28). P4 L2 specs `Draft [Bootstrap]` — C29 holds Stable until `examples/{3d,camera,shader}/` validate (T-4T05). 2 retroactive P1 L2 specs Stable (`l2-pool-go`, `l2-view-go`). Execute via `/magic.run main`.
+**Mode:** Specs `Stable` 48/96. **Phase 4 Done** (19/19) — C29 P4 gate closed by T-4T05; **8 render specs promoted Draft → Stable**. `l1-render-core` kept **RFC** + `l2-render-core-go` Draft (promotion-quarantine; RFC→Stable deferred to `/magic.spec`). **Phase 5 Hold** — full atomic decomposition complete 2026-05-28 (18 tasks, Tracks A–E + T; critical path {A‖D} → B → T; Track C gated on render-core Stable). Phase 5 unfreezes when render-core ratifies.
 
 ## Overview
 
@@ -19,8 +19,8 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 | [Phase 1](tasks/phase-1.md) | ECS Core POC — world, entities, components, queries, scheduler, validating `examples/ecs/poc/` | Done |
 | [Phase 2](archives/tasks/phase-2.md) | Framework Primitives — hierarchy, time, input, state, change-detection, app/plugin (24 atomic tasks, Tracks A–G + T) | Done |
 | [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Done |
-| [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing (19 atomic tasks, Tracks A–E + T; decomposed 2026-05-19) | Active |
-| [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening | Hold |
+| [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing (19 atomic tasks, Tracks A–E + T; decomposed 2026-05-19) | Done |
+| [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening (18 atomic tasks, Tracks A–E + T; decomposed 2026-05-28) | Hold |
 | [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Hold |
 | [Phase 7](tasks/phase-7.md) | Networking & Hot-Reload — profiling, transport, replication, sync, RPC, hot-reload | Hold |
 | [Phase 8](tasks/phase-8.md) | Physics & Scripting — physics server, bodies, colliders, queries, joints, character, scripting | Hold |
@@ -36,14 +36,16 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 - **Total atomic tasks (Phase 1)**: 27 (Tracks A–I + T) — Done *(+2 retroactive Stable L2 specs: `l2-pool-go`, `l2-view-go` — debt-recovery, no new atomic tasks required)*
 - **Total atomic tasks (Phase 2)**: 24 (Tracks A–G + T) — decomposed 2026-05-16; critical path E → F
 - **Total atomic tasks (Phase 3)**: 18 (Tracks A:3 / B:3 / C:3 / D:4 / T:5) — **Done 2026-05-18** (18/18; critical path A → B held; C29 P3 gate closed by T-3T05)
-- **Total atomic tasks (Phase 4)**: 19 (Tracks A:4 / B:3 / C:2 / D:3 / E:2 / T:5) — decomposed 2026-05-19; critical path A → {B‖C} → D → E → T
+- **Total atomic tasks (Phase 4)**: 19 (Tracks A:4 / B:3 / C:2 / D:3 / E:2 / T:5) — **Done 2026-05-28** (19/19; critical path A → {B‖C} → D → E → T held; C29 P4 gate closed by T-4T05; 8 specs Stable, render-core RFC quarantined)
+- **Total atomic tasks (Phase 5)**: 18 (Tracks A:3 Audio / B:3 Asset Formats / C:2 2D / D:3 Animation / E:2 Tweening / T:5 Validation) — decomposed 2026-05-28; critical path {A‖D} → B → T; Track C gated on render-core Stable
 - **Total atomic tasks (Phase 6)**: 46 (Tracks A–P + T) — Track P (Visual Graph System, 4 tasks) added 2026-05-14
-- **Phases 5, 7–8**: structural workbooks, atomic decomposition deferred to per-phase `/magic.task {workspace} "decompose phase-N"` invocations.
+- **Phases 7–8**: structural workbooks, atomic decomposition deferred to per-phase `/magic.task {workspace} "decompose phase-N"` invocations.
 
 ## Meta Information
 
 - **Last Updated**: 2026-05-28
 - **Maintainer**: Core Team
+- **Phase 4 Stabilization + Phase 5 Decomposition (2026-05-28)**: `/magic.task` full planning. **Pre-Planning Stabilization promoted 8 P4 render specs Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) — C29 P4 gate satisfied by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, all hot-path benchmarks 0 B/op 0 allocs/op). **Phase 4 → Done** (19/19). Per user decision, `l1-render-core` retained **RFC** + `l2-render-core-go` Draft (layer-blocked by RFC parent) — RFC→Stable ratification deferred to `/magic.spec`; this is a *promotion-quarantine* only (tasks T-4A01..04 are Done; C12.1 stabilization exception — no task moved to Backlog). **Phase 5 full atomic decomposition** (explicit user request, overriding the deferred per-phase policy): 18 tasks written to `tasks/phase-5.md` across Tracks A (Audio, 3) / B (Asset Formats, 3) / C (2D, 2) / D (Animation, 3) / E (Tweening, 2) / T (Validation, 5). Critical path {A‖D} → B → T (glTF/audio loaders consume AnimationClip + AudioSource types); Track C externally gated on render-core Stable. P5 specs are L1-only — L2 Go contracts pending `/magic.spec`. Phase 5 stays `Hold`. INDEX v2.29.0 → v2.30.0 (Stable 40 → 48 / 96), PLAN v1.11.0 → v1.12.0. No engine (`.magic/`) files modified — no C14 bump.
 - **Registry Sync (2026-05-28)**: INDEX v2.28.0 → v2.29.0 (94 → 96 specs). Resolved ORPHANED_SPEC ×2 + SYNC_GAP: placed `l2-pool-go` and `l2-view-go` (Stable, debt-recovery P1 L2 specs) into Phase 1. `l1-render-core` promoted Draft → RFC (v0.5.0 → v0.6.0). PLAN.md v1.10.0 → v1.11.0. Pre-Planning Stabilization: 0 newly promoted (pool/view already Stable from magic.spec session; Phase 4-8 Draft specs not yet MVC-promotable without C29 gate). No new atomic task IDs — retroactive specs require no implementation work.
 - **Phase 4 Atomic Decomposition (2026-05-19)**: 19 atomic tasks written to `tasks/phase-4.md` — Track A (Render Core, 4: server/RID+backend, Kahn-DAG graph, SubApp+4-phase extract, RenderFeature+SoA cull — critical-path head), Track B (Mesh & Image, 3: mesh/layout, primitives/skin, image/atlas/upload — consumes A server), Track C (Camera & Visibility, 2: camera/projection/frustum, 3-layer visibility/cull), Track D (Materials & Lighting, 3: material/PBR/speckey, lights/IBL/shadow, clustering/shadow-pass), Track E (Post-Processing, 2: effect-chain/tonemap, ping-pong/custom/AA), Track T (Validation, 5: examples/{3d,camera,shader} + isolation/conformance + C29 gate sign-off). Scoped+Guided `/magic.task main "decompose phase-4"` — all 3 Hold Release Conditions met (POC + App Framework Stable + 5 L2 specs authored 2026-05-18). Resolved Pre-flight ORPHANED_SPEC ×5 + SYNC_GAP (placed L2 render specs into Phase 4, INDEX v2.27.0 → v2.28.0). Pre-Planning Stabilization: 0 promoted (C29 P4 gate unmet — Bootstrap retained). Execute via `/magic.run main`.
 - **Phase 3 Atomic Decomposition (2026-05-18)**: 18 atomic tasks written to `tasks/phase-3.md` — Track A (Task System, 3: deque/pool, scope/handle, executor/plugin — critical-path head), Track B (Asset System, 3: handle/store, loader/VFS/async, content/watch — consumes A's pool), Track C (Scene System, 3: static/codec, dynamic/spawner, remap), Track D (Math System, 4: linear, affine/primitives, color/curves, SIMD-parity), Track T (Validation, 5: async/asset/scene/math examples + C29 gate sign-off). Deferral condition (Phase 2 ≥ 50% Done) satisfied — Phase 2 is 100% Done. Resolved PLAN↔workbook drift: PLAN v1.7.0 prose claimed decomposition complete while the workbook still read "Pending". Pre-Planning Stabilization: 0 specs promoted (C29 P3 `examples/` gate unmet — Bootstrap retained for P3+). Execute via `/magic.run main`.

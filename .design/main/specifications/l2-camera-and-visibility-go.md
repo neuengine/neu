@@ -1,7 +1,7 @@
 # Camera & Visibility — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-camera-and-visibility.md](l1-camera-and-visibility.md)
 

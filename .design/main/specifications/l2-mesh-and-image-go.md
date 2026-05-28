@@ -1,7 +1,7 @@
 # Mesh & Image — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-mesh-and-image.md](l1-mesh-and-image.md)
 

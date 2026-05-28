@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.29.0
+**Version:** 2.30.0
 **Status:** Active
 
 ## Overview
@@ -70,14 +70,14 @@ Local registry of specifications for this workspace. Organized by priority batch
 | :--- | :--- | :--- | :--- | :--- |
 | [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | RFC | concept | 0.6.0 |
 | [l2-render-core-go.md](specifications/l2-render-core-go.md) | Go impl: RID+command-queue server, RenderBackend interface, Kahn-DAG graph, SubApp extract isolation, 4-phase schedule, SoA RenderDataHolder (Implements: l1-render-core) | Draft | go | 0.1.0 |
-| [l1-mesh-and-image.md](specifications/l1-mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Draft | concept | 0.1.0 |
-| [l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md) | Go impl: immutable attribute-map Mesh, validated index/skin invariants, FNV layout hash, stdlib decode on IOPool, shelf-pack DynamicAtlas (Implements: l1-mesh-and-image) | Draft | go | 0.1.0 |
-| [l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Draft | concept | 0.1.0 |
-| [l2-materials-and-lighting-go.md](specifications/l2-materials-and-lighting-go.md) | Go impl: typed MaterialParameters, idempotent PBR clamp, total AlphaMode→phase, CascadeShadowConfig, ForBatched light clustering (Implements: l1-materials-and-lighting) | Draft | go | 0.1.0 |
-| [l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md) | Camera, projections, visibility hierarchy, frustum culling | Draft | concept | 0.1.0 |
-| [l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md) | Go impl: pure-data Camera, projection guards, 3-layer visibility reusing hierarchy walk, conservative frustum test, ForBatched cull (Implements: l1-camera-and-visibility) | Draft | go | 0.1.0 |
-| [l1-post-processing.md](specifications/l1-post-processing.md) | Post-process effects, anti-aliasing, tonemapping, bloom | Draft | concept | 0.1.0 |
-| [l2-post-processing-go.md](specifications/l2-post-processing-go.md) | Go impl: canonical EffectSlot chain, omit-disabled graph nodes, pooled ping-pong, HDR→LDR tonemap guard, AA mutual-exclusion (Implements: l1-post-processing) | Draft | go | 0.1.0 |
+| [l1-mesh-and-image.md](specifications/l1-mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Stable | concept | 0.1.0 |
+| [l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md) | Go impl: immutable attribute-map Mesh, validated index/skin invariants, FNV layout hash, stdlib decode on IOPool, shelf-pack DynamicAtlas (Implements: l1-mesh-and-image) | Stable | go | 0.1.0 |
+| [l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Stable | concept | 0.1.0 |
+| [l2-materials-and-lighting-go.md](specifications/l2-materials-and-lighting-go.md) | Go impl: typed MaterialParameters, idempotent PBR clamp, total AlphaMode→phase, CascadeShadowConfig, ForBatched light clustering (Implements: l1-materials-and-lighting) | Stable | go | 0.1.0 |
+| [l1-camera-and-visibility.md](specifications/l1-camera-and-visibility.md) | Camera, projections, visibility hierarchy, frustum culling | Stable | concept | 0.1.0 |
+| [l2-camera-and-visibility-go.md](specifications/l2-camera-and-visibility-go.md) | Go impl: pure-data Camera, projection guards, 3-layer visibility reusing hierarchy walk, conservative frustum test, ForBatched cull (Implements: l1-camera-and-visibility) | Stable | go | 0.1.0 |
+| [l1-post-processing.md](specifications/l1-post-processing.md) | Post-process effects, anti-aliasing, tonemapping, bloom | Stable | concept | 0.1.0 |
+| [l2-post-processing-go.md](specifications/l2-post-processing-go.md) | Go impl: canonical EffectSlot chain, omit-disabled graph nodes, pooled ping-pong, HDR→LDR tonemap guard, AA mutual-exclusion (Implements: l1-post-processing) | Stable | go | 0.1.0 |
 
 ## P5 — Content Systems
 
@@ -147,6 +147,6 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-28
-- **Total Specifications**: 96 (65 L1 concept + 29 L2 Go + 1 test + 1 tool) | Stable: 40 | RFC: 1 | Draft: 55
+- **Total Specifications**: 96 (65 L1 concept + 29 L2 Go + 1 test + 1 tool) | Stable: 48 | RFC: 1 | Draft: 47
 - **Engine Version:** 2.1.28
-- **Last Stabilization:** 2026-05-28 — P1 ECS (2 new L2: `l2-pool-go`, `l2-view-go`) promoted directly to Stable (L1 parent Stable + MVC + C9 Trust Mode). `l1-render-core` promoted Draft → RFC (v0.6.0: +`Destroy`, +handle layout, +Canonical References, Q4/Q5 resolved). Prior: 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)
+- **Last Stabilization:** 2026-05-28 — **P4 Render Pipeline: 8 specs promoted Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) via Pre-Planning Stabilization — C29 P4 gate satisfied by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, 0-alloc hot paths). Bootstrap deactivated for the 4 promoted P4 cohorts. **Quarantined:** `l1-render-core` (RFC) + `l2-render-core-go` (Draft, layer-blocked by RFC parent) — RFC→Stable ratification deferred to `/magic.spec`. Prior: P1 ECS (2 new L2: `l2-pool-go`, `l2-view-go`) promoted directly to Stable (L1 parent Stable + MVC + C9 Trust Mode). `l1-render-core` promoted Draft → RFC (v0.6.0: +`Destroy`, +handle layout, +Canonical References, Q4/Q5 resolved). Prior: 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

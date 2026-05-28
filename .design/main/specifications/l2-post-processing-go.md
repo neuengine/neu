@@ -1,7 +1,7 @@
 # Post-Processing — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-post-processing.md](l1-post-processing.md)
 

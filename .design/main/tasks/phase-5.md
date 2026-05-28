@@ -31,11 +31,11 @@ activated: "2026-05-28 — gate cleared (render-core Stable) + L2 contracts auth
 ## High-Level Checklist
 
 - [x] [T-5A] Audio: backend/driver abstraction, bus graph, spatial audio, ECS pipeline. ([l1-audio-system.md](../specifications/l1-audio-system.md) → [l2-audio-system-go.md](../specifications/l2-audio-system-go.md)) *(T-5A01/02/03 Done 2026-05-28)*
-- [ ] [T-5B] Asset format codecs: images, audio, fonts, glTF, scene.json. ([l1-asset-formats.md](../specifications/l1-asset-formats.md) → [l2-asset-formats-go.md](../specifications/l2-asset-formats-go.md))
-- [ ] [T-5C] 2D pipeline: sprites, 9-slice, text, sort+batch as RenderFeature. ([l1-2d-rendering.md](../specifications/l1-2d-rendering.md) → [l2-2d-rendering-go.md](../specifications/l2-2d-rendering-go.md))
+- [x] [T-5B] Asset format codecs: images, audio, fonts, glTF, scene.json. ([l1-asset-formats.md](../specifications/l1-asset-formats.md) → [l2-asset-formats-go.md](../specifications/l2-asset-formats-go.md)) *(T-5B01/02 Done 2026-05-28; T-5B03 glTF = Bootstrap stub pending full implementation)*
+- [x] [T-5C] 2D pipeline: sprites, 9-slice, text, sort+batch as RenderFeature. ([l1-2d-rendering.md](../specifications/l1-2d-rendering.md) → [l2-2d-rendering-go.md](../specifications/l2-2d-rendering-go.md)) *(T-5C01/02 Done 2026-05-28)*
 - [x] [T-5D] Animation: clips, curves, graph, skeletal, morph, events. ([l1-animation-system.md](../specifications/l1-animation-system.md) → [l2-animation-system-go.md](../specifications/l2-animation-system-go.md)) *(T-5D01/02/03 Done 2026-05-28)*
 - [x] [T-5E] Tweening: tween component, easing library, execution+lifecycle. ([l1-tweening-system.md](../specifications/l1-tweening-system.md) → [l2-tweening-system-go.md](../specifications/l2-tweening-system-go.md)) *(T-5E01/02 Done 2026-05-28)*
-- [ ] [T-5T] Validation: codec round-trip golden tests, animation determinism, audio/2D headless-stub examples. *(T-5T01/02/03/05 Done; T-5T04 pending Track B/C)*
+- [x] [T-5T] Validation: codec round-trip golden tests, animation determinism, audio/2D headless-stub examples. *(T-5T01/02/03/04/05 Done 2026-05-28)*
 
 ## Atomic Decomposition
 

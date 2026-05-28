@@ -1,7 +1,7 @@
 # Render Core — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-render-core.md](l1-render-core.md)
 
@@ -267,15 +267,27 @@ var (
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 4 Render Pipeline). Stable promotion blocked: (1) L1 parent Draft;
-     (2) C29 — no validating examples/3d/ yet; (3) C-002 STOP FACTOR Phase 4. -->
+<!-- Downstream agents: read ALL files below before implementing or extending the render core (Go). -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| `[BACKEND]` | `pkg/render/backend.go` | `RenderBackend` interface, `RID` bit-pack, `ResourceKind`, descriptors — public contract |
+| `[PHASE]` | `pkg/render/phase.go` | `RenderPhase` enum (Opaque/AlphaMask/Transparent/UI) — public, cross-spec |
+| `[SUBAPP]` | `internal/render/subapp.go` | `RenderSubApp`: own `*world.World` + schedule, `RunFrame` (Collect→Extract→Prepare→Draw) |
+| `[EXTRACT]` | `internal/render/extract.go` | `ExtractFn` registry, main→render copy-not-share isolation (INV-4) |
+| `[GRAPH]` | `internal/render/graph.go` | `RenderGraph`, Kahn DAG build, barrier insertion, `ErrRenderGraphCycle` (INV-1/2) |
+| `[SERVER]` | `internal/render/server.go` | `Server`: RID allocator, command queue, two-phase create, goroutine fast-path |
+| `[RESOURCES]` | `internal/render/resources.go` | `ResourceTracker`: ref-count lifecycle, deferred deletion (INV-3) |
+| `[PHASES]` | `internal/render/phases.go` | Four-phase render schedule (Collect / Extract / Prepare / Draw) |
+| `[FEATURE]` | `internal/render/feature.go` | `RenderFeature` interface, `RenderObject` proxy pattern |
+| `[VISIBILITY]` | `internal/render/visibility.go` | `VisibilityGroup`, parallel frustum cull (ForBatched), culling mask |
+| `[RENDERDATA]` | `internal/render/renderdata.go` | `RenderDataHolder` SoA: `StaticKey`/`DynamicKey` arrays, GPU-bindable slices |
+| `[CONFORMANCE]` | `internal/render/conformance_test.go` | `recordingBackend` — all 10 `RenderBackend` methods exercised (INV-5) |
+| `[ISOLATION]` | `internal/render/isolation_test.go` | Render-world extract isolation tests (INV-4: copy not share) |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-18 | Initial L2 draft — Go translation of l1-render-core v0.5.0. RID+command-queue server, RenderBackend interface, Kahn-DAG graph, SubApp extract isolation, four-phase schedule on ComputePool, SoA RenderDataHolder, RenderFeature proxies. L1 Q1–Q5 carried as TBD. Draft — L1 parent Draft + C29 + C-002 Phase 4 Hold. |
+| 0.1.0 | 2026-05-28 | **Draft → Stable ratification** (`/magic.spec`). All three promotion blockers cleared: (1) L1 parent `l1-render-core` ratified RFC → Stable same session; (2) C29 P4 gate closed by T-4T05 (`examples/{3d,camera,shader}/` validated); (3) C-002 STOP FACTOR lifted (Phase 4 Done). Canonical References populated with the 11 implemented source files + 2 conformance/isolation test files (all verified on disk). No content change beyond canonical-ref fill — implementation matches the 0.1.0 contract. |

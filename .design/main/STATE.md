@@ -4,14 +4,14 @@
 <!-- Maximum 100 lines. Agent updates AFTER each completed action. -->
 
 **Workspace:** main
-**Updated:** 2026-05-28 16:21
+**Updated:** 2026-05-28 16:42
 **Phase:** 5 — Content Systems
-**Status:** Hold
+**Status:** Ready
 
 ## Current Position
 
-- **Task:** `/magic.task` planning Done — **Phase 4 → Done**; 8 P4 render specs promoted Draft → Stable; **Phase 5 fully decomposed** (18 tasks, Hold). `l1-render-core` kept RFC (promotion-quarantine, user choice).
-- **Next Action:** Ratify l1-render-core RFC->Stable via /magic.spec to unblock Phase 5 Track C (2D); then /magic.run main for render-core-independent Tracks A/B/D/E. Recommended: author L2 Go contracts for P5 specs via /magic.spec first.
+- **Task:** `/magic.spec` ratification Done — **render-core RFC → Stable** (+ L2). **Phase 4 = 10/10 specs Stable**, RFC count → 0. **Phase 5 gate cleared** (Hold → Ready); 18 tasks decomposed, Track C (2D) now unblocked.
+- **Next Action:** Author L2 Go contracts for the 5 P5 specs via `/magic.spec` (parity with P1–P4), then activate Phase 5 via `/magic.task` and execute `/magic.run main`. Critical path {A‖D} → B → T.
 
 ## Progress
 
@@ -19,8 +19,8 @@
 Phase 1: [27/27] ████████ 100% ✓ Done
 Phase 2: [24/24] ████████ 100% ✓ Done
 Phase 3: [18/18] ████████ 100% ✓ Done
-Phase 4: [19/19] ████████ 100% ✓ Done  ← 8 specs Stable; render-core RFC quarantined
-Phase 5: [0/18]  ░░░░░░░░   0%   Hold  ← decomposed; gated on render-core RFC→Stable
+Phase 4: [19/19] ████████ 100% ✓ Done  ← all 10 specs Stable (render-core ratified)
+Phase 5: [0/18]  ░░░░░░░░   0%   Ready ← decomposed; gate cleared, awaiting activation
 Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 6 = 46 tasks, far-future Hold)
 ```
 
@@ -28,6 +28,7 @@ Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 
 
 <!-- Last 3-5 locked decisions. Older entries → archived to PLAN.md -->
 
+- 2026-05-28 **`/magic.spec` — Render Core ratified Stable** — `l1-render-core` **RFC → Stable** + `l2-render-core-go` **Draft → Stable**, completing the ratification deferred in the prior `/magic.task`. Justification: Phase 4 complete + C29 gate (T-4T05); L1 Canonical Refs already filled + Q4/Q5 resolved; Q1–Q3 annotated non-blocking (forward-looking refinements — ref-counting tracker chosen per §4.6 and validated 0-alloc). L2 Canonical Refs populated with 11 source + 2 test files (all verified on disk via glob — Path Validity check). **Phase 4 = 10/10 Stable, RFC count → 0.** Phase 5 gate ("Render Core Stable") cleared → `Hold` → `Ready`, Track C (2D) unblocked. INDEX v2.31.0 (Stable 50/96), PLAN/TASKS v1.13.0. Post-Update Review (Critic): invariants intact, no impl code in spec (Go contracts permitted), links accurate. **Remaining recommended step:** author L2 Go contracts for the 5 P5 specs (still L1-only).
 - 2026-05-28 **`/magic.task` — P4 Stabilization + P5 Decomposition** — Pre-Planning Stabilization promoted **8 P4 render specs Draft → Stable** (l1/l2 × mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) — C29 P4 gate closed by T-4T05. **Phase 4 → Done** (19/19). **User decision:** `l1-render-core` kept **RFC** + `l2-render-core-go` Draft (layer-blocked) — RFC→Stable ratification deferred to `/magic.spec`. This is a *promotion-quarantine* only — tasks T-4A01..04 are Done (C12.1 exception, nothing moved to Backlog). **Phase 5 full atomic decomposition** (18 tasks → `tasks/phase-5.md`): Track A:3 Audio / B:3 Asset Formats / C:2 2D / D:3 Animation / E:2 Tweening / T:5 Validation. Critical path **{A‖D} → B → T** (glTF/audio loaders consume AnimationClip + AudioSource types); Track E independent; **Track C externally gated** on render-core Stable. Skeptic flags: Animation (D) under-sizing risk; P5 specs are L1-only (L2 Go contracts pending /magic.spec); phase `Hold` condition over-broad (only Track C truly needs render-core). INDEX v2.30.0 (Stable 48/96), PLAN/TASKS v1.12.0.
 - 2026-05-28 **PHASE 4 COMPLETE — T-4T01..05 Done** — Track T validation: `examples/3d/` (Cube+PBR+DirectionalLight+2-cascade shadow, frame hash stable 20 runs), `examples/camera/` (3-camera Order-sort determinism 20 runs), `examples/shader/` (post-process Bloom→Tonemap→FXAA, AA conflict detection, INV-3 golden topology). `internal/render/conformance_test.go` (recordingBackend, all 10 RenderBackend methods). `internal/render/isolation_test.go` (PostProcessStack value-copy isolation, slice-backing isolation, multi-frame isolation). T-4T05 C29 gate: 36/36 pkgs PASS; `go build ./examples/{3d,camera,shader}/...` OK; C-003 stdlib-only; BenchmarkFrustumCullSoA/ClusterLights/BuildPostChain/SpecKey all 0 B/0 allocs. P4 specs eligible Draft→Stable via next /magic.task.
 - 2026-05-28 **Done: T-4E02 — Track E complete** — `pkg/render/postprocess/custom.go`: FullscreenMaterial{Shader Handle[material.Shader], InputTex []RID, Params map[string]ShaderValue, InsertAfter}. `internal/render/postpass/pingpong.go`: PingPongPool (2 HDR + 2 LDR pre-alloc RIDs, Reset=index-rewind C-027, 0-alloc), CheckAAConflict (FXAA+SMAA→ErrAAConflict, SMAA preferred). INV-4 proven by PostProcessStack value semantics. BenchmarkBuildPostChain 0 B/op 0 allocs/op. 24/24 PASS.
@@ -44,7 +45,7 @@ Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 
 
 <!-- Empty if none. Format: [severity] description -->
 
-- [low] **Phase 5 `Hold` — render-core RFC.** `l1-render-core` is RFC; Phase 5 unfreeze condition is "Render Core Stable". Only **Track C (2D)** + the 2D portion of the C29 P5 gate (T-5T04) truly need it — Tracks A/B/D/E are render-core-independent. Resolve via `/magic.spec` RFC→Stable ratification (T-4T05 sign-off + resolved Q4/Q5 are the evidence), or relax the P5 gate to promote the non-2D cohort first.
+<!-- [resolved 2026-05-28] render-core RFC blocker — ratified RFC → Stable via /magic.spec; Phase 5 gate cleared. -->
 - [low] **Phase 5 specs are L1-only.** No `l2-*-go.md` contracts for audio/asset-formats/2d/animation/tweening. Recommended `/magic.spec` step before `/magic.run` so tasks implement against a Go-level contract (parity with Phases 1–4).
 
 ## Blocking Constraints
@@ -60,6 +61,6 @@ Overall: [88/106] ██████░░  83% (phases 1–5 decomposed; Phase 
 
 ## Session Continuity
 
-**Last Session Ended:** 2026-05-28 16:21
+**Last Session Ended:** 2026-05-28 16:42
 **Handoff File:** none
-**Bootstrap Mode:** true (P5+ remain `[Bootstrap]`; P1–P3 + 8 P4 specs deactivated)
+**Bootstrap Mode:** true (P5+ remain `[Bootstrap]`; P1–P4 fully deactivated — all 10 P4 specs Stable)

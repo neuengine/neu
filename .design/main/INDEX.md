@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.30.0
+**Version:** 2.31.0
 **Status:** Active
 
 ## Overview
@@ -68,8 +68,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 | File | Description | Status | Layer | Version |
 | :--- | :--- | :--- | :--- | :--- |
-| [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | RFC | concept | 0.6.0 |
-| [l2-render-core-go.md](specifications/l2-render-core-go.md) | Go impl: RID+command-queue server, RenderBackend interface, Kahn-DAG graph, SubApp extract isolation, 4-phase schedule, SoA RenderDataHolder (Implements: l1-render-core) | Draft | go | 0.1.0 |
+| [l1-render-core.md](specifications/l1-render-core.md) | Render graph, extract pattern, render world, backend abstraction | Stable | concept | 0.6.0 |
+| [l2-render-core-go.md](specifications/l2-render-core-go.md) | Go impl: RID+command-queue server, RenderBackend interface, Kahn-DAG graph, SubApp extract isolation, 4-phase schedule, SoA RenderDataHolder (Implements: l1-render-core) | Stable | go | 0.1.0 |
 | [l1-mesh-and-image.md](specifications/l1-mesh-and-image.md) | Mesh assets, vertex layout, image/texture, texture atlases | Stable | concept | 0.1.0 |
 | [l2-mesh-and-image-go.md](specifications/l2-mesh-and-image-go.md) | Go impl: immutable attribute-map Mesh, validated index/skin invariants, FNV layout hash, stdlib decode on IOPool, shelf-pack DynamicAtlas (Implements: l1-mesh-and-image) | Stable | go | 0.1.0 |
 | [l1-materials-and-lighting.md](specifications/l1-materials-and-lighting.md) | Material system, PBR, light types, shadows, environment maps | Stable | concept | 0.1.0 |
@@ -147,6 +147,6 @@ Local registry of specifications for this workspace. Organized by priority batch
 
 - **Maintainer**: Core Team
 - **Last Updated**: 2026-05-28
-- **Total Specifications**: 96 (65 L1 concept + 29 L2 Go + 1 test + 1 tool) | Stable: 48 | RFC: 1 | Draft: 47
+- **Total Specifications**: 96 (65 L1 concept + 29 L2 Go + 1 test + 1 tool) | Stable: 50 | RFC: 0 | Draft: 46
 - **Engine Version:** 2.1.28
-- **Last Stabilization:** 2026-05-28 — **P4 Render Pipeline: 8 specs promoted Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) via Pre-Planning Stabilization — C29 P4 gate satisfied by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, 0-alloc hot paths). Bootstrap deactivated for the 4 promoted P4 cohorts. **Quarantined:** `l1-render-core` (RFC) + `l2-render-core-go` (Draft, layer-blocked by RFC parent) — RFC→Stable ratification deferred to `/magic.spec`. Prior: P1 ECS (2 new L2: `l2-pool-go`, `l2-view-go`) promoted directly to Stable (L1 parent Stable + MVC + C9 Trust Mode). `l1-render-core` promoted Draft → RFC (v0.6.0: +`Destroy`, +handle layout, +Canonical References, Q4/Q5 resolved). Prior: 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)
+- **Last Stabilization:** 2026-05-28 — **Render Core ratified: `l1-render-core` RFC → Stable + `l2-render-core-go` Draft → Stable** (`/magic.spec`). Evidence: Phase 4 complete (19/19) + C29 P4 gate closed by T-4T05; L1 Canonical References already filled, Q4/Q5 resolved, Q1–Q3 annotated non-blocking; L2 Canonical References populated with 11 verified source files + 2 conformance/isolation tests. Bootstrap fully deactivated for **all 10 P4 render specs** — Phase 4 = 10/10 Stable. Phase 5 gate ("Render Core Stable") now cleared. Prior: **P4 Render Pipeline: 8 specs promoted Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) via Pre-Planning Stabilization — C29 P4 gate satisfied by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, 0-alloc hot paths). Prior: P1 ECS (2 new L2: `l2-pool-go`, `l2-view-go`) promoted directly to Stable (L1 parent Stable + MVC + C9 Trust Mode). `l1-render-core` promoted Draft → RFC (v0.6.0: +`Destroy`, +handle layout, +Canonical References, Q4/Q5 resolved). Prior: 2026-05-18 — P3 Assets/Math/Concurrency (4 L1 + 4 L2: task, asset, scene, math) promoted Draft → Stable via Pre-Planning Stabilization (C29 P3 gate satisfied by T-3T05 — `examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Prior: 2026-05-17 — P2 Framework (6 L1 + 7 L2) promoted Draft → Stable (gate: `examples/ecs/framework/`; multi-repo l1/l2 stay Draft — RFC-gated, Exit Criterion via /magic.spec)

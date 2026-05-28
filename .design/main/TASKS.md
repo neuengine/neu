@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.12.0
+**Version:** 1.13.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.12.0
+**Based on:** .design/main/PLAN.md v1.13.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` 48/96. **Phase 4 Done** (19/19) — C29 P4 gate closed by T-4T05; **8 render specs promoted Draft → Stable**. `l1-render-core` kept **RFC** + `l2-render-core-go` Draft (promotion-quarantine; RFC→Stable deferred to `/magic.spec`). **Phase 5 Hold** — full atomic decomposition complete 2026-05-28 (18 tasks, Tracks A–E + T; critical path {A‖D} → B → T; Track C gated on render-core Stable). Phase 5 unfreezes when render-core ratifies.
+**Mode:** Specs `Stable` 50/96. **Phase 4 Done** (19/19) — **all 10 render specs Stable** (`l1-render-core` ratified RFC → Stable + `l2-render-core-go` Draft → Stable via `/magic.spec` 2026-05-28; RFC count → 0). **Phase 5 Ready** — gate cleared (render-core Stable); full atomic decomposition complete (18 tasks, Tracks A–E + T; critical path {A‖D} → B → T; Track C now unblocked). Recommended next: author L2 Go contracts for P5 via `/magic.spec`, then `/magic.run main`.
 
 ## Overview
 
@@ -20,7 +20,7 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 | [Phase 2](archives/tasks/phase-2.md) | Framework Primitives — hierarchy, time, input, state, change-detection, app/plugin (24 atomic tasks, Tracks A–G + T) | Done |
 | [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Done |
 | [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing (19 atomic tasks, Tracks A–E + T; decomposed 2026-05-19) | Done |
-| [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening (18 atomic tasks, Tracks A–E + T; decomposed 2026-05-28) | Hold |
+| [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening (18 atomic tasks, Tracks A–E + T; decomposed 2026-05-28) | Ready |
 | [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Hold |
 | [Phase 7](tasks/phase-7.md) | Networking & Hot-Reload — profiling, transport, replication, sync, RPC, hot-reload | Hold |
 | [Phase 8](tasks/phase-8.md) | Physics & Scripting — physics server, bodies, colliders, queries, joints, character, scripting | Hold |
@@ -45,6 +45,7 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 
 - **Last Updated**: 2026-05-28
 - **Maintainer**: Core Team
+- **Render Core Ratification (2026-05-28, `/magic.spec`)**: `l1-render-core` **RFC → Stable** + `l2-render-core-go` **Draft → Stable** — completes the ratification deferred from the prior `/magic.task`. Evidence: Phase 4 complete (19/19) + C29 P4 gate closed by T-4T05; L1 Canonical References already filled (8 files), Q4/Q5 resolved, Q1–Q3 annotated as non-blocking forward-looking refinements; L2 Canonical References populated with 11 verified source files + 2 conformance/isolation tests. **Phase 4 = 10/10 specs Stable** (RFC count → 0). **Phase 5 gate ("Render Core Stable") cleared** → Phase 5 `Hold` → `Ready` (Track C / 2D unblocked). INDEX v2.30.0 → v2.31.0 (Stable 48 → 50 / 96), PLAN/TASKS v1.12.0 → v1.13.0. No engine (`.magic/`) files modified — no C14 bump. Next: author L2 Go contracts for P5 specs via `/magic.spec`, then activate Phase 5 via `/magic.task` / `/magic.run main`.
 - **Phase 4 Stabilization + Phase 5 Decomposition (2026-05-28)**: `/magic.task` full planning. **Pre-Planning Stabilization promoted 8 P4 render specs Draft → Stable** (4 L1 + 4 L2: mesh-and-image, materials-and-lighting, camera-and-visibility, post-processing) — C29 P4 gate satisfied by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, all hot-path benchmarks 0 B/op 0 allocs/op). **Phase 4 → Done** (19/19). Per user decision, `l1-render-core` retained **RFC** + `l2-render-core-go` Draft (layer-blocked by RFC parent) — RFC→Stable ratification deferred to `/magic.spec`; this is a *promotion-quarantine* only (tasks T-4A01..04 are Done; C12.1 stabilization exception — no task moved to Backlog). **Phase 5 full atomic decomposition** (explicit user request, overriding the deferred per-phase policy): 18 tasks written to `tasks/phase-5.md` across Tracks A (Audio, 3) / B (Asset Formats, 3) / C (2D, 2) / D (Animation, 3) / E (Tweening, 2) / T (Validation, 5). Critical path {A‖D} → B → T (glTF/audio loaders consume AnimationClip + AudioSource types); Track C externally gated on render-core Stable. P5 specs are L1-only — L2 Go contracts pending `/magic.spec`. Phase 5 stays `Hold`. INDEX v2.29.0 → v2.30.0 (Stable 40 → 48 / 96), PLAN v1.11.0 → v1.12.0. No engine (`.magic/`) files modified — no C14 bump.
 - **Registry Sync (2026-05-28)**: INDEX v2.28.0 → v2.29.0 (94 → 96 specs). Resolved ORPHANED_SPEC ×2 + SYNC_GAP: placed `l2-pool-go` and `l2-view-go` (Stable, debt-recovery P1 L2 specs) into Phase 1. `l1-render-core` promoted Draft → RFC (v0.5.0 → v0.6.0). PLAN.md v1.10.0 → v1.11.0. Pre-Planning Stabilization: 0 newly promoted (pool/view already Stable from magic.spec session; Phase 4-8 Draft specs not yet MVC-promotable without C29 gate). No new atomic task IDs — retroactive specs require no implementation work.
 - **Phase 4 Atomic Decomposition (2026-05-19)**: 19 atomic tasks written to `tasks/phase-4.md` — Track A (Render Core, 4: server/RID+backend, Kahn-DAG graph, SubApp+4-phase extract, RenderFeature+SoA cull — critical-path head), Track B (Mesh & Image, 3: mesh/layout, primitives/skin, image/atlas/upload — consumes A server), Track C (Camera & Visibility, 2: camera/projection/frustum, 3-layer visibility/cull), Track D (Materials & Lighting, 3: material/PBR/speckey, lights/IBL/shadow, clustering/shadow-pass), Track E (Post-Processing, 2: effect-chain/tonemap, ping-pong/custom/AA), Track T (Validation, 5: examples/{3d,camera,shader} + isolation/conformance + C29 gate sign-off). Scoped+Guided `/magic.task main "decompose phase-4"` — all 3 Hold Release Conditions met (POC + App Framework Stable + 5 L2 specs authored 2026-05-18). Resolved Pre-flight ORPHANED_SPEC ×5 + SYNC_GAP (placed L2 render specs into Phase 4, INDEX v2.27.0 → v2.28.0). Pre-Planning Stabilization: 0 promoted (C29 P4 gate unmet — Bootstrap retained). Execute via `/magic.run main`.

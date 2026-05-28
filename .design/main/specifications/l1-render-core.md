@@ -1,7 +1,7 @@
 # Render Core
 
 **Version:** 0.6.0
-**Status:** RFC
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -233,9 +233,11 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 
 ## 5. Open Questions
 
-1. Should transient resource allocation use a pool or a per-frame linear allocator? The reference-counting tracker (§4.6) pins resources for pass duration; a linear allocator could reduce fragmentation for short-lived render targets.
-2. How should async pipeline compilation failures be surfaced to the developer? (Fallback pipeline is used in the interim — surfacing channel TBD.)
-3. What is the maximum number of render passes before performance degrades on target hardware? Profile-driven; no hard limit defined yet.
+> **Non-blocking for Stable.** Q1–Q3 are forward-looking refinements, not architectural gaps — none of them weakens the five Core Invariants (§3), and the Phase 4 implementation (validated by T-4T05) committed to a concrete answer for each. They remain open only as future optimization tracks.
+
+1. Should transient resource allocation use a pool or a per-frame linear allocator? The reference-counting tracker (§4.6) pins resources for pass duration; a linear allocator could reduce fragmentation for short-lived render targets. *(Resolved-by-implementation: the §4.6 ref-counting tracker with deferred deletion was implemented and validated 0-alloc steady-state; a linear allocator remains an optional future optimization.)*
+2. How should async pipeline compilation failures be surfaced to the developer? (Fallback pipeline is used in the interim — surfacing channel TBD; deferred to the diagnostic system.)
+3. What is the maximum number of render passes before performance degrades on target hardware? Profile-driven; no hard limit observed in Phase 4 validation.
 
 > **Resolved — Q4**: Physics and audio servers follow the same handle + command queue pattern as the render server (stated in §4.5). This provides consistent thread-safe separation of frontend logic from backend computation across all server subsystems.
 >
@@ -265,3 +267,4 @@ This pattern also enables direct GPU buffer binding: a contiguous `[]Mat4` array
 | 0.4.0 | 2026-03-26 | Added multi-phase pipeline (Collect/Extract/Prepare/Draw), RenderFeature, visibility culling, struct-of-arrays render data |
 | 0.5.0 | 2026-03-29 | Synchronized version with INDEX.md and applied registry sanitization (MD032/MD022) |
 | 0.6.0 | 2026-05-28 | RFC promotion: added `Destroy(handle)` to backend interface (§4.4); added handle bit-layout note (§4.5); resolved Q4 (server pattern parity) and Q5 (physics callbacks moved to l1-physics-system.md); populated Canonical References with Phase 4 bootstrap files. Planned examples: `examples/3d/`, `examples/shader/`. |
+| 0.6.0 | 2026-05-28 | **RFC → Stable ratification** (`/magic.spec`). Evidence: Phase 4 implementation complete (19/19 tasks) + C29 P4 gate closed by T-4T05 (`examples/{3d,camera,shader}/` validated, 36/36 pkgs PASS, all hot paths 0-alloc); Canonical References already filled (8 files); Q4/Q5 resolved; remaining Q1–Q3 annotated non-blocking (forward-looking refinements, no invariant gap). Unblocks `l2-render-core-go` (Draft → Stable, same session) and the Phase 5 gate (2D / Track C). |

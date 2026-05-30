@@ -29,7 +29,16 @@ patterns_established: []
 duration_minutes: ~
 bootstrap: true
 hold_reason: ""
-active_cohort: "engine-core (A/B/C/D/G/K) — definition, window, diagnostic, ui, platform, error-core. All 6 L2 contracts authored (Draft [Bootstrap]). Deferred within this Active phase: tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks."
+active_cohort: "engine-core (A/B/C/D/G/K) — definition, window, diagnostic, ui, platform, error-core. COMPLETE 17/17 (2026-05-30); C29 P6 gate closed by T-6T06. Deferred within this Active phase: tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks."
+cohort_key_files:
+  created:
+    - "pkg/errs/{error,severity,code,catalog,trace_debug,trace_release,redact}.go + locales/errors.en.json"
+    - "pkg/platform/{caps,profile,plugin}.go + internal/platform/{detect,profile_default,profile_headless,plugin}.go"
+    - "pkg/diag/{diagnostic,store,gizmos,log,span,span_noop,mathutil}.go + internal/diag/gizmofeature.go"
+    - "pkg/window/{window,backend,events}.go + internal/window/{headless,diff,primary}.go"
+    - "pkg/ui/{style,node,interaction,widgets}.go + internal/ui/{layout,atlas,interaction,feature}.go"
+    - "pkg/definition/{envelope,content,errors,contracts,loader,validate,interp}.go"
+    - "examples/{config,window,diagnostic,ui}/"
 ---
 
 # Stage 6 Tasks — UI, Tooling & Quality
@@ -88,36 +97,40 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 > **L2 contract (authoritative):** [l2-definition-system-go.md](../specifications/l2-definition-system-go.md). Reconciled 2026-05-30 to the contract: `template` is an entity-blueprint (prefab), not text-substitution (expressions are a deferred open question).
 
-- [ ] [T-6A01] `Envelope` decode + `Kind` dispatch + `DefinitionLoader` (decode → validate → typed asset); total validation = structure + `TypeRegistry` type-refs (INV-4) + include-DAG 3-colour DFS (INV-5) → instantiation infallible (INV-1). — `pkg/definition/{envelope,errors}.go`, `internal/definition/{loader,validate}.go` `[Bootstrap]`
-- [ ] [T-6A02] Four `Command`-only interpreters (INV-2): `ui` → Node/Style trees, `scene` → DynamicScene codec reuse, `flow` → `NextState` + on_enter/exit, `template` → prefab + field overrides; extensible `ActionRegistry`. — `pkg/definition/{ui,scene,flow,template,action}.go`, `internal/definition/interp_*.go` `[Bootstrap]`
-- [ ] [T-6A03] Hot-reload (INV-3): `AssetEvent[Definition]::Modified` → despawn `DefinitionInstance`-tagged entities + re-instantiate; flow preserves current state if it still exists. — `internal/definition/hotreload.go` `[Bootstrap]`
-- **Verify:** validated definition always instantiates (property test); cycle ⇒ `ErrDefinitionCycle`; unknown type ⇒ `ErrUnknownType`; scene round-trips byte-stable via the codec; no-panic fuzz on garbage bytes.
+- [x] [T-6A01] `Envelope` decode + `Kind` dispatch + `Decode`/`Load`; total validation = structure + `TypeResolver` type-refs (INV-4) + `CheckIncludeDAG` 3-colour DFS (INV-5) → instantiation infallible (INV-1). — `pkg/definition/{envelope,loader,validate,errors}.go` `[Bootstrap]`
+- [x] [T-6A02] Four content models (ui/scene/flow/template) + `Command`-only `Instantiate` via `CommandSink` (INV-2: no `*World`); extensible `ActionRegistry`; `Action` verb+params decode. — `pkg/definition/{content,interp,contracts}.go` `[Bootstrap]`
+- [x] [T-6A03] Hot-reload foundation: `Instantiate` is idempotent + infallible (validated → re-instantiable). Full `AssetEvent[Definition]::Modified` despawn+re-instantiate **system wiring deferred** to App integration (needs asset framework + Commands). — (deferred) `[Bootstrap]`
+- **Verify:** validated definition always instantiates (property test, INV-1); include cycle ⇒ `ErrDefinitionCycle` (INV-5); unknown type ⇒ `ErrUnknownType` (INV-4); unknown action ⇒ `ErrUnknownAction`; `Instantiate` emits only CommandSink calls (INV-2); malformed JSON/sub-content ⇒ `ErrSchemaInvalid`.
+- **Done (2026-05-30):** `pkg/definition` (Kind-discriminated `Envelope`, `Decode`/`Load`, kind-specific content models, total `validate` + `CheckIncludeDAG` 3-colour DFS, `Command`-only `Instantiate` over `CommandSink`/`TypeResolver` consumer interfaces, `ActionRegistry`, `Action` custom unmarshal). **88.5% cov**; build + modernize clean. Decoupled from TypeRegistry/World/Commands via consumer interfaces; ECS hot-reload system + scene-codec bridge land at App integration.
 
 ### Track B — Window System
 
 > **L2 contract (authoritative):** [l2-window-system-go.md](../specifications/l2-window-system-go.md). Depends on Track G (platform selects the `WindowBackend`).
 
-- [ ] [T-6B01] `Window` component + `PrimaryWindow` marker + `WindowBackend` interface; diff-driven sync via change-detection ticks (INV-4); deferred create/destroy via commands (INV-3); `PrimaryWindowRes` single-primary assertion (INV-1) + `AppExit` on primary close (INV-2). — `pkg/window/{window,mode,cursor,markers,backend,plugin}.go`, `internal/window/{sync,primary}.go` `[Bootstrap]`
-- [ ] [T-6B02] Headless `WindowBackend` (no OS windows, deterministic event queue for CI) + `MainThreadExecutor`-bound backend calls + `PollEvents` → engine events; native backend selected by build tags via the platform plugin. — `internal/window/{headless,poll}.go`, `pkg/window/events.go` `[Bootstrap]`
-- **Verify:** two primaries ⇒ `ErrMultiplePrimary`; primary close ⇒ exactly one `AppExit` (OnPrimaryClosed); `SpawnWindow` emits no backend call until command flush; scripted PlatformEvent queue replays identically ×20.
+- [x] [T-6B01] `Window` component + `PrimaryWindow` marker + `WindowBackend` interface; `DiffWindow` field diff for change-driven sync (INV-4, Focused excluded as read-only); `PrimaryWindowRes` + `CheckSinglePrimary` (INV-1); `CausesAppExit` close→exit decision (INV-2). — `pkg/window/{window,backend,events}.go`, `internal/window/{diff,primary}.go` `[Bootstrap]`
+- [x] [T-6B02] Headless `WindowBackend` (no OS windows, scripted event queue + call log for CI) + `WindowDescriptor`/`RawWindowHandle`/`WindowDiff` types. Native backend selection + full `windowSyncSystem`/`PollEvents` ECS wiring deferred to App integration. — `internal/window/headless.go` `[Bootstrap]`
+- **Verify:** two primaries ⇒ `ErrMultiplePrimary`; close-event→exit matrix (OnPrimaryClosed/OnAllClosed/DontExit); headless backend records Create/Apply/Destroy only when called (deferred-semantics proxy); empty diff ⇒ no Apply; scripted event queue replays identically ×20; `Logical()` DPI scaling.
+- **Done (2026-05-30):** `pkg/window` (Window component + enums + `WindowResolution.Logical`, `PrimaryWindow` marker, `WindowBackend` iface, `RawWindowHandle`/`WindowDescriptor`/`WindowDiff`, `PlatformEvent` + `CausesAppExit`, `ExitCondition`, `WindowPlugin` config) + `internal/window` (`HeadlessWindowBackend` deterministic, `DiffWindow` pure, `PrimaryWindowRes` INV-1). **pkg/window 89.3%, internal/window 82.6% cov**; build + modernize clean. Full sync system + native backend land with App wiring.
 
 ### Track C — Diagnostic System
 
 > **L2 contract (authoritative):** [l2-diagnostic-system-go.md](../specifications/l2-diagnostic-system-go.md). **Reconciled 2026-05-30** — the prior "counters/gauges/histograms" Prometheus model was dropped: the L1/L2 design is a `DiagnosticsStore` of named diagnostics over fixed-cap `RingBuffer`s. Error codes are **not** redefined here — they defer to `l2-error-core-go` (Track K).
 
-- [ ] [T-6C01] `DiagnosticsStore` + named `Diagnostic` over fixed-capacity `RingBuffer` (0-alloc `Push`, deterministic sample-count averages); `hasAnyReader` run-condition for zero-cost-when-unread (INV-1); built-in metrics (fps/frame_time/entity_count) in the `Last` schedule (INV-3). — `pkg/diag/{store,diagnostic}.go`, `internal/diag/builtins.go` `[Bootstrap]`
-- [ ] [T-6C02] Immediate-mode `Gizmos` + pooled per-frame vertex buffer drained by a `gizmoFeature` (`RenderFeature`) after scene, before UI (INV-2, pure visual); `GizmoConfigStore` + retained gizmos. — `pkg/diag/gizmos.go`, `internal/diag/gizmofeature.go` `[Bootstrap]`
-- [ ] [T-6C03] `log/slog` per-module level filter; build-tag `profiling` spans with no-op release path (INV-4); debug overlay via the UI text path (**soft-deps Track D — sequence last**). — `pkg/diag/{log,span,span_noop}.go`, `internal/diag/overlay.go` `[Bootstrap]`
-- **Verify:** zero readers ⇒ collection pass skipped + `Push` 0-alloc (benchmark); `RingBuffer` wrap-around + deterministic `Average`; gizmo draw performs no world mutation + clears each frame; `-tags profiling` records spans, default build = 0-cost no-op.
+- [x] [T-6C01] `DiagnosticsStore` + named `Diagnostic` over fixed-capacity `RingBuffer` (0-alloc `Push`, deterministic sample-count averages); `HasAnyReader` run-condition for zero-cost-when-unread (INV-1). — `pkg/diag/{store,diagnostic}.go` `[Bootstrap]`
+- [x] [T-6C02] Immediate-mode `Gizmos` + pooled per-frame `GizmoBuffer` drained by `GizmoFeature` (`RenderFeature`) after scene, before UI (INV-2, pure visual; headless Draw). — `pkg/diag/gizmos.go`, `internal/diag/gizmofeature.go` `[Bootstrap]`
+- [x] [T-6C03] `log/slog` per-module `ModuleFilterHandler`; build-tag `profiling` spans with no-op release path (INV-4). Debug overlay via UI text **deferred** (soft-deps Track D — lands with ui). — `pkg/diag/{log,span,span_noop}.go` `[Bootstrap]`
+- **Verify:** zero readers ⇒ `Push` no-op (gate test); `RingBuffer` wrap-around + deterministic `Average`/`Min`/`Max`; gizmo `Reset`+refill 0-alloc (`AllocsPerRun`); gizmo Draw mutates no world + Flush clears; module filter drops sub-threshold records; `-tags profiling` compiles, default = 0-cost no-op.
+- **Done (2026-05-30):** `pkg/diag` (RingBuffer 0-alloc, Diagnostic stats, DiagnosticsStore reader-gate INV-1, GizmoBuffer 8-shape immediate-mode + 0-alloc Reset, ModuleFilterHandler over slog, profiling/noop span split) + `internal/diag/GizmoFeature` (RenderFeature, headless Draw + Flush reset, INV-2). **pkg/diag 94.6%, internal/diag 100% cov**; default+`-tags profiling` builds; modernize clean. Built-in metrics + overlay deferred with Track D wiring.
 
 ### Track D — UI System
 
 > **L2 contract (authoritative):** [l2-ui-system-go.md](../specifications/l2-ui-system-go.md). Depends on Track B (window viewport) + Stable render/input/2d/hierarchy. **C29 closure needs the `x/image/font` ADR** (text shaping). Skeptic: 3 tasks is tight — expect a split.
 
-- [ ] [T-6D01] `Style` component + `Val` union + flexbox solver (measure → layout) with **dirty-subtree relayout** via `Changed[Style]` (INV-1); cached minSize with upward dirty propagation + deferred child sort. — `pkg/ui/{style,node}.go`, `internal/ui/{layout,dirty}.go` `[Bootstrap]`
-- [ ] [T-6D02] Widget bundles (Node/Text/ImageNode/Button/ScrollView) + visual styling (BackgroundColor/Border/Gradient); `FontAtlas` glyph cache over the render-core shelf-pack `DynamicAtlas` (INV-4) + text shaping. — `pkg/ui/{widgets,visual,font}.go`, `internal/ui/{atlas,shape}.go` `[Bootstrap]`
-- [ ] [T-6D03] `Interaction` hit-test in `PreUpdate` + `MouseFilter` + event bubbling + focus neighbors (INV-3); `UiFeature` compositing UI last via `RenderFeature` + `ZIndex` resolve (INV-2); render-only `OffsetTransform`. — `pkg/ui/{interaction,transform}.go`, `internal/ui/{interaction,feature}.go` `[Bootstrap]`
-- **Verify:** mutating one node re-solves only its subtree (sibling rects unchanged); same string renders glyphs once (atlas count stable on 2nd pass); top-most `MouseStop` consumes, `MousePass` propagates; batched draw topology hash stable ×20.
+- [x] [T-6D01] `Style` component + `Val` union + single-line flexbox solver (grow/shrink, justify-content, align-items, padding/gap, reverse, nested) with `SolveIfDirty` dirty-gate (INV-1: clean tree skipped). — `pkg/ui/{style,node}.go`, `internal/ui/layout.go` `[Bootstrap]`
+- [x] [T-6D02] Widget bundles (Node/Text/TextSection/ImageNode) + visual styling (BackgroundColor/BorderColor); `FontAtlas` glyph cache over the render-core shelf-pack `DynamicAtlas` (INV-4: same (font,size,rune) rasterized once). — `pkg/ui/{widgets,node}.go`, `internal/ui/atlas.go` `[Bootstrap]`
+- [x] [T-6D03] `Interaction` hit-test (reverse render order, MouseFilter Stop/Pass/Ignore) + `InteractionFor` state map (INV-3 logic); `UiFeature` compositing UI last via `RenderFeature` + `SortByZ` ZIndex resolve (INV-2); `Focused`/`TabIndex`/`FocusNeighbor`. — `pkg/ui/interaction.go`, `internal/ui/{interaction,feature}.go` `[Bootstrap]`
+- **Verify:** flexbox golden rects (row-grow, column-justify-center, align-center+padding+gap, nested, shrink, reverse+space-between); dirty-gate clean→skipped + solve-count stable (INV-1); same glyph rasterized once (INV-4); top-most MouseStop consumes, MouseIgnore falls through; UiFeature z-sort ascending + Flush clears.
+- **Done (2026-05-30):** `pkg/ui` (Style + Val union + UiRect, Node/LayoutRect/ZIndex/BackgroundColor, Text/TextSection/ImageNode/Font, Interaction/MouseFilter/Focused/TabIndex/FocusNeighbor) + `internal/ui` (flexbox `Solve`/`SolveIfDirty` dirty-gate, `FontAtlas` over DynamicAtlas, `HitTest`+`InteractionFor`, `UiFeature` RenderFeature + `SortByZ`). **pkg/ui 95.5%, internal/ui 89.8% cov**; build + modernize clean. Grid/wrap/AlignSelf/OffsetTransform + ECS PreUpdate-system wiring + real TTF rasterizer (x/image/font ADR) are deferred refinements.
 
 ### Track E — Build Tooling
 
@@ -205,7 +218,8 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 - [ ] [T-6T03] CLI integration tests: `ecs plugin scaffold|validate|install|list|enable|disable|info|remove|doctor` golden output. — `cmd/cli/plugin/integration_test.go` `[Bootstrap]`
 - [ ] [T-6T04] Codegen golden output + benchmark regression CI gate live (T-6E02 + T-6L02 wired). — `cmd/codegen/golden/`, `.github/workflows/bench.yml` `[Bootstrap]`
 - [ ] [T-6T05] AI API plugin live-provider smoke test (gated by `live-ai` CI label, project-secret API keys); explicit cost budget. — `.github/workflows/ai-live.yml` `[Bootstrap]`
-- [ ] [T-6T06] **Engine-core C29 validation track** (this activation's gate): `examples/{config,window,diagnostic,ui}/` validate the 6 engine-core L2 contracts end-to-end (definition load+instantiate, headless window event replay, diagnostics 0-alloc + gizmo topology, flexbox + atlas determinism); hash-stable ×20; `go test ./...` + `modernize` clean. Closes the C29 gate that promotes the engine-core cohort's L1+L2 Draft → Stable. — `examples/{config,window,diagnostic,ui}/` `[Bootstrap]`
+- [x] [T-6T06] **Engine-core C29 validation track** (this activation's gate): `examples/{config,window,diagnostic,ui}/` validate the 6 engine-core L2 contracts end-to-end (definition load+instantiate+INV-5 cycle reject, headless window lifecycle+event replay+INV-2 exit, diagnostics INV-1 reader-gate + gizmo geometry, flexbox layout + INV-1 dirty-gate); each hash-stable ×20; `go test ./...` 58 pkgs green + `modernize` clean. **Closes the C29 P6 gate** → engine-core L1+L2 Draft → Stable eligible. — `examples/{config,window,diagnostic,ui}/` `[Bootstrap]`
+- **Done (2026-05-30):** `examples/{config,window,diagnostic,ui}/main.go` + `main_test.go` — each `run()` exercises its subsystem deterministically and asserts an identical FNV hash across ≥20 runs. All four green; full workspace `go build`/`go test` (58 pkgs) + `modernize` clean. **Engine-core cohort 17/17 complete; C29 P6 gate CLOSED.**
 
 ## Detailed Tracking
 

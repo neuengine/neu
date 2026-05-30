@@ -22,3 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added 5 specifications (main)
 - Completed task `phase-4` (main)
 - Updated 4 specifications (main)
+- Completed `phase-5` content systems (audio, animation, tweening, 2D, asset codecs) (main)
+- Ratified multi-repo architecture l1/l2 → Stable (engine↔editor boundary) (main)
+- Phase 6 engine-core cohort (17/17): added `pkg/errs` (structured error taxonomy), `pkg/platform` (platform profile + caps), `pkg/diag` (diagnostics + gizmos), `pkg/window` (entity windows + headless backend), `pkg/ui` (flexbox layout + font atlas + interaction), `pkg/definition` (JSON declarative layer) + `examples/{config,window,diagnostic,ui}` C29 validation (main)

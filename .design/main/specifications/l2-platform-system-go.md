@@ -1,7 +1,7 @@
 # Platform System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-platform-system.md](l1-platform-system.md)
 
@@ -171,12 +171,19 @@ func detectArch() PlatformArch // from runtime.GOARCH
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 6). Stable promotion blocked until: (1) l1-platform-system is Stable
-     (layer constraint); (2) backends implemented + a validating example/headless build. -->
+<!-- All paths verified on disk; 100% cov in both default and -tags headless
+     builds; headless build verified (INV-4). C29 P6 gate closed by T-6T06. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [CAPS] | `pkg/platform/caps.go` | `PlatformCaps` branchless bitfield + `Has`/`With`/`Without` + `String`. |
+| [PROFILE] | `pkg/platform/profile.go` | `PlatformProfile`, `PlatformOS`/`Arch`/`Tier` total-switch enums. |
+| [PLUGIN] | `pkg/platform/plugin.go` | `PlatformPlugin` interface (embeds `appface.Plugin`). |
+| [DETECT] | `internal/platform/detect.go` | Pure `osFromGOOS`/`archFromGOARCH`/`tierFor` mappings (no build tags). |
+| [DEFAULT] | `internal/platform/profile_default.go` | `//go:build !headless` profile + per-OS `defaultCaps`. |
+| [HEADLESS] | `internal/platform/profile_headless.go` | `//go:build headless` profile excluding GPU/MultiWindow/SpatialAudio (INV-4). |
+| [PLUGINIMPL] | `internal/platform/plugin.go` | Profile-inserting `Plugin` (INV-2/INV-3). |
+| [TEST] | `pkg/platform/platform_test.go`, `internal/platform/*_test.go` | Caps bitfield, OS/Arch/Tier mapping, headless caps, plugin insertion (100% both builds). |
 
 ## Document History
 

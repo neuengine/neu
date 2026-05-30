@@ -1,7 +1,7 @@
 # Definition System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-definition-system.md](l1-definition-system.md)
 
@@ -199,13 +199,22 @@ type ErrUnknownAction   struct{ Type string }
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 6, Track A). Stable promotion blocked until: (1) l1-definition-system is
-     Stable (layer constraint); (2) loader + validator + interpreters implemented with a
-     validating example (examples/config/). -->
+<!-- All paths verified on disk; validated by examples/config (command-sequence
+     hash ×20 + INV-5 cycle reject, T-6T06) + pkg/definition 88.5% cov. C29 P6 gate
+     closed. Decoupled from TypeRegistry/World via consumer interfaces; the ECS
+     hot-reload system + scene-codec bridge land at App integration. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [ENVELOPE] | `pkg/definition/envelope.go` | `Kind` discriminator, `Metadata`, `rawEnvelope`, `Definition` typed asset. |
+| [CONTENT] | `pkg/definition/content.go` | `UIDef`/`SceneDef`/`FlowDef`/`TemplateDef` models, `Action` custom unmarshal. |
+| [LOADER] | `pkg/definition/loader.go` | `Decode`/`Load` + per-kind content decode + include collection. |
+| [VALIDATE] | `pkg/definition/validate.go` | Structure + `TypeResolver` type-refs (INV-4) + `CheckIncludeDAG` 3-colour DFS (INV-5). |
+| [INTERP] | `pkg/definition/interp.go` | `Command`-only `Instantiate` via `CommandSink` (INV-2), infallible post-validate (INV-1). |
+| [CONTRACTS] | `pkg/definition/contracts.go` | `TypeResolver`/`CommandSink`/`EntityRef` consumer interfaces, `ActionRegistry`. |
+| [ERRORS] | `pkg/definition/errors.go` | `ErrUnknownType`/`ErrDefinitionCycle`/`ErrSchemaInvalid`/`ErrUnknownAction`. |
+| [EXAMPLE] | `examples/config/main.go` | Decode→instantiate (recording sink) + INV-5 cycle reject, hash-stable ×20 (T-6T06). |
+| [TEST] | `pkg/definition/definition_test.go` | Decode, INV-4 type-ref, INV-5 DAG, INV-2 command-only, infallible property, flow validation. |
 
 ## Document History
 

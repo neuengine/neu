@@ -1,11 +1,11 @@
 # Implementation Plan — Neu Engine
 
-**Version:** 1.20.0
+**Version:** 1.21.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/INDEX.md v2.36.0
+**Based on:** .design/main/INDEX.md v2.37.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Status:** Active
-**Mode:** Specs `Stable` 60/107. **Phases 1–5 Done.** **Phase 6 ACTIVE — engine-core cohort** (2026-05-30): tracks **A/B/C/D/G/K** (definition, window, diagnostic, ui, platform, error-core) under Bootstrap, each backed by an authored L2 contract; build order `{K‖G} → {B,C} → D → A`; C29 gate = T-6T06 (`examples/{config,window,diagnostic,ui}/`). Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks **deferred within the Active phase**. Multi-repo Stable (editor-layer unblocked but L2s unauthored). **Held Draft:** `asset-formats` L1+L2. **Execute via `/magic.run main`** (critical path `{K‖G} → {B,C} → D → A`).
+**Mode:** Specs `Stable` 72/107. **Phases 1–5 Done.** **Phase 6 engine-core cohort COMPLETE** (2026-05-30): tracks A/B/C/D/G/K (definition, window, diagnostic, ui, platform, error-core) implemented + validated (T-6T06, 17/17) and **12 specs promoted Draft → Stable** (6 L1 + 6 L2, Canonical References populated). Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks **deferred** within the Active phase (editor-layer L2s unauthored). **Held Draft:** `asset-formats` L1+L2. **Next:** author the editor-layer L2 tier via `/magic.spec` (multi-repo Stable unblocks them), or activate the tooling tracks.
 
 ## Overview
 
@@ -111,21 +111,21 @@ Dependency analysis (Implements: chains):
 
 *Definition layer, window/UI, diagnostics, build & CLI tooling, platform abstraction, AI assistant surface, examples framework, compatibility policy, error taxonomy, benchmark suite, codegen.*
 
-- [ ] **Definition System** ([l1-definition-system.md](specifications/l1-definition-system.md)) [L1]
-- [ ] **Definition System (Go)** ([l2-definition-system-go.md](specifications/l2-definition-system-go.md)) [L2] `[Bootstrap]`
+- [x] **Definition System** ([l1-definition-system.md](specifications/l1-definition-system.md)) [L1] `Stable`
+- [x] **Definition System (Go)** ([l2-definition-system-go.md](specifications/l2-definition-system-go.md)) [L2] `Stable`
 - [ ] **Definition Integration** ([l1-definition-integration.md](specifications/l1-definition-integration.md)) [L1] `[Bootstrap]`
-- [ ] **Window System** ([l1-window-system.md](specifications/l1-window-system.md)) [L1]
-- [ ] **Window System (Go)** ([l2-window-system-go.md](specifications/l2-window-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **Diagnostic System** ([l1-diagnostic-system.md](specifications/l1-diagnostic-system.md)) [L1]
-- [ ] **Diagnostic System (Go)** ([l2-diagnostic-system-go.md](specifications/l2-diagnostic-system-go.md)) [L2] `[Bootstrap]`
-- [ ] **UI System** ([l1-ui-system.md](specifications/l1-ui-system.md)) [L1]
-- [ ] **UI System (Go)** ([l2-ui-system-go.md](specifications/l2-ui-system-go.md)) [L2] `[Bootstrap]`
+- [x] **Window System** ([l1-window-system.md](specifications/l1-window-system.md)) [L1] `Stable`
+- [x] **Window System (Go)** ([l2-window-system-go.md](specifications/l2-window-system-go.md)) [L2] `Stable`
+- [x] **Diagnostic System** ([l1-diagnostic-system.md](specifications/l1-diagnostic-system.md)) [L1] `Stable`
+- [x] **Diagnostic System (Go)** ([l2-diagnostic-system-go.md](specifications/l2-diagnostic-system-go.md)) [L2] `Stable`
+- [x] **UI System** ([l1-ui-system.md](specifications/l1-ui-system.md)) [L1] `Stable`
+- [x] **UI System (Go)** ([l2-ui-system-go.md](specifications/l2-ui-system-go.md)) [L2] `Stable`
 - [ ] **Build Tooling** ([l1-build-tooling.md](specifications/l1-build-tooling.md)) [L1]
 - [ ] **CLI Tooling** ([l1-cli-tooling.md](specifications/l1-cli-tooling.md)) [L1]
 - [ ] **Code Documentation** ([l1-code-documentation.md](specifications/l1-code-documentation.md)) [L1] `[Bootstrap]`
 - [ ] **Code Documentation (Go)** ([l2-code-documentation-go.md](specifications/l2-code-documentation-go.md)) [L2] `[Bootstrap]`
-- [ ] **Platform System** ([l1-platform-system.md](specifications/l1-platform-system.md)) [L1]
-- [ ] **Platform System (Go)** ([l2-platform-system-go.md](specifications/l2-platform-system-go.md)) [L2] `[Bootstrap]`
+- [x] **Platform System** ([l1-platform-system.md](specifications/l1-platform-system.md)) [L1] `Stable`
+- [x] **Platform System (Go)** ([l2-platform-system-go.md](specifications/l2-platform-system-go.md)) [L2] `Stable`
 - [ ] **AI Assistant System** ([l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md)) [L1]
 - [ ] **Plugin Distribution** ([l1-plugin-distribution.md](specifications/l1-plugin-distribution.md)) [L1] `[Bootstrap]`
 - [ ] **AI API Plugin** ([l1-ai-api-plugin.md](specifications/l1-ai-api-plugin.md)) [L1] `[Bootstrap]`
@@ -133,8 +133,8 @@ Dependency analysis (Implements: chains):
 - [ ] **Visual Graph Editor Bridge (Go)** ([l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md)) [L2] `[Bootstrap]`
 - [ ] **Examples Framework** ([l1-examples-framework.md](specifications/l1-examples-framework.md)) [L1]
 - [ ] **Compatibility Policy** ([l1-compatibility-policy.md](specifications/l1-compatibility-policy.md)) [L1]
-- [ ] **Error Core** ([l1-error-core.md](specifications/l1-error-core.md)) [L1]
-- [ ] **Error Core (Go)** ([l2-error-core-go.md](specifications/l2-error-core-go.md)) [L2] `[Bootstrap]`
+- [x] **Error Core** ([l1-error-core.md](specifications/l1-error-core.md)) [L1] `Stable`
+- [x] **Error Core (Go)** ([l2-error-core-go.md](specifications/l2-error-core-go.md)) [L2] `Stable`
 - [ ] **Benchmark Spec** ([l2-benchmark-spec.md](specifications/l2-benchmark-spec.md)) [L2-test]
 - [ ] **Codegen Tools** ([l2-codegen-tools.md](specifications/l2-codegen-tools.md)) [L2-tool]
 
@@ -217,6 +217,7 @@ Dependency analysis (Implements: chains):
 | 1.9.0 | 2026-05-18 | Post-Run Replan (rules/magic.md §5): Phase 3 → **Done** (18/18); resolved PLAN↔STATE mechanical drift (PLAN listed Phase 3 Active with unchecked items while STATE/TASKS/git = Done). Pre-Planning Stabilization promoted 8 P3 specs Draft → Stable (4 L1 + 4 L2: task, asset, scene, math) — C29 P3 gate satisfied by T-3T05 (`examples/{async,asset,scene,math}/` green). Bootstrap deactivated for P3. Phase 4 STOP FACTOR [C-002] lifted; remains `Hold` on Release Cond. #3 (L2 render specs absent) — decomposition deferred per TASKS.md per-phase policy. INDEX v2.27.0 (Stable 38/89), RULES parity v1.8.0 |
 | 1.10.0 | 2026-05-19 | Scoped+Guided `/magic.task main "decompose phase-4"`. Phase 4 `Hold` → **Active** — all 3 Hold Release Conditions met (POC validated + App Framework Stable + 5 L2 render specs authored 2026-05-18 via `/magic.spec`). Placed 5 orphan L2 render specs into Phase 4 under their L1 parents (resolves Pre-flight ORPHANED_SPEC ×5 + SYNC_GAP). Atomic decomposition: 19 tasks across Tracks A:4 Render Core / B:3 Mesh&Image / C:2 Camera / D:3 Materials / E:2 Post / T:5 Validation — critical path A → {B‖C} → D → E → T. Pre-Planning Stabilization: 0 promoted (C29 P4 `examples/{3d,camera,shader}/` gate unmet — Bootstrap retained). 5 new hard L2→L1 edges (24 total), acyclic. INDEX sync v2.27.0 → v2.28.0 (94 specs, Stable 38/94). |
 | 1.11.0 | 2026-05-28 | Registry sync (backfilled — header bumped without history row): INDEX v2.28.0 → v2.29.0 (94 → 96 specs). Placed 2 retroactive P1 L2 specs `l2-pool-go` + `l2-view-go` (Stable, debt-recovery — code pre-existed in `internal/ecs/{pool,view}/`) into Phase 1. `l1-render-core` promoted Draft → RFC (v0.5.0 → v0.6.0: +`Destroy`, +RID layout, +Canonical Refs, Q4/Q5 resolved). Pre-Planning Stabilization: 0 newly promoted (C29 P4 gate still unmet at that point). Stable 40/96. |
+| 1.21.0 | 2026-05-30 | `/magic.task` Pre-Planning Stabilization — **Phase 6 engine-core cohort: 12 specs promoted Draft → Stable** (6 L1 + 6 L2: error-core, platform-system, window-system, diagnostic-system, ui-system, definition-system). C29 P6 gate closed by T-6T06 (4 examples hash-stable ×20 + 58-pkg suite green, re-verified). All 6 L2 Canonical References populated with on-disk-verified files. Phase 6 cohort entries marked `[x]` Stable; `[Bootstrap]` dropped from the 6 promoted L2s. Deferred (non-blocking, App-integration glue) + `asset-formats` held Draft. C24 Skeptic: no Stable→Draft hard edge (all cohort `Implements` parents now Stable; diagnostic→error-core + definition→ui both Stable). INDEX v2.36.0 → v2.37.0 (Stable 60 → 72, Draft 47 → 35). RULES parity v1.8.0. **Next:** author editor-layer L2 tier via `/magic.spec`. |
 | 1.20.0 | 2026-05-30 | `/magic.task` — **Phase 6 `Hold` → Active (engine-core cohort)** per user direction. Activated tracks **A/B/C/D/G/K** (definition, window, diagnostic, ui, platform, error-core); each now references its authored L2 contract as the authoritative design source. **Reconciled the pre-existing decomposition to the L2 contracts** (the workbook predated them): Track C dropped the wrong "counters/gauges/histograms" Prometheus model for the spec's `DiagnosticsStore`+`RingBuffer`; Track A reframed `template` as entity-prefab (not text-substitution; expressions deferred); Tracks A/C/G file paths realigned; per-track `Verify` lines added. Added **T-6T06** engine-core C29 validation track (`examples/{config,window,diagnostic,ui}/`). Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks deferred within the Active phase. Bootstrap retained (Draft L1+L2 → promote after T-6T06 closes the gate, per P4/P5 discipline). Skeptic flags recorded (UI under-sized, overlay→UI soft-dep, x/image/font ADR). INDEX unchanged (v2.36.0). RULES parity v1.8.0. Hand off to `/magic.run main`. |
 | 1.19.0 | 2026-05-30 | `/magic.task` update (registry sync). Reflected the **multi-repo ratification** (`/magic.spec`): `l1/l2-multi-repo-architecture` Draft → Stable in Phase 2 (dropped `Draft`/RFC-pending markers on Track G entries + prose + phase-status table — Exit Criterion #4 met, guard suite green). Pre-Planning Stabilization: **0 newly promoted** — multi-repo already Stable; the 6 P6 engine-core L2s remain layer-blocked (Draft L1 parents); editor-layer L1s are Draft concept specs with no L2/code; `asset-formats` held. Closes SYNC_GAP (PLAN v2.35.0 → INDEX v2.36.0). **Phase 2 now 15 specs Stable.** RULES parity v1.8.0. Decision point persists: activate Phase 6 vs. author editor-layer L2 tier. |
 | 1.18.0 | 2026-05-30 | `/magic.task` update (registry sync). Placed 3 orphan P6 L2 specs into Phase 6 under their L1 parents — `l2-definition-system-go` (after l1-definition-system), `l2-diagnostic-system-go` (after l1-diagnostic-system), `l2-ui-system-go` (after l1-ui-system); all `[L2] [Bootstrap]`. Resolves Pre-flight ORPHANED_SPEC ×3 + SYNC_GAP (PLAN was on INDEX v2.34.0, registry at v2.35.0). Annotated `phase-6.md` Track A/C/D with their L2 refs. Pre-Planning Stabilization: **0 promoted** — the 3 new L2s are layer-blocked (Draft L1 parents); all other Draft specs are Phase-6+ `Hold`-gated (C-002) with no C29 validation track. 3 hard L2→L1 edges (35 total), acyclic. **P6 engine-core L2 coverage now complete (6/6).** Phase 6 stays `Hold`. INDEX v2.35.0 (107 specs, Stable 58/Draft 49), RULES parity v1.8.0. |

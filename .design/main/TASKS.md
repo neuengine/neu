@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.20.0
+**Version:** 1.21.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.20.0
+**Based on:** .design/main/PLAN.md v1.21.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` 60/107. **Phases 1–5 Done** (106/106 tasks). **Phase 6 ACTIVE — engine-core cohort** (2026-05-30): tracks A/B/C/D/G/K (definition, window, diagnostic, ui, platform, error-core) decomposed + reconciled to their L2 contracts; build order `{K‖G} → {B,C} → D → A`; C29 gate = T-6T06. Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) deferred within the Active phase. **Held Draft:** `asset-formats` L1+L2. **Execute via `/magic.run main`.**
+**Mode:** Specs `Stable` 72/107. **Phases 1–5 Done** (106/106 tasks). **Phase 6 engine-core cohort COMPLETE** (2026-05-30): A/B/C/D/G/K implemented + validated (T-6T06, 17/17) and **12 specs promoted Draft → Stable**. Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks deferred within the Active phase. **Held Draft:** `asset-formats` L1+L2. **Next:** `/magic.spec` author editor-layer L2 tier, or activate tooling tracks.
 
 ## Overview
 
@@ -21,7 +21,7 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 | [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Done |
 | [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing (19 atomic tasks, Tracks A–E + T; decomposed 2026-05-19) | Done |
 | [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening (18 atomic tasks, Tracks A–E + T; decomposed 2026-05-28) | Done |
-| [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Active (engine-core cohort A/B/C/D/G/K; tooling+editor tracks deferred) |
+| [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Active (engine-core cohort COMPLETE 17/17, 12 specs Stable; tooling+editor tracks deferred) |
 | [Phase 7](tasks/phase-7.md) | Networking & Hot-Reload — profiling, transport, replication, sync, RPC, hot-reload | Hold |
 | [Phase 8](tasks/phase-8.md) | Physics & Scripting — physics server, bodies, colliders, queries, joints, character, scripting | Hold |
 

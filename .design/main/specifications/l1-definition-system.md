@@ -1,7 +1,7 @@
 # Definition System
 
 **Version:** 0.5.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** concept
 
 ## Overview

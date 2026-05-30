@@ -1,7 +1,7 @@
 # UI System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-ui-system.md](l1-ui-system.md)
 
@@ -213,13 +213,23 @@ type ErrGlyphTooLarge struct{ Rune rune; SizePx float32 }
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 6). Stable promotion blocked until: (1) l1-ui-system is Stable
-     (layer constraint); (2) layout + atlas + feature implemented with a validating
-     example (examples/ui/); (3) the text-shaping dep ADR is resolved. -->
+<!-- All paths verified on disk; validated by examples/ui (layout hash ×20, T-6T06)
+     + pkg/ui 95.5% / internal/ui 89.8% cov. C29 P6 gate closed. Grid/wrap/AlignSelf,
+     OffsetTransform, the ECS PreUpdate system, and a real TTF rasterizer
+     (x/image/font ADR) are deferred refinements. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [STYLE] | `pkg/ui/style.go` | `Style` component, `Val` tagged union, `UiRect`, Display/Flex/Justify/Align enums. |
+| [NODE] | `pkg/ui/node.go` | `Node`, `LayoutRect` (+`Contains`), `ZIndex`, `BackgroundColor`/`BorderColor`. |
+| [WIDGETS] | `pkg/ui/widgets.go` | `Text`/`TextSection`/`ImageNode`/`Font` + alignment/wrapping enums. |
+| [INTERACTION] | `pkg/ui/interaction.go` | `Interaction`, `MouseFilter`, `Focused`, `TabIndex`, `FocusNeighbor`. |
+| [LAYOUT] | `internal/ui/layout.go` | Single-line flexbox `Solve`/`SolveIfDirty` dirty-gate (INV-1). |
+| [ATLAS] | `internal/ui/atlas.go` | `FontAtlas` glyph cache over render-core `DynamicAtlas` (INV-4). |
+| [HITTEST] | `internal/ui/interaction.go` | `HitTest` (reverse render order, MouseFilter) + `InteractionFor` (INV-3). |
+| [FEATURE] | `internal/ui/feature.go` | `UiFeature` (RenderFeature) compositing last + `SortByZ` (INV-2). |
+| [EXAMPLE] | `examples/ui/main.go` | Toolbar layout, dirty-gate, layout hash-stable ×20 (T-6T06). |
+| [TEST] | `pkg/ui/ui_test.go`, `internal/ui/ui_test.go` | Val resolve, flexbox golden rects, dirty-gate, atlas cache, hit-test, z-sort. |
 
 ## Document History
 

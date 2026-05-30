@@ -1,7 +1,7 @@
 # Platform System
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** concept
 
 ## Overview

@@ -1,7 +1,7 @@
 # Error Core — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-error-core.md](l1-error-core.md)
 
@@ -176,12 +176,19 @@ type ErrCodeOutOfRange struct{ Code Code; Module string }
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 6). Stable promotion blocked until: (1) l1-error-core is Stable
-     (layer constraint); (2) implementation + tests land with a validating example. -->
+<!-- All paths verified on disk; INV behaviours covered by errs_test.go (89.3%).
+     C29 P6 gate closed by T-6T06. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [SEVERITY] | `pkg/errs/severity.go` | `Severity`/`Audience` total-switch enums. |
+| [CODE] | `pkg/errs/code.go` | `Code` newtype, category ranges, `Descriptor`, `Register`/`Lookup` registry with duplicate + out-of-range guards. |
+| [ERROR] | `pkg/errs/error.go` | `EngineError` interface, `engineError`, `New`/`Wrap`, `Unwrap`/`Is`, `MustSucceed` (Fatal+Developer panic policy). |
+| [CATALOG] | `pkg/errs/catalog.go` | `Catalog` over `fs.FS`, `Localize` with default-template + bare-code fallback. |
+| [TRACE] | `pkg/errs/trace_release.go` + `trace_debug.go` | `//go:build`-gated trace capture (no-op release, `runtime.Callers` under `debug`). |
+| [REDACT] | `pkg/errs/redact.go` | `Redactor` + masking `io.Writer` for credential redaction. |
+| [LOCALE] | `locales/errors.en.json` | Canonical English message catalog. |
+| [TEST] | `pkg/errs/errs_test.go` | Severity totality, registry guards, catalog fallback, panic policy, redaction. |
 
 ## Document History
 

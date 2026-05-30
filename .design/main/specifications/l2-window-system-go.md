@@ -1,7 +1,7 @@
 # Window System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-window-system.md](l1-window-system.md)
 
@@ -198,13 +198,20 @@ func (p WindowPlugin) Build(app *app.App)
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 6). Stable promotion blocked until: (1) l1-window-system is Stable
-     (layer constraint); (2) a WindowBackend (headless + ≥1 native) lands with a
-     validating example (examples/window/). -->
+<!-- All paths verified on disk; validated by examples/window (hash ×20, T-6T06)
+     + pkg/window 89.3% / internal/window 82.6% cov. C29 P6 gate closed. The full
+     ECS sync system + a native backend land at App integration. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [WINDOW] | `pkg/window/window.go` | `Window` component, `WindowMode`/`PresentMode`/`Cursor` enums, `WindowResolution.Logical`, `PrimaryWindow` marker. |
+| [BACKEND] | `pkg/window/backend.go` | `WindowBackend` iface, `RawWindowHandle`, `WindowDescriptor`, `WindowDiff` (INV-4), `ExitCondition`, `WindowPlugin`. |
+| [EVENTS] | `pkg/window/events.go` | `PlatformEvent` + `CausesAppExit` close→exit decision (INV-2). |
+| [HEADLESS] | `internal/window/headless.go` | `HeadlessWindowBackend`: deterministic call-log + scripted event queue (CI). |
+| [DIFF] | `internal/window/diff.go` | `DiffWindow` pure field-diff (INV-4; Focused excluded as read-only). |
+| [PRIMARY] | `internal/window/primary.go` | `PrimaryWindowRes` + `CheckSinglePrimary` (INV-1). |
+| [EXAMPLE] | `examples/window/main.go` | Create→diff/apply→event-replay→close→destroy, hash-stable ×20 (T-6T06). |
+| [TEST] | `pkg/window/window_test.go`, `internal/window/window_test.go` | Logical scaling, diff, exit matrix, headless lifecycle, INV-1 primary. |
 
 ## Document History
 

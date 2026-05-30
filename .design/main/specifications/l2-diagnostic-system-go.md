@@ -1,7 +1,7 @@
 # Diagnostic System — Go Implementation
 
 **Version:** 0.1.0
-**Status:** Draft
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-diagnostic-system.md](l1-diagnostic-system.md)
 
@@ -199,13 +199,19 @@ func SetModuleLevel(module string, lvl LogLevel)             // per-module slog 
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 6). Stable promotion blocked until: (1) l1-diagnostic-system is Stable
-     (layer constraint); (2) implementation + tests land with a validating example
-     (examples/diagnostic/). -->
+<!-- All paths verified on disk; validated by examples/diagnostic (hash ×20,
+     T-6T06) + pkg/diag 94.6% / internal/diag 100% cov. C29 P6 gate closed. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| [DIAGNOSTIC] | `pkg/diag/diagnostic.go` | `RingBuffer[T]` (0-alloc Push), `Diagnostic` + Average/Smoothed/Min/Max/Latest. |
+| [STORE] | `pkg/diag/store.go` | `DiagnosticsStore`, `Register`/`Push`/`AddReader`, `HasAnyReader` zero-cost gate (INV-1). |
+| [GIZMOS] | `pkg/diag/gizmos.go` | `Gizmos` interface + `GizmoBuffer` (8-shape immediate-mode, 0-alloc Reset). |
+| [LOG] | `pkg/diag/log.go` | `ModuleFilterHandler` per-module slog level filter. |
+| [SPAN] | `pkg/diag/span.go` + `span_noop.go` | `//go:build profiling` spans with no-op release path (INV-4). |
+| [FEATURE] | `internal/diag/gizmofeature.go` | `GizmoFeature` (RenderFeature) draining the buffer after scene/before UI (INV-2). |
+| [EXAMPLE] | `examples/diagnostic/main.go` | Reader-gate + averages + gizmo geometry, hash-stable ×20 (T-6T06). |
+| [TEST] | `pkg/diag/diag_test.go`, `internal/diag/gizmofeature_test.go` | RingBuffer wrap, reader-gate, gizmo 0-alloc, module filter, feature drain. |
 
 ## Document History
 

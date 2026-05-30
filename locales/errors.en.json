@@ -1,0 +1,14 @@
+{
+  "E0001": {
+    "template": "entity %d not found",
+    "solution": "the entity may have been despawned; check generation before access"
+  },
+  "E1000": {
+    "template": "system %q has a cyclic dependency in schedule %q",
+    "solution": "break the cycle by removing one Before/After ordering edge"
+  },
+  "E2000": {
+    "template": "asset %q failed to load",
+    "solution": "verify the asset path and that a loader is registered for its extension"
+  }
+}

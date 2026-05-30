@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.16.0
+**Version:** 1.20.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.16.0
+**Based on:** .design/main/PLAN.md v1.20.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` 58/101. **Phases 1–5 Done** (106/106 tasks). **Phase 5 Done** (18/18, 2026-05-28) — C29 P5 gate closed (T-5T05). **8 P5 specs promoted Draft → Stable** (audio, animation, tweening, 2d-rendering). **Held Draft:** `asset-formats` L1+L2 (glTF/scene/font unimplemented). **Next:** Phase 6 `Hold` — author + stabilize missing P6 L2 contracts via `/magic.spec` before activation.
+**Mode:** Specs `Stable` 60/107. **Phases 1–5 Done** (106/106 tasks). **Phase 6 ACTIVE — engine-core cohort** (2026-05-30): tracks A/B/C/D/G/K (definition, window, diagnostic, ui, platform, error-core) decomposed + reconciled to their L2 contracts; build order `{K‖G} → {B,C} → D → A`; C29 gate = T-6T06. Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) deferred within the Active phase. **Held Draft:** `asset-formats` L1+L2. **Execute via `/magic.run main`.**
 
 ## Overview
 
@@ -21,7 +21,7 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 | [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Done |
 | [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing (19 atomic tasks, Tracks A–E + T; decomposed 2026-05-19) | Done |
 | [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening (18 atomic tasks, Tracks A–E + T; decomposed 2026-05-28) | Done |
-| [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Hold |
+| [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Active (engine-core cohort A/B/C/D/G/K; tooling+editor tracks deferred) |
 | [Phase 7](tasks/phase-7.md) | Networking & Hot-Reload — profiling, transport, replication, sync, RPC, hot-reload | Hold |
 | [Phase 8](tasks/phase-8.md) | Physics & Scripting — physics server, bodies, colliders, queries, joints, character, scripting | Hold |
 

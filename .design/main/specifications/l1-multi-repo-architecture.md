@@ -3,8 +3,8 @@
 | Metadata | Value |
 | :--- | :--- |
 | **Layer** | 1 (concept) |
-| **Status** | Draft |
-| **Version** | 1.4.0 |
+| **Status** | Stable |
+| **Version** | 1.5.0 |
 | **Related Specifications** | [app-framework.md](l1-app-framework.md), [hot-reload.md](l1-hot-reload.md), [ai-assistant-system.md](l1-ai-assistant-system.md), [definition-system.md](l1-definition-system.md), [diagnostic-system.md](l1-diagnostic-system.md), [visual-graph-system.md](l1-visual-graph-system.md) |
 
 ## Overview
@@ -413,15 +413,16 @@ Before opening a PR in `editor`, the developer removes the `replace` directive, 
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- The engine-side boundary is implemented + guard-tested; the architecture-guard
+     suite is the C29 validator (INV-1…INV-6 verified mechanically). -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| [EDITOR_PKG] | `pkg/editor/` | Runtime extension interfaces (EditorPlugin/Inspector/Gizmo/Definition) + data types — interface-and-type only (INV-3). |
+| [PROTOCOL_PKG] | `pkg/protocol/` | IPC wire messages + newline-delimited JSON codec — stdlib-only (INV-4). |
+| [GUARD_EDITOR] | `pkg/editor/editor_test.go` | `TestEditorPkgIsContractOnly` (INV-3), `TestNoEditorImports` (INV-1), `TestNoPackageInit` (INV-5) — the C29 validators. |
+| [GUARD_PROTOCOL] | `pkg/protocol/protocol_test.go` | `TestProtocolRoundTrip` (all 8 Kinds), `TestProtocolStdlibOnly` (INV-4), forward-compat decode. |
+| [L2] | [l2-multi-repo-architecture-go.md](l2-multi-repo-architecture-go.md) | Go contract mapping INV-1…INV-6 to the packages + guard tests above. |
 
 ## Document History
 
@@ -434,3 +435,4 @@ Before opening a PR in `editor`, the developer removes the `replace` directive, 
 | 1.3.0 | 2026-03-30 | Added C26 example correlation placeholder for the planned multi-repository boundary stub |
 | — | — | Planned examples: `examples/app/multi_repo_boundary/` |
 | 1.4.0 | 2026-04-26 | Demoted RFC → Draft: architecture agreed (Variant A resolved, three-level model stable), open questions 2–4 deferred to Phase 4 (editor kickoff); not blocking Phase 1–3 |
+| 1.5.0 | 2026-05-30 | **Draft → Stable** (`/magic.spec` ratification). Evidence: the engine-side boundary (`pkg/editor/` + `pkg/protocol/`) is implemented and the architecture-guard suite is green — `TestEditorPkgIsContractOnly` (INV-3), `TestNoEditorImports` (INV-1), `TestNoPackageInit`/`TestProtocol_NoPackageInit` (INV-5), `TestProtocolStdlibOnly` (INV-4), `TestProtocolRoundTrip` (all 8 Kinds) — this guard suite is the C29 validator named by the L2 spec. Canonical References populated. Open questions 2–4 remain genuinely non-blocking for the engine-side contract: WebSocket transport is additive/non-breaking, editor versioning is an editor-repo concern (out of engine scope), default no-op interfaces are deferred to the first `EditorPlugin`. Unblocks the editor-layer L2 tier. |

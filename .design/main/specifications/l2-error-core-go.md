@@ -62,7 +62,7 @@ choice reuses the existing asset VFS, keeping the core dep-free (C-003).
 ## Go Package
 
 ```
-pkg/errcore/
+pkg/errs/
   error.go         // EngineError interface, engineError struct, New/Wrap constructors
   severity.go      // Severity, Audience enums + total-switch String()
   code.go          // Code newtype, category ranges, Descriptor, Register/Lookup registry

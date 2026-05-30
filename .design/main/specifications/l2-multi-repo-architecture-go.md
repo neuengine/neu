@@ -1,7 +1,7 @@
 # Multi-Repository Architecture — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-multi-repo-architecture.md](l1-multi-repo-architecture.md)
 
@@ -320,21 +320,23 @@ var (
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream
-     agents MUST read before implementing this spec. Use relative paths from
-     project root. Stub state — fill with concrete files when implementation
-     begins (Phase 2, Track G: T-2G01/T-2G02). -->
+<!-- All paths verified on disk; INV-1…INV-6 mechanically verified by the
+     architecture-guard suite (the C29 validator). L1 parent is Stable. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Stable promotion is blocked twice:
-     (1) L1 parent l1-multi-repo-architecture.md is Draft (layer constraint);
-     (2) C29 — no validating implementation in examples/ (pkg/editor + pkg/protocol
-     land in Phase 2 Track G; their example/guard tests are the C29 validator). -->
+| [PLUGIN] | `pkg/editor/plugin.go` | `EditorPlugin` + `EditorInterface` (deferred-mutation handle, no `*World` — INV-6). |
+| [GIZMO] | `pkg/editor/gizmo.go` | `GizmoPlugin`, `GizmoWriter`, `GizmoHit` (comma-ok `Interact`). |
+| [DEFINITION] | `pkg/editor/definition.go` | `DefinitionEditorPlugin` (mirrors definition-system §4.10). |
+| [PROPERTY] | `pkg/editor/property.go` | `PropertyInfo`, `PropertyList`, `Range`, `InspectorPlugin` data types. |
+| [MESSAGES] | `pkg/protocol/messages.go` | `Kind` discriminator + 8 wire-message structs (hot-reload + diagnostics). |
+| [CODEC] | `pkg/protocol/codec.go` | `Encode`/`Decode`/`Scanner` newline-delimited JSON, `ErrUnknownKind` forward-compat. |
+| [GUARD_EDITOR] | `pkg/editor/editor_test.go` | `TestEditorPkgIsContractOnly` (INV-3), `TestNoEditorImports` (INV-1), `TestNoPackageInit` (INV-5), `TestEditorBuildClean`. |
+| [GUARD_PROTOCOL] | `pkg/protocol/protocol_test.go` | `TestProtocolRoundTrip` (8 Kinds), `TestProtocolStdlibOnly` (INV-4), unknown-kind/extra-field forward-compat. |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-17 | Initial L2 draft — Go translation of l1-multi-repo-architecture v1.4.0. Concrete pkg/editor interfaces + pkg/protocol JSON wire messages, //go:build editor scoping, AST/`go list` architecture-guard tests mapping INV-1…INV-6. L1 Phase-4-deferred open questions kept out of 0.1.0 scope. |
+| 0.2.0 | 2026-05-30 | **Draft → Stable** (`/magic.spec` ratification). L1 parent now Stable (layer constraint cleared); Canonical References populated with the on-disk `pkg/editor/` + `pkg/protocol/` sources and their guard tests. C29 satisfied: `go test ./pkg/editor/ ./pkg/protocol/` green — `TestEditorPkgIsContractOnly` (INV-3), `TestNoEditorImports` (INV-1), `TestNoPackageInit` (INV-5), `TestProtocolStdlibOnly` (INV-4), `TestProtocolRoundTrip` (8 Kinds), unknown-kind/extra-field forward-compat all pass. The boundary contract is mechanically enforced, not merely documented. |

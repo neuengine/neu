@@ -1,7 +1,7 @@
 ---
 phase: 6
 name: "UI, Tooling & Quality"
-status: Hold
+status: Active
 subsystem: "pkg/ui, pkg/window, pkg/diag, cmd/cli, pkg/build, pkg/codegen, pkg/platform, pkg/plugin, pkg/plugins/aiapi, pkg/assistant, pkg/errs, pkg/definition, pkg/visualgraph, pkg/editor"
 requires:
   - "Phase 1–3 Stable"
@@ -28,30 +28,41 @@ key_files:
 patterns_established: []
 duration_minutes: ~
 bootstrap: true
-hold_reason: "Unfreezes after Phase 1–3 Stable."
+hold_reason: ""
+active_cohort: "engine-core (A/B/C/D/G/K) — definition, window, diagnostic, ui, platform, error-core. All 6 L2 contracts authored (Draft [Bootstrap]). Deferred within this Active phase: tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks."
 ---
 
 # Stage 6 Tasks — UI, Tooling & Quality
 
 **Phase:** 6
-**Status:** Hold
+**Status:** Active (engine-core cohort)
 **Strategic Goal:** Developer-experience surface — UI, CLI, build, diagnostics, AI assistant boundary, third-party plugin ecosystem, codegen, errors. Closes the loop between engine internals (Phases 1–3) and the editor/tooling consumer.
+
+## Active Cohort (this activation, 2026-05-30)
+
+Per user direction, **only the engine-core tracks are active this pass**: **A** (definition), **B** (window), **C** (diagnostic), **D** (ui), **G** (platform), **K** (error-core). Each has an authored L2 Go contract (`Draft [Bootstrap]`) that is the **authoritative design reference** — `/magic.run` MUST read the L2 spec's Type Definitions / Invariant Compliance / Testing Strategy before implementing a task (the task lines below are summaries; the L2 contract governs file layout + invariants).
+
+**Build order (intra-cohort hard deps):** `{K error-core ‖ G platform}` → `{B window, C diagnostic}` → `D ui` → `A definition`.
+
+**Deferred within this Active phase** (not yet started): tooling **E/F/I/J/L/M** + editor-layer **H/N/O/P** (the editor-layer L2 contracts are unblocked by multi-repo Stable but not yet authored). Validation **T** tasks track the editor/tooling tracks and stay deferred; an engine-core C29 validation track (`examples/{config,window,diagnostic,ui}/`) is added as **T-6T06** below.
+
+**Skeptic flags:** (1) Track D (ui) at 3 tasks is optimistic for a flexbox solver + widgets + interaction + font atlas — expect a split during execution. (2) T-6C02 (diagnostic overlay) soft-depends on Track D (overlay renders via UI text); keep the overlay last in Track C so store/gizmos land first. (3) Track D C29 closure needs the `x/image/font` ADR (flagged in `l2-ui-system-go`).
 
 ## Track Overview
 
 | Track | Domain | Spec | Tasks |
 | :--- | :--- | :--- | :--- |
-| A | Definition System (`pkg/definition/`) | l1-definition-system | T-6A01..03 |
-| B | Window System (`pkg/window/`) | l1-window-system | T-6B01..02 |
-| C | Diagnostic System (`pkg/diag/`) | l1-diagnostic-system | T-6C01..03 |
-| D | UI System (`pkg/ui/`) | l1-ui-system | T-6D01..03 |
+| A | Definition System (`pkg/definition/`) | l1-definition-system + l2-definition-system-go | T-6A01..03 |
+| B | Window System (`pkg/window/`) | l1-window-system + l2-window-system-go | T-6B01..02 |
+| C | Diagnostic System (`pkg/diag/`) | l1-diagnostic-system + l2-diagnostic-system-go | T-6C01..03 |
+| D | UI System (`pkg/ui/`) | l1-ui-system + l2-ui-system-go | T-6D01..03 |
 | E | Build Tooling (`.github/`, `scripts/`) | l1-build-tooling | T-6E01..03 |
 | F | CLI Tooling (`cmd/cli/`) | l1-cli-tooling | T-6F01..03 |
-| G | Platform System (`pkg/platform/`) | l1-platform-system | T-6G01..02 |
+| G | Platform System (`pkg/platform/`) | l1-platform-system + l2-platform-system-go | T-6G01..02 |
 | H | AI Assistant System (`pkg/assistant/`) | l1-ai-assistant-system | T-6H01..03 |
 | I | Examples Framework (`examples/`) | l1-examples-framework | T-6I01..02 |
 | J | Compatibility Policy | l1-compatibility-policy | T-6J01..02 |
-| K | Error Core (`pkg/errs/`) | l1-error-core | T-6K01..03 |
+| K | Error Core (`pkg/errs/`) | l1-error-core + l2-error-core-go | T-6K01..03 |
 | L | Benchmark Spec (`bench/`) | l2-benchmark-spec | T-6L01..02 |
 | M | Codegen Tools (`cmd/codegen/`) | l2-codegen-tools | T-6M01..02 |
 | **N** | **Plugin Distribution (`pkg/plugin/`)** | **l1-plugin-distribution** | **T-6N01..04** |
@@ -75,26 +86,38 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 
 ### Track A — Definition System
 
-- [ ] [T-6A01] JSON schema parser + loader for UI/scene/flow/template definitions; AST + validation. — `pkg/definition/{schema,loader,ast}.go` `[Bootstrap]`
-- [ ] [T-6A02] Template engine: variable substitution, includes, conditional sections. — `pkg/definition/template/` `[Bootstrap]`
-- [ ] [T-6A03] Hot-reload watcher integration (asset server hook) + diff applier. — `pkg/definition/watch.go` `[Bootstrap]`
+> **L2 contract (authoritative):** [l2-definition-system-go.md](../specifications/l2-definition-system-go.md). Reconciled 2026-05-30 to the contract: `template` is an entity-blueprint (prefab), not text-substitution (expressions are a deferred open question).
+
+- [ ] [T-6A01] `Envelope` decode + `Kind` dispatch + `DefinitionLoader` (decode → validate → typed asset); total validation = structure + `TypeRegistry` type-refs (INV-4) + include-DAG 3-colour DFS (INV-5) → instantiation infallible (INV-1). — `pkg/definition/{envelope,errors}.go`, `internal/definition/{loader,validate}.go` `[Bootstrap]`
+- [ ] [T-6A02] Four `Command`-only interpreters (INV-2): `ui` → Node/Style trees, `scene` → DynamicScene codec reuse, `flow` → `NextState` + on_enter/exit, `template` → prefab + field overrides; extensible `ActionRegistry`. — `pkg/definition/{ui,scene,flow,template,action}.go`, `internal/definition/interp_*.go` `[Bootstrap]`
+- [ ] [T-6A03] Hot-reload (INV-3): `AssetEvent[Definition]::Modified` → despawn `DefinitionInstance`-tagged entities + re-instantiate; flow preserves current state if it still exists. — `internal/definition/hotreload.go` `[Bootstrap]`
+- **Verify:** validated definition always instantiates (property test); cycle ⇒ `ErrDefinitionCycle`; unknown type ⇒ `ErrUnknownType`; scene round-trips byte-stable via the codec; no-panic fuzz on garbage bytes.
 
 ### Track B — Window System
 
-- [ ] [T-6B01] Window abstraction interface + multi-window registry + WindowID lifecycle. — `pkg/window/{window,registry}.go` `[Bootstrap]`
-- [ ] [T-6B02] Platform backend selection (build tags) + headless backend for tests. — `pkg/window/backend_*.go` `[Bootstrap]`
+> **L2 contract (authoritative):** [l2-window-system-go.md](../specifications/l2-window-system-go.md). Depends on Track G (platform selects the `WindowBackend`).
+
+- [ ] [T-6B01] `Window` component + `PrimaryWindow` marker + `WindowBackend` interface; diff-driven sync via change-detection ticks (INV-4); deferred create/destroy via commands (INV-3); `PrimaryWindowRes` single-primary assertion (INV-1) + `AppExit` on primary close (INV-2). — `pkg/window/{window,mode,cursor,markers,backend,plugin}.go`, `internal/window/{sync,primary}.go` `[Bootstrap]`
+- [ ] [T-6B02] Headless `WindowBackend` (no OS windows, deterministic event queue for CI) + `MainThreadExecutor`-bound backend calls + `PollEvents` → engine events; native backend selected by build tags via the platform plugin. — `internal/window/{headless,poll}.go`, `pkg/window/events.go` `[Bootstrap]`
+- **Verify:** two primaries ⇒ `ErrMultiplePrimary`; primary close ⇒ exactly one `AppExit` (OnPrimaryClosed); `SpawnWindow` emits no backend call until command flush; scripted PlatformEvent queue replays identically ×20.
 
 ### Track C — Diagnostic System
 
-- [ ] [T-6C01] Metric registry: counters, gauges, histograms, label sets; lock-free hot path. — `pkg/diag/{metric,registry}.go` `[Bootstrap]`
-- [ ] [T-6C02] Profiling overlay + frame stats (delegates to UI system); pprof export endpoints. — `pkg/diag/{overlay,pprof}.go` `[Bootstrap]`
-- [ ] [T-6C03] Gizmos API + error code surface for ad-hoc visual debug. — `pkg/diag/{gizmos,errors}.go` `[Bootstrap]`
+> **L2 contract (authoritative):** [l2-diagnostic-system-go.md](../specifications/l2-diagnostic-system-go.md). **Reconciled 2026-05-30** — the prior "counters/gauges/histograms" Prometheus model was dropped: the L1/L2 design is a `DiagnosticsStore` of named diagnostics over fixed-cap `RingBuffer`s. Error codes are **not** redefined here — they defer to `l2-error-core-go` (Track K).
+
+- [ ] [T-6C01] `DiagnosticsStore` + named `Diagnostic` over fixed-capacity `RingBuffer` (0-alloc `Push`, deterministic sample-count averages); `hasAnyReader` run-condition for zero-cost-when-unread (INV-1); built-in metrics (fps/frame_time/entity_count) in the `Last` schedule (INV-3). — `pkg/diag/{store,diagnostic}.go`, `internal/diag/builtins.go` `[Bootstrap]`
+- [ ] [T-6C02] Immediate-mode `Gizmos` + pooled per-frame vertex buffer drained by a `gizmoFeature` (`RenderFeature`) after scene, before UI (INV-2, pure visual); `GizmoConfigStore` + retained gizmos. — `pkg/diag/gizmos.go`, `internal/diag/gizmofeature.go` `[Bootstrap]`
+- [ ] [T-6C03] `log/slog` per-module level filter; build-tag `profiling` spans with no-op release path (INV-4); debug overlay via the UI text path (**soft-deps Track D — sequence last**). — `pkg/diag/{log,span,span_noop}.go`, `internal/diag/overlay.go` `[Bootstrap]`
+- **Verify:** zero readers ⇒ collection pass skipped + `Push` 0-alloc (benchmark); `RingBuffer` wrap-around + deterministic `Average`; gizmo draw performs no world mutation + clears each frame; `-tags profiling` records spans, default build = 0-cost no-op.
 
 ### Track D — UI System
 
-- [ ] [T-6D01] Layout engine (flex/grid) + measure/arrange pass. — `pkg/ui/layout/{flex,grid,box}.go` `[Bootstrap]`
-- [ ] [T-6D02] Widget primitives: button, text, image, container, scroll. — `pkg/ui/widgets/` `[Bootstrap]`
-- [ ] [T-6D03] Interaction handler (input routing) + style system + theming tokens. — `pkg/ui/{interaction,style}.go` `[Bootstrap]`
+> **L2 contract (authoritative):** [l2-ui-system-go.md](../specifications/l2-ui-system-go.md). Depends on Track B (window viewport) + Stable render/input/2d/hierarchy. **C29 closure needs the `x/image/font` ADR** (text shaping). Skeptic: 3 tasks is tight — expect a split.
+
+- [ ] [T-6D01] `Style` component + `Val` union + flexbox solver (measure → layout) with **dirty-subtree relayout** via `Changed[Style]` (INV-1); cached minSize with upward dirty propagation + deferred child sort. — `pkg/ui/{style,node}.go`, `internal/ui/{layout,dirty}.go` `[Bootstrap]`
+- [ ] [T-6D02] Widget bundles (Node/Text/ImageNode/Button/ScrollView) + visual styling (BackgroundColor/Border/Gradient); `FontAtlas` glyph cache over the render-core shelf-pack `DynamicAtlas` (INV-4) + text shaping. — `pkg/ui/{widgets,visual,font}.go`, `internal/ui/{atlas,shape}.go` `[Bootstrap]`
+- [ ] [T-6D03] `Interaction` hit-test in `PreUpdate` + `MouseFilter` + event bubbling + focus neighbors (INV-3); `UiFeature` compositing UI last via `RenderFeature` + `ZIndex` resolve (INV-2); render-only `OffsetTransform`. — `pkg/ui/{interaction,transform}.go`, `internal/ui/{interaction,feature}.go` `[Bootstrap]`
+- **Verify:** mutating one node re-solves only its subtree (sibling rects unchanged); same string renders glyphs once (atlas count stable on 2nd pass); top-most `MouseStop` consumes, `MousePass` propagates; batched draw topology hash stable ×20.
 
 ### Track E — Build Tooling
 
@@ -110,8 +133,12 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 
 ### Track G — Platform System
 
-- [ ] [T-6G01] Capability registry + tier matrix (CPU features, GPU APIs, audio backends). — `pkg/platform/{capability,tier}.go` `[Bootstrap]`
-- [ ] [T-6G02] Build-tag conventions + per-platform backend selection helpers; `//go:build editor` enforcement test. — `pkg/platform/build/` `[Bootstrap]`
+> **L2 contract (authoritative):** [l2-platform-system-go.md](../specifications/l2-platform-system-go.md). Cohort root (no intra-cohort deps); selects the Track B `WindowBackend`.
+
+- [x] [T-6G01] Immutable `PlatformProfile` resource + `PlatformCaps` branchless bitfield + `PlatformOS`/`Arch`/`Tier` enums; detection from `runtime.GOOS`/`GOARCH`; inserted in `PreStartup`, read-only thereafter (INV-2). — `pkg/platform/{profile,caps,plugin}.go`, `internal/platform/detect.go` `[Bootstrap]`
+- [x] [T-6G02] Build-tag-split profile (`profile_default.go` `!headless` / `profile_headless.go` `headless`) — headless caps exclude `HasGPU`/`HasMultiWindow`/`HasSpatialAudio` (INV-4); `Plugin` inserts the profile resource (INV-3); pure `osFromGOOS`/`archFromGOARCH` mappings. `//go:build editor` scope is enforced by the existing `pkg/editor` guard tests (multi-repo), not duplicated. — `internal/platform/profile_{default,headless}.go`, `internal/platform/plugin.go` `[Bootstrap]`
+- **Verify:** `Has`/`With` bitfield table (disjoint flags don't alias); `-tags headless` profile has `HasGPU/HasMultiWindow/HasSpatialAudio == false`; cross-compile smoke (`GOOS=windows/linux/darwin`, `js/wasm`) builds the core.
+- **Done (2026-05-30):** `pkg/platform` (pure types: `PlatformProfile`, `PlatformCaps` bitfield, OS/Arch/Tier total-switch enums, `PlatformPlugin` iface) + `internal/platform` (GOOS/GOARCH pure mappings, `!headless`/`headless` profile split, profile-inserting `Plugin`). **pkg/platform 100%, internal/platform 100% coverage in both default and `-tags headless` builds**; headless build verified. Build + modernize clean.
 
 ### Track H — AI Assistant System
 
@@ -131,9 +158,13 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 
 ### Track K — Error Core
 
-- [ ] [T-6K01] E-series code registry + structured `Error` type (code, message, severity, fields, wrapped); chain via `errors.Is/As`. — `pkg/errs/{error,registry,code}.go` `[Bootstrap]`
-- [ ] [T-6K02] Localization hooks (message templates per locale) + severity levels (Info/Warn/Error/Fatal). — `pkg/errs/{i18n,severity}.go` `[Bootstrap]`
-- [ ] [T-6K03] Error formatter + redaction filter (used by Track O for API key redaction); structured-log adapter. — `pkg/errs/{format,redact}.go` `[Bootstrap]`
+> **L2 contract (authoritative):** [l2-error-core-go.md](../specifications/l2-error-core-go.md). Cohort root (no intra-cohort deps); consumed by Track C (diagnostic codes) and the deferred editor/AI tracks.
+
+- [x] [T-6K01] `EngineError` interface over stdlib `errors` (Is/As/Unwrap) + range-partitioned `Code` registry (duplicate ⇒ `ErrDuplicateCode`, out-of-range ⇒ `ErrCodeOutOfRange`) + `Severity`/`Audience` total-switch enums. — `pkg/errs/{error,severity,code}.go` `[Bootstrap]`
+- [x] [T-6K02] `fs.FS` locale catalog (`errors.{lang}.json`) + `Localize` with default-template fallback (missing key never empty); malformed catalog keeps embedded defaults. — `pkg/errs/catalog.go`, `locales/errors.en.json` `[Bootstrap]`
+- [x] [T-6K03] Build-tag debug traces (`runtime.Callers`; `!debug` = no-op, INV trace) + `MustSucceed` (panics **only** for Fatal+Developer) + structured-log adapter; redaction filter (consumed later by Track O). — `pkg/errs/{trace_debug,trace_release,redact}.go` `[Bootstrap]`
+- **Verify:** `errors.As` recovers `EngineError` through a `%w` chain; severity `String()` total over all enum values; duplicate/out-of-range registration guarded; `Localize` falls back on missing key; `MustSucceed` panics only for Fatal+Developer.
+- **Done (2026-05-30):** `pkg/errs` implemented — `EngineError`/`engineError`, `Code` registry with module-range + duplicate guards, `Severity`/`Audience` total-switch enums, `Catalog` over `fs.FS` (fmt-style templates + bare-code fallback), `//go:build debug` trace split, `MustSucceed` Fatal+Developer panic policy, `Redactor`. `locales/errors.en.json` shipped. **89.3% coverage**, build + modernize clean.
 
 ### Track L — Benchmark Spec
 
@@ -174,6 +205,7 @@ hold_reason: "Unfreezes after Phase 1–3 Stable."
 - [ ] [T-6T03] CLI integration tests: `ecs plugin scaffold|validate|install|list|enable|disable|info|remove|doctor` golden output. — `cmd/cli/plugin/integration_test.go` `[Bootstrap]`
 - [ ] [T-6T04] Codegen golden output + benchmark regression CI gate live (T-6E02 + T-6L02 wired). — `cmd/codegen/golden/`, `.github/workflows/bench.yml` `[Bootstrap]`
 - [ ] [T-6T05] AI API plugin live-provider smoke test (gated by `live-ai` CI label, project-secret API keys); explicit cost budget. — `.github/workflows/ai-live.yml` `[Bootstrap]`
+- [ ] [T-6T06] **Engine-core C29 validation track** (this activation's gate): `examples/{config,window,diagnostic,ui}/` validate the 6 engine-core L2 contracts end-to-end (definition load+instantiate, headless window event replay, diagnostics 0-alloc + gizmo topology, flexbox + atlas determinism); hash-stable ×20; `go test ./...` + `modernize` clean. Closes the C29 gate that promotes the engine-core cohort's L1+L2 Draft → Stable. — `examples/{config,window,diagnostic,ui}/` `[Bootstrap]`
 
 ## Detailed Tracking
 

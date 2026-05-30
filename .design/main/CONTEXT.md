@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-05-28
+**Generated:** 2026-05-30
 
 ## Active Technologies
 
@@ -43,6 +43,7 @@
 │   ├── animation/
 │   ├── audio/
 │   ├── ecs/
+│   ├── platform/
 │   ├── render/
 │   └── tween/
 └── pkg/
@@ -52,7 +53,9 @@
     ├── audio/
     ├── ecs/
     ├── editor/
+    ├── errs/
     ├── math/
+    ├── platform/
     ├── protocol/
     ├── render/
     ├── scene/

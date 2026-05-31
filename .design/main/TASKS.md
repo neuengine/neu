@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.21.0
+**Version:** 1.23.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.21.0
+**Based on:** .design/main/PLAN.md v1.23.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` 72/107. **Phases 1–5 Done** (106/106 tasks). **Phase 6 engine-core cohort COMPLETE** (2026-05-30): A/B/C/D/G/K implemented + validated (T-6T06, 17/17) and **12 specs promoted Draft → Stable**. Tooling (E/F/I/J/L/M) + editor-layer (H/N/O/P) tracks deferred within the Active phase. **Held Draft:** `asset-formats` L1+L2. **Next:** `/magic.spec` author editor-layer L2 tier, or activate tooling tracks.
+**Mode:** Specs `Stable` 72/112. **Phases 1–5 Done** (106/106 tasks). **Phase 6 engine-core cohort COMPLETE** (12 specs Stable) + **editor-layer L2 tier authored + mapped** (5 new L2: plugin-distribution, ai-assistant, ai-api-plugin, cli, definition-integration — `Draft [Bootstrap]`). **Full P6 L1+L2 parity.** Tooling (E/F/I/J/L/M) + editor (H/N/O/P) tracks deferred (specs ready, impl pending). **Held Draft:** `asset-formats` L1+L2. **Next:** activate tooling/editor tracks via `/magic.run`, or implement glTF.
 
 ## Overview
 

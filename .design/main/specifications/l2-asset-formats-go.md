@@ -1,7 +1,7 @@
 # Asset Formats — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-asset-formats.md](l1-asset-formats.md)
 
@@ -54,34 +54,36 @@ and the existing `AssetServer` registration surface.
 
 | L1 Invariant | Implementation |
 | :--- | :--- |
-| **1**: each extension maps to exactly one loader; duplicate = hard error | `RegisterLoader(ext, loader)` checks the server's `map[string]typedLoader`; a second registration for the same extension returns `ErrLoaderConflict` (fail at app build, not silently last-wins). |
+| **1**: each extension maps to exactly one loader; duplicate = hard error | Each format package exposes `RegisterAll(srv)` registering its loader for its unique extensions via `asset.RegisterLoader`. *(Planned hardening:* the shared `AssetServer` registry is currently last-wins; the `ErrLoaderConflict` type exists, and a registration-time cross-package duplicate-extension guard is a planned addition to fully enforce the hard-error contract.) |
 | **2**: full asset or error; never partial | Each `Load` builds the asset in a local value and returns `(asset, nil)` only on full success; any decode error returns `(zero, err)` and the `AssetServer` marks the slot `Failed` — nothing partial enters the store. |
-| **3**: disabled format ⇒ clear unsupported error | Build-tag-gated subpackages register via `init()`. With the tag off, the extension is unregistered; `AssetServer.Load` of that extension returns `ErrUnsupportedFormat{Ext}` — a clear message, not a silent miss. |
-| **4**: sub-asset labels stable across reloads | `GltfAssetLabel` encodes `(kind, index)` deterministically (`Mesh(0)` is always the first mesh by glTF declaration order); the label → sub-asset map is rebuilt identically on reload. |
+| **3**: disabled format ⇒ clear unsupported error | The mechanism is structural and Stable: the dep-free core compiles only stdlib loaders, and `ErrUnsupportedFormat{Ext}` is the typed result for an unregistered extension. *(The build-tag-gated optional formats that would exercise this path — OGG/MP3/FLAC/DDS/KTX2 — are Planned, so the invariant is proven by construction, not yet by a shipped opt-in format.)* |
+| **4**: sub-asset labels stable across reloads | `GltfAssetLabel` encodes `(kind, index)` deterministically; one `mesh.Mesh` is emitted per glTF primitive in declaration order, so `Mesh(0)` always resolves to the first primitive. The `label → index` map is rebuilt identically on reload — verified by `examples/gltf` (fan-out hash stable ×20) + `FuzzDecode`. |
 
 ## Go Package
 
+Each subpackage owns its `LoadSettings` and error types ([implemented] vs [planned]
+marks the v0.2.0 Stable surface):
+
 ```
 pkg/asset/formats/
-  register.go        // DefaultFormatsPlugin: registers all enabled loaders
-  settings.go        // LoadSettings (Format override, glTF axis, JPEG quality)
-  errors.go          // ErrLoaderConflict, ErrUnsupportedFormat, ErrSubAssetMissing
-  image/
-    stdlib.go        // PNG/JPEG/GIF/BMP via stdlib image (always compiled)
-    hdr.go           // Radiance RGBE decode (stdlib-only)
-    compressed.go    // DDS/KTX2 blob+metadata passthrough (//go:build gpu_compressed)
-  audio/
-    wav.go           // PCM WAV (stdlib-only, always compiled)
-    vorbis.go        // OGG/Vorbis (//go:build audio_vorbis — opt-in dep)
-    mp3.go flac.go   // (//go:build audio_mp3 / audio_flac)
-  font/
-    truetype.go      // .ttf/.otf glyph outlines + metrics (stdlib x/image/font candidate — ADR)
   gltf/
-    loader.go        // .gltf/.glb parse → GltfAsset
-    label.go         // GltfAssetLabel deterministic sub-asset addressing
-    convert.go       // glTF primitives → mesh/material/image/animation/skin
+    label.go         // GltfKind + GltfAssetLabel deterministic addressing   [implemented]
+    schema.go        // glTF 2.0 JSON subset + component/mode constants       [implemented]
+    convert.go       // buffer resolve + accessor decode → mesh/material/texture [implemented]
+    loader.go        // .gltf/.glb parse → GltfAsset, Decode, Get, RegisterAll [implemented]
+  image/
+    stdlib.go        // PNG/JPEG via stdlib image (always compiled)          [implemented]
+    hdr.go           // Radiance RGBE decode (stdlib-only)                    [planned]
+    compressed.go    // DDS/KTX2 blob+metadata passthrough (//go:build gpu_compressed) [planned]
+  audio/
+    wav.go           // PCM WAV (stdlib-only, always compiled)               [implemented]
+    vorbis.go mp3.go flac.go  // OGG/MP3/FLAC (//go:build opt-in deps)        [planned]
+  font/
+    truetype.go      // .ttf/.otf glyph outlines + metrics (x/image/font — ADR) [planned]
   scene/
-    json.go          // .scene.json → scene.DynamicScene (reflection codec)
+    json.go          // .scene.json → scene.DynamicScene (reflection codec)  [planned]
+  // A unified register.go/settings.go + DefaultFormatsPlugin + cross-package
+  // ErrLoaderConflict detection are [planned] (the AssetServer registry is last-wins today).
 ```
 
 ## Type Definitions
@@ -115,20 +117,33 @@ func (l GltfAssetLabel) String() string // e.g. "Mesh(0)" — deterministic, rel
 func RegisterLoader[A any, S any](srv *asset.AssetServer, l asset.AssetLoader[A, S], exts ...string) error
 ```
 
+> **Implementation note (v0.2.0).** The shipped `GltfAsset` holds the decoded
+> sub-assets **by value** (`[]*mesh.Mesh`, `[]*material.Material`,
+> `[]renderimage.Image`, `[]GltfScene`) addressed by a `map[GltfAssetLabel]int`,
+> rather than `asset.Handle[T]`. The handle form requires registering each sub-asset
+> into the `AssetServer` through a load context, which the current
+> `asset.AssetLoader[A,S]` signature (`Load(r io.Reader, settings S)`) does not
+> expose — handle-based sub-asset registration is deferred to App integration. The
+> value form fully satisfies INV-2 (full-or-error) and INV-4 (stable labels)
+> standalone. `RegisterAll` reuses `asset.RegisterLoader[A,S](srv, loader)`
+> (extensions come from `Extensions()`); there is no `LoadContext` parameter.
+
 ## Key Methods
 
 ```go
-func NewDefaultFormatsPlugin() app.Plugin // registers all build-tag-enabled loaders
+// glTF (INV-2, INV-4) — implemented.
+func (GltfLoader) Load(r io.Reader, s LoadSettings) (GltfAsset, error)
+func (GltfLoader) Extensions() []string                   // ".gltf", ".glb"
+func Decode(raw []byte) (GltfAsset, error)                // JSON/GLB auto-detect, panic-safe (INV-2)
+func (a *GltfAsset) Get(label GltfAssetLabel) (any, bool) // INV-4 stable lookup
+func (a *GltfAsset) Labels() []GltfAssetLabel             // deterministic (kind, index) order
+func RegisterAll(srv *asset.AssetServer) error            // registers GltfLoader for .gltf/.glb
 
-// glTF (INV-2, INV-4).
-func (g *GltfLoader) Load(ctx asset.LoadContext, r io.Reader, s LoadSettings) (GltfAsset, error)
-func (a *GltfAsset) Get(label GltfAssetLabel) (asset.UntypedHandle, bool) // INV-4 stable lookup
+// Images (INV-2) — implemented; stdlib path is 0 external deps.
+func (StdlibImageLoader) Load(r io.Reader, _ LoadSettings) (renderimage.Image, error)
 
-// Images (INV-2) — stdlib path is 0 external deps.
-func (l *PngLoader) Load(ctx asset.LoadContext, r io.Reader, _ LoadSettings) (image.Image, error)
-
-// scene.json → DynamicScene (reuses Phase 3 reflection codec).
-func (l *SceneJSONLoader) Load(ctx asset.LoadContext, r io.Reader, _ LoadSettings) (scene.DynamicScene, error)
+// scene.json → DynamicScene (reuses Phase 3 reflection codec) — planned.
+// func (SceneJSONLoader) Load(r io.Reader, _ LoadSettings) (scene.DynamicScene, error)
 ```
 
 ## Performance Strategy
@@ -179,16 +194,23 @@ type ErrSubAssetMissing  struct{ Label GltfAssetLabel }
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub — populate when implementation lands
-     (Phase 5 Track B). Stable promotion blocked until: (1) codec round-trip golden
-     tests pass (T-5T04); (2) C29 P5 gate (T-5T05). Track B joins Tracks A + D
-     (AudioSource + AnimationClip asset types). -->
+<!-- v0.2.0 Stable surface: glTF loader + stdlib image + WAV. Planned formats
+     (HDR/DDS/KTX2/OGG/MP3/FLAC/fonts/scene.json) add rows as their loaders land. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
+| gltf-label | pkg/asset/formats/gltf/label.go | `GltfKind` + `GltfAssetLabel` deterministic `(kind, index)` addressing (INV-4) |
+| gltf-schema | pkg/asset/formats/gltf/schema.go | glTF 2.0 JSON subset + OpenGL component/mode constants |
+| gltf-convert | pkg/asset/formats/gltf/convert.go | Buffer resolve (base64/GLB-BIN) + accessor de-interleave + mesh/material/texture conversion |
+| gltf-loader | pkg/asset/formats/gltf/loader.go | `GltfLoader`, `.gltf`/`.glb` split, `Decode` (panic-safe INV-2), `GltfAsset.Get`/`Labels`, `RegisterAll` |
+| gltf-test | pkg/asset/formats/gltf/gltf_test.go | Fan-out + label-stability + error-path tests + `FuzzDecode` (90.0% cov) |
+| image-loader | pkg/asset/formats/image/stdlib.go | PNG/JPEG stdlib decode → `renderimage.Image` (INV-2) |
+| audio-loader | pkg/asset/formats/audio/wav.go | PCM WAV decode → `audio.AudioSource` (INV-2) |
+| gltf-example | examples/gltf/main.go | glTF fan-out + label-stability golden (INV-4, hash-stable ×20) |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-28 | Initial L2 draft — Go translation of l1-asset-formats v0.1.0. Stdlib-first image/audio loaders, build-tag-gated optional formats, glTF multi-asset fan-out with stable `GltfAssetLabel`, `.scene.json` via Phase 3 codec, `AssetLoader` registration with extension-uniqueness. Authored ahead of Phase 5 Track B (`/magic.spec`). Draft — L1 parent Draft + consumes Track A/D asset types + no validating golden tests yet. |
+| 0.2.0 | 2026-05-31 | Narrowed to the implemented surface + promoted Draft → Stable (`/magic.task` Option A). Stable: `pkg/asset/formats/gltf` (`.gltf`/`.glb` decode → value-based `GltfAsset` fan-out of mesh/material/texture/scene, deterministic `GltfAssetLabel`, panic-safe `Decode`, 90.0% cov + `FuzzDecode`), `image` (PNG/JPEG), `audio` (WAV). Corrected to reality: value-fan-out instead of `asset.Handle[T]` (no `LoadContext` in `AssetLoader.Load`); INV-1 cross-package conflict-detection + INV-3 build-tag optional formats marked planned; `register.go`/`settings.go`/`DefaultFormatsPlugin`/`scene.json`/font/HDR/DDS/KTX2/OGG/MP3/FLAC marked `[planned]`. Canonical References populated; `Implements` parent now Stable (layer-clean). |

@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-05-30
+**Generated:** 2026-05-31
 
 ## Active Technologies
 
@@ -17,7 +17,10 @@
 │   ├── main/
 │   └── workspace.json
 ├── cmd/
-│   └── cli/
+│   ├── benchcompare/
+│   ├── cli/
+│   ├── codegen/
+│   └── releasenotes/
 ├── examples/
 │   ├── 2d/
 │   ├── 3d/
@@ -31,6 +34,7 @@
 │   ├── config/
 │   ├── diagnostic/
 │   ├── ecs/
+│   ├── gltf/
 │   ├── math/
 │   ├── networking/
 │   ├── physics/
@@ -47,6 +51,7 @@
 │   ├── diag/
 │   ├── ecs/
 │   ├── platform/
+│   ├── plugin/
 │   ├── render/
 │   ├── tween/
 │   ├── ui/
@@ -55,6 +60,7 @@
     ├── animation/
     ├── app/
     ├── asset/
+    ├── assistant/
     ├── audio/
     ├── definition/
     ├── diag/
@@ -63,12 +69,16 @@
     ├── errs/
     ├── math/
     ├── platform/
+    ├── plugin/
+    ├── plugins/
     ├── protocol/
     ├── render/
     ├── scene/
     ├── task/
     ├── tween/
     ├── ui/
+    ├── version/
+    ├── visualgraph/
     └── window/
 ```
 

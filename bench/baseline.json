@@ -1,0 +1,86 @@
+{
+  "go_version": "go1.26.3",
+  "updated": "2026-05-31T14:34:53Z",
+  "results": {
+    "BenchmarkClusterLights": {
+      "ns_per_op": 574,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkCubicBezierVec3": {
+      "ns_per_op": 11,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkHslRoundtrip": {
+      "ns_per_op": 91,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkMat4Inverse": {
+      "ns_per_op": 37,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkMat4MulMat": {
+      "ns_per_op": 88,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkQuatMul": {
+      "ns_per_op": 61,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkQuatMulVec3": {
+      "ns_per_op": 12,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkQuatSlerp": {
+      "ns_per_op": 65,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkRayAABB": {
+      "ns_per_op": 12,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkRaySphere": {
+      "ns_per_op": 7,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkSpecKey": {
+      "ns_per_op": 20,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkSrgbToLinear": {
+      "ns_per_op": 145,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkTransformInterpolator": {
+      "ns_per_op": 206,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkVec3Add": {
+      "ns_per_op": 4,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkVec3Cross": {
+      "ns_per_op": 5,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    },
+    "BenchmarkVec3Normalize": {
+      "ns_per_op": 13,
+      "bytes_per_op": 0,
+      "allocs_per_op": 0
+    }
+  }
+}

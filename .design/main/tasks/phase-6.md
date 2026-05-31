@@ -61,21 +61,21 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 | Track | Domain | Spec | Tasks |
 | :--- | :--- | :--- | :--- |
-| A | Definition System (`pkg/definition/`) | l1-definition-system + l2-definition-system-go | T-6A01..03 |
+| A | Definition System (`pkg/definition/`) | l1-definition-system + l2-definition-system-go (+ l2-definition-integration-go: editor surface) | T-6A01..03 |
 | B | Window System (`pkg/window/`) | l1-window-system + l2-window-system-go | T-6B01..02 |
 | C | Diagnostic System (`pkg/diag/`) | l1-diagnostic-system + l2-diagnostic-system-go | T-6C01..03 |
 | D | UI System (`pkg/ui/`) | l1-ui-system + l2-ui-system-go | T-6D01..03 |
 | E | Build Tooling (`.github/`, `scripts/`) | l1-build-tooling | T-6E01..03 |
-| F | CLI Tooling (`cmd/cli/`) | l1-cli-tooling | T-6F01..03 |
+| F | CLI Tooling (`cmd/cli/`) | l1-cli-tooling + l2-cli-tooling-go | T-6F01..03 |
 | G | Platform System (`pkg/platform/`) | l1-platform-system + l2-platform-system-go | T-6G01..02 |
-| H | AI Assistant System (`pkg/assistant/`) | l1-ai-assistant-system | T-6H01..03 |
+| H | AI Assistant System (`pkg/assistant/`) | l1-ai-assistant-system + l2-ai-assistant-system-go | T-6H01..03 |
 | I | Examples Framework (`examples/`) | l1-examples-framework | T-6I01..02 |
 | J | Compatibility Policy | l1-compatibility-policy | T-6J01..02 |
 | K | Error Core (`pkg/errs/`) | l1-error-core + l2-error-core-go | T-6K01..03 |
 | L | Benchmark Spec (`bench/`) | l2-benchmark-spec | T-6L01..02 |
 | M | Codegen Tools (`cmd/codegen/`) | l2-codegen-tools | T-6M01..02 |
-| **N** | **Plugin Distribution (`pkg/plugin/`)** | **l1-plugin-distribution** | **T-6N01..04** |
-| **O** | **AI API Plugin (`pkg/plugins/aiapi/`)** | **l1-ai-api-plugin** | **T-6O01..05** |
+| **N** | **Plugin Distribution (`pkg/plugin/`)** | **l1-plugin-distribution + l2-plugin-distribution-go** | **T-6N01..04** |
+| **O** | **AI API Plugin (`pkg/plugins/aiapi/`)** | **l1-ai-api-plugin + l2-ai-api-plugin-go** | **T-6O01..05** |
 | **P** | **Visual Graph System (`pkg/visualgraph/`, `pkg/editor/`)** | **l1-visual-graph-system** | **T-6P01..04** |
 | T | Validation (cross-track) | — | T-6T01..05 |
 
@@ -134,15 +134,19 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 ### Track E — Build Tooling
 
-- [ ] [T-6E01] CI workflows: vet/lint/race/coverage gates; matrix over OS+Go versions per Track J. — `.github/workflows/ci.yml` `[Bootstrap]`
-- [ ] [T-6E02] Benchmark regression CI gate: parse `-benchmem` output, compare to baseline JSON, fail on >5% drift. — `scripts/bench-gate/` `[Bootstrap]`
-- [ ] [T-6E03] Migration/release doc generators: changelog from spec `Document History`, breaking-change report. — `scripts/release/` `[Bootstrap]`
+- [x] [T-6E01] CI workflows: vet/lint/race/coverage gates; matrix over OS+Go versions per Track J. — `.github/workflows/ci.yml` `[Bootstrap]`
+- [x] [T-6E02] Benchmark regression CI gate: parse `-benchmem` output, compare to baseline JSON, fail on >5% drift. — `.github/workflows/ci.yml` (bench job) `[Bootstrap]`
+- [x] [T-6E03] Migration/release doc generators: changelog from spec `Document History`, breaking-change report. — `cmd/releasenotes/` `[Bootstrap]`
+- **Verify:** `ci.yml` is well-formed (build/vet/test-cover OS matrix + `-race` job + golangci-lint + bench-gate jobs); `releasenotes` parses Document History (em-dash/separator rows skipped, pipes in description survive, missing-H1 → filename fallback), `-since` date filter, breaking detection matches `pkg/version` caret semantics (0.x minor = breaking, 1.x minor ≠ breaking, major = breaking), exit 0/2.
+- **Done (2026-05-31):** **T-6E01/E02** — `.github/workflows/ci.yml`: `test` (build+vet+`-coverprofile` across ubuntu/macos/windows), `race` (ubuntu `go test -race` — finally satisfies C28/C-005 which can't run in the dep-free local env), `lint` (golangci-lint-action), `bench` (pipes `go test -bench -benchmem ./...` through `cmd/benchcompare` — advisory, since the seed `baseline.json` ns/op is dev-machine-specific while allocs/B are the portable signal). Go version pinned via `GO_VERSION` env tracking `pkg/version.MinGoToolchain`. Path reconciled: bench-gate is a CI job step over the tested Go tool, not an ad-hoc `scripts/bench-gate/` shell. **T-6E03** — `cmd/releasenotes` (Go, path reconciled from `scripts/release/` for testability): `parse.go` (spec title/version/status + Document History table parser, filename fallback), `report.go` (`ReleaseNotes` dated changelog + `BreakingChanges` dogfooding `pkg/version` caret-incompat), `main.go` (`-specs`/`-since`/`-breaking`/`-o`). **92.1% cov**; dogfooded on the real `.design/main/specifications` corpus (release notes + breaking report render correctly). `go test ./...` 67 pkgs green, build/modernize clean. **Track E core complete.**
 
 ### Track F — CLI Tooling
 
-- [ ] [T-6F01] CLI shell: command dispatch, global flags, structured logging. — `cmd/cli/main.go`, `cmd/cli/root.go` `[Bootstrap]`
-- [ ] [T-6F02] Scaffolding subcommands: `ecs new project|component|system|plugin`. — `cmd/cli/scaffold/` `[Bootstrap]`
-- [ ] [T-6F03] Asset + plugin management subcommands: `ecs asset import|list|build`, `ecs plugin scaffold|validate|install|list|enable|disable|info|remove|doctor` (consumed by Track N). — `cmd/cli/{asset,plugin}/` `[Bootstrap]`
+- [x] [T-6F01] CLI shell: stdlib-`flag` `Router` + `Command` iface + `Output` (text/`--json` INV-4) + global flags (`--json`/`--force`/`--dry-run`) + no-arg structured help (INV-2) + `doctor`. — `cmd/cli/{main,root,commands}.go` `[Bootstrap]`
+- [x] [T-6F02] `scaffold <component|system|plugin> <path>` — overwrite-safe (skip unless `--force`, `--dry-run` preview, INV-1). Full `ecs new project` template tree deferred. — `cmd/cli/commands.go` `[Bootstrap]`
+- [~] [T-6F03] `plugin validate <path>` + `plugin list <dir>` consuming the `pkg/plugin` SDK (ParseManifest+Validate). **Done.** `install|enable|disable|info|remove|doctor` + `asset import|list|build` **deferred** (need the plugin install flow + asset pipeline). — `cmd/cli/commands.go` `[Bootstrap]`
+- **Verify:** no-arg help lists registered commands (INV-2); only registered commands shown (INV-3); `doctor --json` valid stable JSON, text mode no braces (INV-4); scaffold skips existing without `--force` + `--dry-run` writes nothing (INV-1); `plugin validate` good→ok / bad→exit 1; `plugin list` lists + empty-dir message; unknown command → exit 2.
+- **Done (2026-05-31):** `cmd/cli` (Router/Command/Output, `doctor`, overwrite-safe `scaffold`, `plugin validate|list` over the `pkg/plugin` SDK; gated registry INV-3). **85.0% cov**; `go test ./...` 62 pkgs green; modernize clean. `new project`, `asset *`, full `plugin install/lifecycle` subcommands deferred (need templates + asset pipeline + plugin install flow).
 
 ### Track G — Platform System
 
@@ -155,9 +159,11 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 ### Track H — AI Assistant System
 
-- [ ] [T-6H01] AssistantManager resource + AgentConnection registry + capability set persistence. — `pkg/assistant/{manager,agent}.go` `[Bootstrap]`
-- [ ] [T-6H02] Transport implementations: stdio (subprocess), websocket (long-lived), http (request/response). — `pkg/assistant/transport/{stdio,websocket,http}.go` `[Bootstrap]`
-- [ ] [T-6H03] Standard method dispatch (`chat`, `suggest_components`, `generate_scene`, `generate_ui`, `explain_entity`, `diagnose_issue`, `autocomplete`, `generate_code`); request tagging + undo grouping. — `pkg/assistant/methods/` `[Bootstrap]`
+- [x] [T-6H01] `AssistantManager` (agent registry + per-agent `Capability` set + request log) — `//go:build editor`. — `pkg/assistant/manager.go` `[Bootstrap]`
+- [~] [T-6H02] Transports: **stdio done** (`StdioConnection`, newline-delimited JSON) + `MemConnection` (deterministic test responder); **websocket/http deferred** (ws needs a dep ADR; http is a thin follow-up). — `pkg/assistant/transport.go` `[Bootstrap]`
+- [x] [T-6H03] Standard method registry + required-capability table + `Dispatch` (INV-2 gate, INV-5 timeout, request-log tag) + `ApplyModifications` agent+request tagging for undo (INV-1/4). — `pkg/assistant/{methods,manager}.go` `[Bootstrap]`
+- **Verify:** capability bitfield Has/With/String; method→cap table; `Dispatch` denies under-privileged method (INV-2) + logs; unknown agent → `ErrUnknownAgent`; slow agent → `ErrAgentUnavailable` within timeout (INV-5); modifications tagged agent+request (INV-4); stdio round-trip + close. Tested with `-tags editor`.
+- **Done (2026-05-31):** `pkg/assistant` (`//go:build editor`): `AgentMessage` JSON protocol + Encode/Decode, `Capability` bitfield, standard-method/required-cap table, `Transport`/`Connection` + `StdioConnection` + `MemConnection`, `AssistantManager` Dispatch (gate INV-2, timeout/cancel INV-5, log) + `ApplyModifications` tagging (INV-1/4). **88.0% cov (`-tags editor`)**; default `go test ./...` 60 pkgs green (editor excluded); modernize clean. websocket/http transports + ContextProvider + editor UI deferred.
 
 ### Track I — Examples Framework
 
@@ -166,8 +172,10 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 ### Track J — Compatibility Policy
 
-- [ ] [T-6J01] Engine SemVer policy doc + Go-toolchain compatibility matrix; `engine_version` constraint parser (consumed by Track N). — `pkg/version/{semver,constraint}.go` `[Bootstrap]`
-- [ ] [T-6J02] Compatibility test harness: snapshot of `pkg/` public surface; CI fails on undocumented breaking change. — `scripts/api-diff/` `[Bootstrap]`
+- [x] [T-6J01] Engine SemVer policy doc + Go-toolchain compatibility matrix; `engine_version` constraint parser (consumed by Track N). — `pkg/version/{version,constraint,policy}.go` `[Bootstrap]`
+- [ ] [T-6J02] Compatibility test harness: snapshot of `pkg/` public surface; CI fails on undocumented breaking change. — `scripts/api-diff/` `[Bootstrap]` *(deferred — CI/tooling deliverable)*
+- **Verify:** SemVer Parse (v-prefix/pre-release strip, partial→0, invalid→`ErrInvalidVersion`); Compare ordering (major>minor>patch); Constraint matrix (^/~/>=/>/<=/</=/bare/range/empty, caret-on-0.x pins minor); bad clause → `ErrInvalidVersion`; `IsGoToolchainSupported` at/above/below `MinGoToolchain` + `go`-prefix + garbage; **`pkg/plugin` Track N tests still green** after the extraction (alias identity preserved).
+- **Done (2026-05-31):** Extracted the canonical SemVer kernel to **`pkg/version`** (DRY — Track N's `pkg/plugin` and Track J's engine compat now share one implementation): `version.go` (`Version`, `Parse`, `Compare`, `String`), `constraint.go` (`Constraint`, `ParseConstraint`, caret/tilde/range/exact, `Matches`, `IsAny`), `policy.go` (engine SemVer policy doc + `MinGoToolchain` (1.26.3 from go.mod) + `GoToolchainConstraint`/`IsGoToolchainSupported` dogfooding the parser). Refactored `pkg/plugin/{semver,constraint}.go` to **type-alias re-exports** (`type Version = version.Version`, wrapper `ParseVersion`/`ParseConstraint`, aliased sentinels) — public SDK API + Track N tests unchanged. **pkg/version 98.9% cov**; pkg/plugin 86.1% (was 88.5% — logic moved out), internal/plugin 93.0%, cmd/cli 85.0% all green; `go test ./...` 65 pkgs, modernize clean. **T-6J02 deferred** (api-diff is a CI/scripts tool).
 
 ### Track K — Error Core
 
@@ -181,35 +189,45 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 ### Track L — Benchmark Spec
 
-- [ ] [T-6L01] Benchmark suite structure: per-subsystem `bench/{subsystem}/` packages, comparison harness, CSV/JSON output. — `bench/`, `cmd/benchcompare/` `[Bootstrap]`
-- [ ] [T-6L02] Baseline JSON format + CI drift gate (consumed by T-6E02). — `bench/baseline.json`, `scripts/bench-gate/` `[Bootstrap]`
+- [x] [T-6L01] Benchmark suite structure: per-subsystem `bench/{subsystem}/` packages, comparison harness, CSV/JSON output. — `bench/`, `cmd/benchcompare/` `[Bootstrap]`
+- [~] [T-6L02] Baseline JSON format + CI drift gate (consumed by T-6E02). — `bench/baseline.json`, `scripts/bench-gate/` `[Bootstrap]` *(baseline format + JSON report done; CI shell wiring deferred to T-6E02)*
+- **Verify:** parse `go test -bench -benchmem` output (proc-suffix strip, no-`benchmem` line, log-noise skip, multi-pkg); compare flags ns/op + B/op drift past threshold and **any** allocs/op increase (0→1 categorical); new/missing benchmarks listed; `-update` round-trips; `-json` valid (non-finite Δ → null); exit 0/1/2 for OK/regression/usage.
+- **Done (2026-05-31):** `cmd/benchcompare` — stdlib-only parser (`parse.go`), `Baseline` JSON load/save (`baseline.go`), drift `Compare` (`compare.go`: ns/B by `-threshold` %, allocs strict-on-increase per the 0-alloc discipline), CLI (`main.go`: `-baseline`/`-current`/`-threshold`/`-update`/`-json`, exit 1 on regression). **85.4% cov**; `go test ./...` 66 pkgs green, build/modernize clean. Dogfooded: real `bench/baseline.json` (16 hot-path benchmarks captured via `-update`, self-compare OK) + `bench/README.md`. Per-subsystem `bench/{subsystem}/` packages: existing benchmarks stay colocated in `_test.go` (the harness consumes their piped output); a separate tree was unnecessary. T-6L02 CI gate (`scripts/bench-gate/`) deferred to Track E (`T-6E02`).
 
 ### Track M — Codegen Tools
 
-- [ ] [T-6M01] Query wrapper generator: typed `Query[N]` helpers from component declarations. — `cmd/codegen/query/` `[Bootstrap]`
-- [ ] [T-6M02] Boilerplate generator: component registration stubs, plugin scaffolds (consumed by `ecs new plugin`). — `cmd/codegen/{component,plugin}/` `[Bootstrap]`
+- [x] [T-6M01] Query wrapper generator: typed `Query[N]` helpers from component declarations. — `cmd/codegen/query/` `[Bootstrap]`
+- [ ] [T-6M02] Boilerplate generator: component registration stubs, plugin scaffolds (consumed by `ecs new plugin`). — `cmd/codegen/{component,plugin}/` `[Bootstrap]` *(deferred — Track F `scaffold` already emits basic component/system/plugin stubs)*
+- **Verify:** `genSource` output parses as valid Go (go/format + re-parse); `genArity(4)` has 4 pointer-fields/4 `componentIDFor`/`ids[3]` fetch/`idC==idD` distinctness pair; CLI stdout + `-out` file modes; invalid range (min<2, max<min, max>26) + bad flag → exit 2. Generated `Query4/Query5` are functionally correct (spawn→`Count`==1, `All` tuple values, pointer mutation persists, same-type rejection).
+- **Done (2026-05-31):** `cmd/codegen/query` — generates the typed Query/Tuple arity ladder (Go has no variadic type params, so each arity is a distinct generated type; the hand-written `Query1–Query3` set the pattern). `genArity`/`genSource` build the source and validate it through `go/format.Source`; CLI flags `-min`/`-max`/`-out`. **95.2% cov.** Ran it to generate `internal/ecs/query/query_gen.go` (`Query4`/`Query5`/`Query6` + `Tuple4-6`, "DO NOT EDIT" header, `//go:generate` directive in `query.go`) + added `pkg/ecs` re-exports (`Query4-6`/`NewQuery4-6`). Functional `query_gen_test.go` (Query4/5 spawn+query+mutation+distinct) green. `go test ./...` 68 pkgs, build/modernize clean. **Extends the query ladder 3 → 6.** T-6M02 (component/plugin boilerplate) deferred — the Track F CLI `scaffold` already covers basic stubs.
 
 ### Track N — Plugin Distribution (NEW)
 
-- [ ] [T-6N01] Public SDK surface: re-export `Plugin`/`PluginGroup` from app framework; introduce `PluginContext`, `Capability`, `Manifest`, `CommandIssuer`, scoped logger. — `pkg/plugin/{plugin,manifest,capability,context,command,event,query,log,errors}.go` `[Bootstrap]`
-- [ ] [T-6N02] Manifest schema (TOML) + parser + validator; in-process and out-of-process variants; `engine_version` constraint check via Track J. — `pkg/plugin/manifest.go`, `cmd/cli/plugin/validate.go` `[Bootstrap]`
-- [ ] [T-6N03] In-process loader pipeline: discovery (4 sources per spec §4.4), compatibility resolution, capability prompt + persistence, lifecycle wiring (Build/Ready/Finish/Cleanup) with capability-enforcing proxy. — `internal/plugin/loader/` `[Bootstrap]`
-- [ ] [T-6N04] Out-of-process loader: subprocess spawn (cwd-restricted), transport handshake (reuses Track H transports), host-side proxy `Plugin` translating lifecycle + commands + queries, failure isolation per INV-8 (graceful degrade, no host crash). — `internal/plugin/oop/` `[Bootstrap]`
+- [x] [T-6N01] Public SDK surface: `Plugin`/`PluginGroup` re-exported from app framework; `PluginID`, `Mode`, `State`, `Capability`+`CapabilitySet`+tiers, `PluginContext`+`CommandIssuer`, `E-PLUGIN` errors. — `pkg/plugin/{plugin,capability,context,errors}.go` `[Bootstrap]`
+- [x] [T-6N02] Manifest + SemVer: `Version`/`Constraint` (^/~/range, Cargo caret), `Manifest` struct + `Validate` + minimal stdlib TOML-subset `ParseManifest`, `CompatibleWith` (INV-2). — `pkg/plugin/{semver,constraint,manifest}.go` `[Bootstrap]`
+- [~] [T-6N03] In-process loader: **partial** — `internal/plugin/Manager` (registry, INV-2 compat resolution, INV-5 duplicate guard, lifecycle states) + `capabilityProxy` (INV-3 runtime enforcement) + plugin-ID-tagged commands (INV-7) **done**; discovery (4 sources) + capability-prompt persistence + full Build/Ready/Finish wiring **deferred** to App integration. — `internal/plugin/manager.go` `[Bootstrap]`
+- [ ] [T-6N04] Out-of-process loader: subprocess spawn (cwd-restricted), transport handshake (reuses Track H transports + `pkg/protocol`), host-side proxy `Plugin`, failure isolation per INV-8. — `internal/plugin/oop/` `[Bootstrap]` *(deferred — needs Track H transports + App wiring)*
+- **Verify:** SemVer constraint matrix (^/~/range/exact, caret-on-0.x); manifest parse+validate (in/OOP); INV-2 incompatible → `ErrEngineIncompatible`; INV-5 duplicate → `ErrDuplicateID`; INV-1 invalid → `ErrManifestInvalid`; INV-3 ungranted cap → `CapabilityError`; INV-7 commands tagged.
+- **Done (2026-05-31):** `pkg/plugin` SDK (re-exports, `Version`/`Constraint` Cargo-subset SemVer, `Manifest`+TOML-subset parser+`Validate`, `Capability`/`CapabilitySet`+tiers+wildcard, `PluginContext`/`CommandIssuer`, `E-PLUGIN` errors) + `internal/plugin/Manager`+`capabilityProxy`. **pkg/plugin 88.5%, internal/plugin 93.0% cov**; `go test ./...` 60 pkgs green; modernize clean. No Go `plugin` .so. Full loaders (discovery/spawn/lifecycle) deferred to App integration.
 
 ### Track O — AI API Plugin (NEW)
 
-- [ ] [T-6O01] Package skeleton + embedded manifest + lifecycle: `New()` factory, Build/Ready/Finish/Cleanup; config struct + JSON schema export; ServiceRegistry registration. — `pkg/plugins/aiapi/{plugin,config,manifest}.go`, `pkg/plugins/aiapi/plugin.toml` `[Bootstrap]`
-- [ ] [T-6O02] Provider abstraction + canonical request/response types + four providers (OpenAI, Anthropic, Gemini, local OpenAI-compatible); request-build and response-parse golden tests per provider. — `pkg/plugins/aiapi/{provider,canonical,provider_*}.go` `[Bootstrap]`
-- [ ] [T-6O03] Method dispatch (8 standard methods) + streaming chat via SSE + cancellation map (per-request `context.CancelFunc`); event emission for chunks; rate limiter (RPM+TPM token bucket per provider). — `pkg/plugins/aiapi/{methods/,stream.go,ratelimit.go}` `[Bootstrap]`
-- [ ] [T-6O04] Credentials (env / OS keyring / age-encrypted file) + redaction writer + diagnostics (latency, token count, cost USD) + cost-budget event; error mapping to E-PLUGIN-AIAPI-{NNN} via Track K. — `pkg/plugins/aiapi/{credentials,redact,diag,errors}.go` `[Bootstrap]`
-- [ ] [T-6O05] Mode-parity test harness: identical integration suite runs in-process AND out-of-process via Track N OOP loader; FakeProvider for deterministic CI; `-race` clean across both modes (INV-7). — `pkg/plugins/aiapi/testing/`, `internal/plugin/testbench/` `[Bootstrap]`
+- [~] [T-6O01] Config struct + `DefaultConfig` (`//go:build editor`) done; embedded `plugin.toml` + full `New()`/Build/Ready/Finish/Cleanup lifecycle + ServiceRegistry registration **deferred** to App integration. — `pkg/plugins/aiapi/config.go` `[Bootstrap]`
+- [x] [T-6O02] `Provider` abstraction + registry + `Select` + canonical request/response types + OpenAI-compatible provider (build/parse, httptest-validated); Anthropic/Gemini follow the same one-file pattern (deferred). — `pkg/plugins/aiapi/{provider,canonical,provider_openai}.go` `[Bootstrap]`
+- [~] [T-6O03] Rate limiter (RPM+TPM token bucket per provider, INV-8) **done**; method dispatch (8 methods) + SSE streaming + cancellation map **deferred** (needs Track H method-routing + event bus wiring). — `pkg/plugins/aiapi/ratelimit.go` `[Bootstrap]`
+- [x] [T-6O04] Credentials (env source; keyring/age ADR-gated) + redaction via `errs.Redactor` + secret zeroing (INV-1) + `E-PLUGIN-AIAPI-{NNN}` mapping incl. `MapHTTPStatus` (INV-5). Diagnostics/cost-budget events deferred (need diag wiring). — `pkg/plugins/aiapi/{credentials,errors}.go` `[Bootstrap]`
+- [x] [T-6O05] `FakeProvider` deterministic responder for CI (INV-7 mode-parity foundation); full in-process/OOP parity harness deferred (needs Track N OOP loader). — `pkg/plugins/aiapi/fake.go` `[Bootstrap]`
+- **Verify:** rate limiter RPM+TPM exhaustion + refill (INV-8); `MapHTTPStatus` 401/429/4xx/5xx (INV-5); OpenAI build/parse round-trip + `Complete` via httptest (success + 500); FakeProvider Complete/Stream/err; env secret resolve + redaction + zeroing (INV-1); `Select` + unknown-provider error. Tested `-tags editor`.
+- **Done (2026-05-31):** `pkg/plugins/aiapi` (`//go:build editor`): canonical types, `Provider` iface + registry + `Select`, OpenAI-compatible provider (build/parse + httptest), `Config`/`DefaultConfig`, RPM+TPM `rateLimiter` (INV-8), `E-PLUGIN-AIAPI` codes + `MapHTTPStatus` (INV-5), env credentials + `errs.Redactor` reuse + zeroing (INV-1), `FakeProvider`. **82.3% cov (`-tags editor`)**; default `go test ./...` 60 pkgs green; `go build -tags editor ./...` clean; modernize clean. Deferred (App/event/diag/OOP wiring): SSE streaming, method dispatch, lifecycle, diagnostics, full mode-parity harness, Anthropic/Gemini/local providers.
 
 ### Track P — Visual Graph System (NEW)
 
-- [ ] [T-6P01] Graph Data Model: `GraphDefinition`, `Node`, `Pin`, `Connection` structs; integration with Definition System. — `pkg/visualgraph/{model,definition}.go` `[Bootstrap]`
-- [ ] [T-6P02] Node Registry: Automatic generation of nodes from TypeRegistry components/events/states. — `pkg/visualgraph/registry.go` `[Bootstrap]`
-- [ ] [T-6P03] Graph Interpreter: Execution engine (imperative chain + lazy data evaluation); cyclic dependency detection; context passing. — `pkg/visualgraph/{interpreter,execution}.go` `[Bootstrap]`
-- [ ] [T-6P04] Editor Gateway: `GraphEditorPlugin`, `NodeRegistryQuery`, `GraphDebugger` interface implementations for external editor (`editor`) integration via `pkg/editor/`. — `pkg/editor/graph.go`, `pkg/visualgraph/debug.go` `[Bootstrap]`
+- [x] [T-6P01] Graph Data Model: `GraphDefinition`, `Node`, `Pin` (Direction/Kind), `Connection`, `VariableDecl` + lookup helpers. Definition-System `"graph"` loader wiring deferred to App integration. — `pkg/visualgraph/model.go` `[Bootstrap]`
+- [x] [T-6P02] `NodeRegistry` + `NodeDescriptor`/`PinDescriptor` (Register/Get/List/ListByCategory/Search, deterministic). TypeRegistry auto-generation deferred (needs the registry service wired). — `pkg/visualgraph/registry.go` `[Bootstrap]`
+- [x] [T-6P03] `ValidateGraph` (INV-3 endpoint/direction/kind/type-compat + INV-4 data-dependency cycle detection) + `Interpreter` (execution chain + lazy memoized data pull, step-limit INV-2, `CommandSink` INV-1, deterministic INV-4) + built-in node set (event/math/logic/flow/action). — `pkg/visualgraph/{validate,interpreter,builtins}.go` `[Bootstrap]`
+- [ ] [T-6P04] Editor Gateway: `GraphEditorPlugin`/`NodeRegistryQuery`/`GraphDebugger` in `pkg/editor/graph.go` + `pkg/protocol/graph.go` IPC. — `pkg/editor/graph.go` `[Bootstrap]` *(deferred — editor-bridge L2; needs pkg/editor extension + App integration)*
+- **Verify:** registry CRUD + sorted List + Search; validate rejects unknown node/pin, direction, kind mismatch, type mismatch (INV-3), data cycle (INV-4); interpreter lazy data-eval (Add→Log sum), Branch routing, exec-cycle → `ErrStepLimit` (INV-2), Action → sink (INV-1), deterministic ×20 (INV-4).
+- **Done (2026-05-31):** `pkg/visualgraph` (graph model + `NodeRegistry` + `ValidateGraph` INV-3/INV-4 + `Interpreter` lazy-pull execution engine INV-1/2/4 + built-in node set). **89.3% cov**; `go test ./...` 61 pkgs green; modernize clean. Editor gateway (`pkg/editor/graph.go`), TypeRegistry auto-gen, SubGraph/Query nodes, and the `"graph"` definition loader deferred to App/editor integration.
 
 ### Track T — Validation
 

@@ -1,5 +1,9 @@
 package query
 
+// Query1–Query3 are hand-written (query1.go–query3.go); the higher-arity ladder
+// is generated from the same pattern. Regenerate with `go generate ./...`.
+//go:generate go run github.com/neuengine/neu/cmd/codegen/query -min 4 -max 6 -out query_gen.go
+
 import "github.com/neuengine/neu/internal/ecs/component"
 
 // QueryState is the cached, archetype-level matching primitive shared by

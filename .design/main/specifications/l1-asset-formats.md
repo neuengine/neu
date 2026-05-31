@@ -1,7 +1,7 @@
 # Asset Formats
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -35,6 +35,15 @@ A game engine must consume diverse content authored in external tools. Centraliz
 
 ## 4. Detailed Design
 
+> **Implementation Status (v0.2.0).** The Stable surface is the stdlib-first core:
+> the **glTF 2.0 loader** (scenes, meshes, materials, embedded textures — §4.1),
+> **PNG/JPEG** image decoding (§4.2), and **PCM WAV** audio (§4.3). The architecture
+> below — stateless `AssetLoader`, build-tag modular inclusion, and the invariants
+> in §3 — is fixed and Stable. Every other format in the tables (HDR, DDS, KTX2,
+> BMP, WebP, TGA, OGG, FLAC, MP3, AAC, fonts), the `.scene.json` format (§4.5), and
+> glTF animations/skins/morph-targets/KHR extensions are marked **Planned**: they
+> are intended future loaders, not yet implemented.
+
 ### 4.1 glTF 2.0 Loader
 
 The glTF loader consumes `.gltf` (JSON + separate binary) and `.glb` (single binary) files. It produces:
@@ -54,6 +63,11 @@ GltfAsset
 
 Supported glTF extensions: `KHR_materials_unlit`, `KHR_texture_transform`, `KHR_draco_mesh_compression` (behind build tag), `KHR_lights_punctual`.
 
+> **Implemented:** Scene/Mesh/Material/Texture fan-out with stable `GltfAssetLabel`
+> addressing over `.gltf` (JSON) and `.glb` (binary); one mesh per glTF primitive in
+> declaration order. **Planned:** Animation, Skin, MorphTarget sub-assets and all KHR
+> extensions.
+
 ### 4.2 Image Format Loaders
 
 Each image format has its own loader producing an `Image` asset:
@@ -71,6 +85,8 @@ Each image format has its own loader producing an `Image` asset:
 
 GPU-compressed formats (DDS, KTX2) are uploaded directly; the loader selects a transcode target matching the current GPU backend capabilities.
 
+> **Implemented:** PNG, JPEG (stdlib `image`). **Planned:** HDR, DDS, KTX2, BMP, WebP, TGA.
+
 ### 4.3 Audio Format Loaders
 
 Each audio format produces an `AudioSource` asset:
@@ -83,9 +99,14 @@ Each audio format produces an `AudioSource` asset:
 | MP3 | `.mp3` | Lossy, wide compatibility |
 | AAC | `.aac`, `.m4a` | Lossy, behind optional build tag |
 
+> **Implemented:** WAV (stdlib PCM). **Planned:** OGG/Vorbis, FLAC, MP3, AAC.
+
 ### 4.4 Font Loader
 
 Loads `.ttf` and `.otf` files into a `Font` asset containing glyph outlines and metrics. Rasterization into glyph atlases is deferred to the text pipeline at render time.
+
+> **Planned:** the font loader is not yet implemented; it is gated on the text-pipeline
+> integration (and the `x/image/font` ADR raised by the UI system).
 
 ### 4.5 Scene File Format
 
@@ -100,6 +121,10 @@ The engine defines its own JSON-based scene format (`.scene.json`). A scene file
 }
 ```
 
+> **Planned:** the `.scene.json` loader is not yet implemented. It will wrap the
+> existing Phase 3 `DynamicScene` reflection codec when the asset-pipeline scene
+> integration lands; until then `.scene.json` is an intended format, not a shipped one.
+
 ### 4.6 Loader Registration
 
 At app build time, each format plugin registers its loader:
@@ -111,27 +136,34 @@ AssetServer.register_loader(GltfLoader, &["gltf", "glb"])
 
 Build tags control which registration calls are compiled. A convenience `DefaultFormatsPlugin` registers all enabled loaders in one step.
 
+> **Implemented:** per-package `RegisterAll(server)` for the glTF, image, and audio
+> loaders. **Planned:** the unified `DefaultFormatsPlugin` and cross-package
+> duplicate-extension detection that hardens INV-1 into a registration-time hard error
+> (the current `AssetServer` registry is last-wins).
+
 ## 5. Open Questions
 
 - Should the engine support a custom binary scene format for faster load times in shipping builds?
 - How should format-specific load settings (e.g., JPEG quality threshold, glTF coordinate system override) be passed through the asset pipeline?
 - Is runtime format detection (magic bytes) worth the complexity, or is extension-based sufficient?
+- Which **Planned** formats (§4.2–4.5) graduate first, and which ship only as opt-in build-tag plugins versus engine-core defaults? (Scoped out of the v0.2.0 Stable surface.)
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- Authoritative sources for the v0.2.0 Stable surface (glTF + stdlib image + WAV).
+     Planned formats (§4.2–4.5) will add rows as their loaders land. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| gltf-loader | pkg/asset/formats/gltf/loader.go | glTF `.gltf`/`.glb` decode, `GltfAsset` fan-out, `GltfAssetLabel` addressing (INV-2, INV-4) |
+| gltf-convert | pkg/asset/formats/gltf/convert.go | Accessor de-interleave + mesh/material/texture conversion |
+| image-loader | pkg/asset/formats/image/stdlib.go | PNG/JPEG stdlib decode → `Image` (INV-2) |
+| audio-loader | pkg/asset/formats/audio/wav.go | PCM WAV decode → `AudioSource` (INV-2) |
+| gltf-example | examples/gltf/main.go | glTF fan-out + label-stability golden (INV-4, hash-stable ×20) |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
-| — | — | Planned examples: `examples/asset/` |
+| 0.2.0 | 2026-05-31 | Narrowed to match implementation (`/magic.task` Option A) + promoted Draft → Stable. Stable surface = glTF 2.0 loader (scene/mesh/material/texture fan-out + stable `GltfAssetLabel`, INV-2/INV-4) + stdlib PNG/JPEG + PCM WAV. HDR/DDS/KTX2/BMP/WebP/TGA/OGG/FLAC/MP3/AAC/fonts/`.scene.json` + glTF animations/skins/morph/KHR explicitly marked **Planned** (deferred future loaders). Canonical References populated; INV-1 cross-package conflict-detection noted as a planned hardening. Validated by `examples/gltf` (×20). |

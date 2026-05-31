@@ -1,31 +1,42 @@
-# Engine Examples
+# Engine Examples (Track I)
 
-This directory contains examples categorized by engine subsystem. Currently, the project is in the **Specification Phase (Phase 0)**, and most examples are placeholders representing planned validation targets.
+Each subdirectory is a self-contained, runnable `package main` demonstrating one
+engine subsystem. Examples double as end-to-end validation: they run headless
+(no GPU), are deterministic, and are gated against committed goldens by
+[`cmd/examplecheck`](../cmd/examplecheck).
 
-## Example Categories
+Examples are introduced alongside the implementation phases (P1 ECS → P2
+framework/asset/diagnostic → P3 scene/math → P4 render → P5 content). See the
+[Examples Framework Specification](../.design/main/specifications/l1-examples-framework.md)
+for the broader catalog and staged rollout.
 
-| Category | Description | Status |
-| :--- | :--- | :--- |
-| [**ECS**](ecs/README.md) | Core Entity-Component-System patterns | Placeholder (P1) |
-| [**World**](world/README.md) | Resources, Events, and Hierarchy | Placeholder (P1/2) |
-| [**App**](app/README.md) | Application lifecycle and Plugins | Placeholder (P1/2) |
-| [**Diagnostic**](diagnostic/README.md) | Profiling and debug visualization | Placeholder (P2) |
-| [**Asset**](asset/README.md) | Asynchronous loading and handles | Placeholder (P2) |
-| [**2D**](2d/README.md) | 2D rendering and sprites | Placeholder (P3) |
-| [**3D**](3d/README.md) | 3D meshes and lighting | Placeholder (P3) |
-| [**UI**](ui/README.md) | User interface and layouts | Placeholder (P3) |
-| [**Physics**](physics/README.md) | Rigid body dynamics and collisions | Placeholder (P3/4) |
-| [**Audio**](audio/README.md) | 2D/3D audio and spatialization | Placeholder (P2/3) |
-| [**Networking**](networking/README.md) | Replication and synchronization | Placeholder (P4+) |
-| [**Stress Test**](stress_test/README.md) | Performance and scalability benchmarks | Placeholder (P2/3) |
+## Conventions
 
-## Staged Rollout
+- **`run() (uint64, error)`** does the deterministic work and returns a stable
+  hash over its salient output.
+- **`main()`** prints `PASS: <name> hash=<N>` on success, or `FAIL: <reason>`.
+  Examples that validate by assertion rather than a single hash may print
+  multiple `PASS ...` lines and no `hash=` token — these are run as smoke checks.
+- **`main_test.go`** asserts `run()` is stable across ≥20 invocations.
 
-Examples are introduced following the engine's implementation phases:
+Start a new example by copying [`_template/`](_template/) (the `_` prefix makes
+the Go tool and `examplecheck` skip the scaffold itself).
 
-1. **Phase 1**: Core ECS validation (`ecs/`, `world/`, `app/`).
-2. **Phase 2**: Subsystem foundations (`asset/`, `diagnostic/`, `audio/`).
-3. **Phase 3**: Visual and Physical modules (`2d/`, `3d/`, `ui/`, `physics/`).
-4. **Phase 4+**: Complex systems (`networking/`).
+## Golden gate
 
-For more details on the example framework, see the [Examples Framework Specification](../../.design/main/specifications/l1-examples-framework.md).
+`examples/goldens.json` records the expected hash of every hash-emitting example.
+The per-example `_test.go` proves *internal* determinism (the hash is stable);
+the golden registry proves the *value itself* has not drifted — a behavioural
+regression that is still deterministic would pass the unit test but fail here.
+
+```sh
+# Verify every example against the committed goldens (exit 1 on failure/drift):
+go run ./cmd/examplecheck
+
+# Rewrite the registry after an intentional behavioural change:
+go run ./cmd/examplecheck -update
+
+# List examples, or limit a CI run to those changed since a ref (selective build):
+go run ./cmd/examplecheck -list
+go run ./cmd/examplecheck -changed origin/master
+```

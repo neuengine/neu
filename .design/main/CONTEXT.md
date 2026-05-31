@@ -20,11 +20,13 @@
 │   ├── benchcompare/
 │   ├── cli/
 │   ├── codegen/
+│   ├── examplecheck/
 │   └── releasenotes/
 ├── examples/
 │   ├── 2d/
 │   ├── 3d/
 │   ├── README.md
+│   ├── _template/
 │   ├── animation/
 │   ├── app/
 │   ├── asset/
@@ -35,6 +37,7 @@
 │   ├── diagnostic/
 │   ├── ecs/
 │   ├── gltf/
+│   ├── goldens.json
 │   ├── math/
 │   ├── networking/
 │   ├── physics/

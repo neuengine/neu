@@ -167,8 +167,10 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 
 ### Track I — Examples Framework
 
-- [ ] [T-6I01] Example directory conventions: per-example `manifest.toml`, README, expected golden output. — `examples/README.md`, `examples/_template/` `[Bootstrap]`
-- [ ] [T-6I02] Example lifecycle hooks + CI selective build (only changed examples). — `scripts/examples/` `[Bootstrap]`
+- [x] [T-6I01] Example directory conventions: per-example `manifest.toml`, README, expected golden output. — `examples/README.md`, `examples/_template/`, `cmd/examplecheck/`, `examples/goldens.json` `[Bootstrap]`
+- [x] [T-6I02] Example lifecycle hooks + CI selective build (only changed examples). — `cmd/examplecheck/` (`-changed`/`-list`) `[Bootstrap]`
+- **Verify:** `examplecheck -list` discovers runnable examples (skips `_template`/hidden); `parseResult` tolerant (PASS/FAIL + optional `hash=`); `classify` (fail/smoke/new/drift/ok); golden registry round-trips (missing→empty, malformed→error); `evaluate` records hashes + counts drift/fail; `execute` compare→0 / drift→1 / `-update` writes; `examplesFromPaths` maps git paths → example set. Dogfood: `-update` runs all 16 examples (9 hash + 7 smoke, 0 fail).
+- **Done (2026-05-31):** `cmd/examplecheck` (path reconciled from `scripts/examples/` to a testable Go tool): discovers `examples/*/main.go`, runs each (`go run`, injected `exampleRunner` so the compare logic is unit-testable without subprocesses), parses `PASS:/FAIL/hash=`, and gates the **hash-emitting** examples against committed `examples/goldens.json` (drift → exit 1) while **smoke** examples are run-only. `-update` rewrites goldens; `-list` + `-changed <ref>` (git-diff → `examplesFromPaths`) drive selective CI builds. Added `examples/_template/` scaffold (`_`-prefix → skipped by `go ./...` + `examplecheck`) + rewrote `examples/README.md` (conventions + golden gate). **87.2% cov**; dogfooded `goldens.json` (9 hashes: 2d/animation/audio/config/diagnostic/gltf/tweening/ui/window). `go test ./...` 69 pkgs green, build/modernize clean. **The committed golden catches deterministic behaviour drift the per-example ×20 stability tests cannot.** Lifecycle hooks beyond run/verify deferred (App-integration concern).
 
 ### Track J — Compatibility Policy
 

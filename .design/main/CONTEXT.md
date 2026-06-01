@@ -17,6 +17,7 @@
 │   ├── main/
 │   └── workspace.json
 ├── cmd/
+│   ├── apidiff/
 │   ├── benchcompare/
 │   ├── cli/
 │   ├── codegen/

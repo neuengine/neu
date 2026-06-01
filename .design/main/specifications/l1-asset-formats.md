@@ -1,6 +1,6 @@
 # Asset Formats
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Stable
 **Layer:** concept
 
@@ -35,14 +35,15 @@ A game engine must consume diverse content authored in external tools. Centraliz
 
 ## 4. Detailed Design
 
-> **Implementation Status (v0.2.0).** The Stable surface is the stdlib-first core:
+> **Implementation Status (v0.3.0).** The Stable surface is the stdlib-first core:
 > the **glTF 2.0 loader** (scenes, meshes, materials, embedded textures — §4.1),
-> **PNG/JPEG** image decoding (§4.2), and **PCM WAV** audio (§4.3). The architecture
-> below — stateless `AssetLoader`, build-tag modular inclusion, and the invariants
-> in §3 — is fixed and Stable. Every other format in the tables (HDR, DDS, KTX2,
-> BMP, WebP, TGA, OGG, FLAC, MP3, AAC, fonts), the `.scene.json` format (§4.5), and
-> glTF animations/skins/morph-targets/KHR extensions are marked **Planned**: they
-> are intended future loaders, not yet implemented.
+> **PNG/JPEG** image decoding (§4.2), **PCM WAV** audio (§4.3), and **`.scene.json`
+> decode** → portable `SerializedScene` (§4.5; spawn-to-World deferred). The
+> architecture below — stateless `AssetLoader`, build-tag modular inclusion, and the
+> invariants in §3 — is fixed and Stable. Every other format in the tables (HDR, DDS,
+> KTX2, BMP, WebP, TGA, OGG, FLAC, MP3, AAC, fonts) and glTF
+> animations/skins/morph-targets/KHR extensions are marked **Planned**: they are
+> intended future loaders, not yet implemented.
 
 ### 4.1 glTF 2.0 Loader
 
@@ -121,9 +122,11 @@ The engine defines its own JSON-based scene format (`.scene.json`). A scene file
 }
 ```
 
-> **Planned:** the `.scene.json` loader is not yet implemented. It will wrap the
-> existing Phase 3 `DynamicScene` reflection codec when the asset-pipeline scene
-> integration lands; until then `.scene.json` is an intended format, not a shipped one.
+> **Implemented (decode):** the `.scene.json` loader (`pkg/asset/formats/scene`)
+> decodes a scene file into the portable `scene.SerializedScene` (interned form),
+> reusing the Phase 3 JSON codec + range-validating the interning indices (INV-2).
+> **Deferred:** hydrating the `SerializedScene` into live World entities (`scene`
+> spawn, needs a `TypeRegistry`) is the scene system's job, not the loader's.
 
 ### 4.6 Loader Registration
 
@@ -159,6 +162,7 @@ Build tags control which registration calls are compiled. A convenience `Default
 | gltf-convert | pkg/asset/formats/gltf/convert.go | Accessor de-interleave + mesh/material/texture conversion |
 | image-loader | pkg/asset/formats/image/stdlib.go | PNG/JPEG stdlib decode → `Image` (INV-2) |
 | audio-loader | pkg/asset/formats/audio/wav.go | PCM WAV decode → `AudioSource` (INV-2) |
+| scene-loader | pkg/asset/formats/scene/scene.go | `.scene.json` decode → portable `SerializedScene` + index validation (INV-2; spawn deferred) |
 | gltf-example | examples/gltf/main.go | glTF fan-out + label-stability golden (INV-4, hash-stable ×20) |
 
 ## Document History
@@ -166,4 +170,5 @@ Build tags control which registration calls are compiled. A convenience `Default
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-25 | Initial draft from architecture analysis |
+| 0.3.0 | 2026-06-01 | Graduated `.scene.json` from Planned → Implemented (decode) (`/magic.run`): `pkg/asset/formats/scene` decodes a scene file into the portable `scene.SerializedScene` (reusing the Phase 3 JSON codec + range-validating interning indices, INV-2). Reconciled to reality — the loader yields `SerializedScene` (the on-disk form), not `DynamicScene` (in-memory); spawn-to-World (`scene` spawn, needs a TypeRegistry) stays deferred. Canonical References + §4.5 updated. |
 | 0.2.0 | 2026-05-31 | Narrowed to match implementation (`/magic.task` Option A) + promoted Draft → Stable. Stable surface = glTF 2.0 loader (scene/mesh/material/texture fan-out + stable `GltfAssetLabel`, INV-2/INV-4) + stdlib PNG/JPEG + PCM WAV. HDR/DDS/KTX2/BMP/WebP/TGA/OGG/FLAC/MP3/AAC/fonts/`.scene.json` + glTF animations/skins/morph/KHR explicitly marked **Planned** (deferred future loaders). Canonical References populated; INV-1 cross-package conflict-detection noted as a planned hardening. Validated by `examples/gltf` (×20). |

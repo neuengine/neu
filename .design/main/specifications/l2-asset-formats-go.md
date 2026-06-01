@@ -1,6 +1,6 @@
 # Asset Formats — Go Implementation
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Stable
 **Layer:** go
 **Implements:** [l1-asset-formats.md](l1-asset-formats.md)
@@ -81,7 +81,7 @@ pkg/asset/formats/
   font/
     truetype.go      // .ttf/.otf glyph outlines + metrics (x/image/font — ADR) [planned]
   scene/
-    json.go          // .scene.json → scene.DynamicScene (reflection codec)  [planned]
+    scene.go         // .scene.json → scene.SerializedScene (decode; spawn deferred) [implemented]
   // A unified register.go/settings.go + DefaultFormatsPlugin + cross-package
   // ErrLoaderConflict detection are [planned] (the AssetServer registry is last-wins today).
 ```
@@ -142,8 +142,8 @@ func RegisterAll(srv *asset.AssetServer) error            // registers GltfLoade
 // Images (INV-2) — implemented; stdlib path is 0 external deps.
 func (StdlibImageLoader) Load(r io.Reader, _ LoadSettings) (renderimage.Image, error)
 
-// scene.json → DynamicScene (reuses Phase 3 reflection codec) — planned.
-// func (SceneJSONLoader) Load(r io.Reader, _ LoadSettings) (scene.DynamicScene, error)
+// scene.json → SerializedScene (reuses Phase 3 JSON codec + index validation) — implemented.
+func (SceneJSONLoader) Load(r io.Reader, _ LoadSettings) (scene.SerializedScene, error)
 ```
 
 ## Performance Strategy
@@ -206,6 +206,8 @@ type ErrSubAssetMissing  struct{ Label GltfAssetLabel }
 | gltf-test | pkg/asset/formats/gltf/gltf_test.go | Fan-out + label-stability + error-path tests + `FuzzDecode` (90.0% cov) |
 | image-loader | pkg/asset/formats/image/stdlib.go | PNG/JPEG stdlib decode → `renderimage.Image` (INV-2) |
 | audio-loader | pkg/asset/formats/audio/wav.go | PCM WAV decode → `audio.AudioSource` (INV-2) |
+| scene-loader | pkg/asset/formats/scene/scene.go | `SceneJSONLoader` → `scene.SerializedScene` (decode + index validation; reuses `scene.UnmarshalJSON`) |
+| scene-test | pkg/asset/formats/scene/scene_test.go | Round-trip byte-stable + malformed/out-of-range golden (96.2% cov) |
 | gltf-example | examples/gltf/main.go | glTF fan-out + label-stability golden (INV-4, hash-stable ×20) |
 
 ## Document History
@@ -213,4 +215,5 @@ type ErrSubAssetMissing  struct{ Label GltfAssetLabel }
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-28 | Initial L2 draft — Go translation of l1-asset-formats v0.1.0. Stdlib-first image/audio loaders, build-tag-gated optional formats, glTF multi-asset fan-out with stable `GltfAssetLabel`, `.scene.json` via Phase 3 codec, `AssetLoader` registration with extension-uniqueness. Authored ahead of Phase 5 Track B (`/magic.spec`). Draft — L1 parent Draft + consumes Track A/D asset types + no validating golden tests yet. |
+| 0.3.0 | 2026-06-01 | Graduated `scene/` from `[planned]` → `[implemented]` (`/magic.run`): `pkg/asset/formats/scene` `SceneJSONLoader` decodes `.scene.json` → `scene.SerializedScene` (reuses `scene.UnmarshalJSON` + adds interning-index range validation the base codec lacks, INV-2). Reconciled to reality: returns `SerializedScene` (portable on-disk form), not `DynamicScene` (in-memory, World-hydrated); spawn-to-World deferred. AssetServer compound-extension routing (`.scene.json` vs `path.Ext` `.json`) noted as a deferred asset-system enhancement. **96.2% cov**. Canonical References updated. |
 | 0.2.0 | 2026-05-31 | Narrowed to the implemented surface + promoted Draft → Stable (`/magic.task` Option A). Stable: `pkg/asset/formats/gltf` (`.gltf`/`.glb` decode → value-based `GltfAsset` fan-out of mesh/material/texture/scene, deterministic `GltfAssetLabel`, panic-safe `Decode`, 90.0% cov + `FuzzDecode`), `image` (PNG/JPEG), `audio` (WAV). Corrected to reality: value-fan-out instead of `asset.Handle[T]` (no `LoadContext` in `AssetLoader.Load`); INV-1 cross-package conflict-detection + INV-3 build-tag optional formats marked planned; `register.go`/`settings.go`/`DefaultFormatsPlugin`/`scene.json`/font/HDR/DDS/KTX2/OGG/MP3/FLAC marked `[planned]`. Canonical References populated; `Implements` parent now Stable (layer-clean). |

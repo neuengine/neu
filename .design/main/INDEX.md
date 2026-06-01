@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.41.0
+**Version:** 2.42.0
 **Status:** Active
 
 ## Overview
@@ -85,8 +85,8 @@ Local registry of specifications for this workspace. Organized by priority batch
 | :--- | :--- | :--- | :--- | :--- |
 | [l1-audio-system.md](specifications/l1-audio-system.md) | Audio playback, spatial audio, backend abstraction | Stable | concept | 0.3.0 |
 | [l2-audio-system-go.md](specifications/l2-audio-system-go.md) | Go impl: AudioBackend/AudioDriver split, bus-graph DAG, effect factory/instance, spatial systems, headless stub driver (Implements: l1-audio-system) | Stable | go | 0.1.0 |
-| [l1-asset-formats.md](specifications/l1-asset-formats.md) | Asset loaders: glTF + stdlib image/audio (HDR/DDS/OGG/fonts/scene.json marked Planned) | Stable | concept | 0.2.0 |
-| [l2-asset-formats-go.md](specifications/l2-asset-formats-go.md) | Go impl: glTF value-fan-out + stable GltfAssetLabel, stdlib PNG/JPEG + WAV; optional formats/scene.json planned (Implements: l1-asset-formats) | Stable | go | 0.2.0 |
+| [l1-asset-formats.md](specifications/l1-asset-formats.md) | Asset loaders: glTF + stdlib image/audio + .scene.json decode (HDR/DDS/OGG/fonts marked Planned) | Stable | concept | 0.3.0 |
+| [l2-asset-formats-go.md](specifications/l2-asset-formats-go.md) | Go impl: glTF value-fan-out + stable GltfAssetLabel, stdlib PNG/JPEG + WAV + .scene.json→SerializedScene decode; optional formats planned (Implements: l1-asset-formats) | Stable | go | 0.3.0 |
 | [l1-2d-rendering.md](specifications/l1-2d-rendering.md) | Sprites, texture slicing, text rendering, 2D pipeline | Stable | concept | 0.2.0 |
 | [l2-2d-rendering-go.md](specifications/l2-2d-rendering-go.md) | Go impl: Sprite2DFeature reusing render-core SoA+VisibilityGroup, deterministic Z→Y→entity sort, atlas batching, 2D ortho+pixel-perfect camera (Implements: l1-2d-rendering) | Stable | go | 0.1.0 |
 | [l1-animation-system.md](specifications/l1-animation-system.md) | Animation graphs, clips, curves, skeletal animation, morph targets | Stable | concept | 0.1.0 |

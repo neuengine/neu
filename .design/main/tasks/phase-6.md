@@ -227,7 +227,7 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 - [x] [T-6P01] Graph Data Model: `GraphDefinition`, `Node`, `Pin` (Direction/Kind), `Connection`, `VariableDecl` + lookup helpers. Definition-System `"graph"` loader wiring deferred to App integration. — `pkg/visualgraph/model.go` `[Bootstrap]`
 - [x] [T-6P02] `NodeRegistry` + `NodeDescriptor`/`PinDescriptor` (Register/Get/List/ListByCategory/Search, deterministic). TypeRegistry auto-generation deferred (needs the registry service wired). — `pkg/visualgraph/registry.go` `[Bootstrap]`
 - [x] [T-6P03] `ValidateGraph` (INV-3 endpoint/direction/kind/type-compat + INV-4 data-dependency cycle detection) + `Interpreter` (execution chain + lazy memoized data pull, step-limit INV-2, `CommandSink` INV-1, deterministic INV-4) + built-in node set (event/math/logic/flow/action). — `pkg/visualgraph/{validate,interpreter,builtins}.go` `[Bootstrap]`
-- [ ] [T-6P04] Editor Gateway: `GraphEditorPlugin`/`NodeRegistryQuery`/`GraphDebugger` in `pkg/editor/graph.go` + `pkg/protocol/graph.go` IPC. — `pkg/editor/graph.go` `[Bootstrap]` *(deferred — editor-bridge L2; needs pkg/editor extension + App integration)*
+- [~] [T-6P04] Editor Gateway: `GraphEditorPlugin`/`NodeRegistryQuery`/`GraphDebugger` in `pkg/editor/graph.go` + `pkg/protocol/graph.go` IPC. — `pkg/editor/graph.go`, `pkg/protocol/graph.go` `[Bootstrap]` *(contract surface Done 2026-06-01; engine-side wiring/graphDebugSyncSystem deferred to App integration)*
 - **Verify:** registry CRUD + sorted List + Search; validate rejects unknown node/pin, direction, kind mismatch, type mismatch (INV-3), data cycle (INV-4); interpreter lazy data-eval (Add→Log sum), Branch routing, exec-cycle → `ErrStepLimit` (INV-2), Action → sink (INV-1), deterministic ×20 (INV-4).
 - **Done (2026-05-31):** `pkg/visualgraph` (graph model + `NodeRegistry` + `ValidateGraph` INV-3/INV-4 + `Interpreter` lazy-pull execution engine INV-1/2/4 + built-in node set). **89.3% cov**; `go test ./...` 61 pkgs green; modernize clean. Editor gateway (`pkg/editor/graph.go`), TypeRegistry auto-gen, SubGraph/Query nodes, and the `"graph"` definition loader deferred to App/editor integration.
 
@@ -287,9 +287,11 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 ### [T-6P04] Editor Gateway
 
 - **Spec:** [l2-visual-graph-editor-bridge.md](../specifications/l2-visual-graph-editor-bridge.md) §4.1–§4.4 (extracted from l1-visual-graph-system §4.7–§4.8)
-- **Status:** Todo `[Bootstrap]`
-- **Handoff:** Closes Track P. Blocks multi-repo external editor integration logic.
-- **Notes:** Must provide JSON/Protobuf-serializable boundary across `pkg/editor/`.
+- **Status:** Partial `[Bootstrap]` — contract surface Done (2026-06-01), engine-side wiring deferred.
+- **Verify:** `pkg/editor/graph.go` passes `TestEditorPkgIsContractOnly` (interfaces + DTOs, no bodies/internal-import/init); `pkg/protocol/graph.go` round-trips all 4 messages + Scanner + stays stdlib-only; fake-implementer satisfies all 3 interfaces; validation is advisory (self-connection rejected, no mutation).
+- **Done (2026-06-01):** `pkg/editor/graph.go` — `GraphEditorPlugin`/`NodeRegistryQuery`/`GraphDebugger` interfaces + editor-local DTOs (`NodeInspection`/`ConnectionChange`/`ValidationResult`/`GraphExecutionFrame`/`NodeDescriptor`/`Connection`/`Direction`), decoupled per the multi-repo precedent (self-contained, `uint64` entity IDs, `graphID` not `GraphDefinition`). `pkg/protocol/graph.go` — `GraphBreakpointHit`/`GraphExecutionTraceEvent`/`GraphRuntimeError`/`GraphLiveUpdate` + wire `GraphExecutionFrame` + `GraphChangeType` + 4 `Decode` cases. **protocol 94.6% cov**; `go test ./...` 69 pkgs green, build/modernize clean; multi-repo guard suite (`TestEditorPkgIsContractOnly`/`TestProtocolStdlibOnly`/round-trip) green. l2-visual-graph-editor-bridge → v0.2.0 (Canonical Refs populated). **Deferred:** concrete engine implementations + `graphDebugSyncSystem` (PostUpdate, editor-attached) — App integration.
+- **Handoff:** Contract surface closes the standalone part of Track P; engine wiring + external editor integration are the remaining App-integration work.
+- **Notes:** Provides a JSON-serializable boundary across `pkg/editor/` + `pkg/protocol/` (newline-delimited JSON, forward-compatible Decode).
 
 ## Validation Strategy
 

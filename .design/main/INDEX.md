@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.39.0
+**Version:** 2.40.0
 **Status:** Active
 
 ## Overview
@@ -128,7 +128,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Stable | concept | 0.2.0 |
 | [l2-error-core-go.md](specifications/l2-error-core-go.md) | Go impl: EngineError over stdlib errors, Severity/Audience total-switch enums, range-partitioned Code registry, fs.FS locale catalog with default fallback, build-tag debug traces, Fatal+Developer-only panic (Implements: l1-error-core) | Stable | go | 0.1.0 |
 | [l1-visual-graph-system.md](specifications/l1-visual-graph-system.md) | Blueprint-style visual graph programming: node model, execution engine, editor "door" interfaces | Draft | concept | 0.2.0 |
-| [l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md) | Go impl: `pkg/editor/graph.go` interfaces (GraphEditorPlugin/NodeRegistryQuery/GraphDebugger) + `pkg/protocol/graph.go` IPC (Implements: l1-visual-graph-system) | Draft | go | 0.1.0 |
+| [l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md) | Go impl: `pkg/editor/graph.go` interfaces (GraphEditorPlugin/NodeRegistryQuery/GraphDebugger) + `pkg/protocol/graph.go` IPC — contract surface implemented, engine wiring deferred (Implements: l1-visual-graph-system) | Draft | go | 0.2.0 |
 
 ## P7 — Advanced Core
 
@@ -162,7 +162,7 @@ Local registry of specifications for this workspace. Organized by priority batch
 ## Meta Information
 
 - **Maintainer**: Core Team
-- **Last Updated**: 2026-05-31
+- **Last Updated**: 2026-06-01
 - **Total Specifications**: 112 (65 L1 concept + 45 L2 Go + 1 test + 1 tool) | Stable: 74 | RFC: 0 | Draft: 38
 - **Engine Version:** 2.1.28
 - **Last Authoring:** 2026-05-30 — **5 new L2 Go contracts authored for Phase 6 (editor-layer tier)** (`/magic.spec`): `l2-plugin-distribution-go`, `l2-ai-assistant-system-go`, `l2-ai-api-plugin-go`, `l2-cli-tooling-go`, `l2-definition-integration-go` — each `Implements:` its Draft L1 parent, status `Draft` (L1 parents Draft → layer constraint). Unblocked by the multi-repo ratification (`pkg/editor` + `pkg/protocol` Stable) + the now-Stable definition/diagnostic engine-core. Dependency order: `{plugin-distribution (SDK) ‖ ai-assistant (transport)} → ai-api-plugin`; `cli → plugin-distribution`; `definition-integration → definition`. 5 new hard L2→L1 edges (37 total), 1:1, acyclic. Completes **L1+L2 parity for the entire P6 editor layer**. Remaining P6 L1s without L2: governance only (`compatibility-policy`, `examples-framework` — no L2 needed) + `build-tooling`/`code-documentation` (have L2s/tool specs). Prior: **3 new L2 Go contracts authored for Phase 6 (UI/declarative tier)** (`/magic.spec`): `l2-diagnostic-system-go`, `l2-ui-system-go`, `l2-definition-system-go` — each `Implements:` its Draft L1 parent, status `Draft` (L1 parent Draft → layer constraint blocks RFC/Stable). This tier builds on the foundational trio: `diagnostic` → render + `l2-error-core-go` (consumes its code registry, no duplication); `ui` → window + input + 2d + render + hierarchy + change-detection (flexbox dirty-relayout, FontAtlas over render-core `DynamicAtlas`); `definition` → ui + scene + type-registry + asset + state + command (validate-once-then-infallible-instantiate, Command-only, DAG cycle reject). 3 new hard L2→L1 edges (35 total), 1:1, acyclic. P6 L2 coverage now 6 of the engine-core L1s; remaining P6 L1s without L2: editor/plugin-layer (multi-repo-gated: ai-assistant, plugin-distribution, ai-api-plugin, definition-integration, cli) + governance (compatibility-policy, examples-framework — no L2 needed). Prior: **3 new L2 Go contracts authored for Phase 6 (foundational trio)**: `l2-error-core-go`, `l2-platform-system-go`, `l2-window-system-go` — each `Implements:` its Draft L1 parent, status `Draft` (L1 parent Draft → layer constraint blocks RFC/Stable). These are the P6 dependency roots: error-core + platform have no intra-P6 deps; window depends on platform. 3 new hard L2→L1 edges (32 total), 1:1, acyclic. Soft `Related Specifications` cross-links (window↔platform↔render/audio) are peer references, non-blocking. Deferred to a later pass: `ui-system`, `definition-system`, `diagnostic-system` L2; editor/plugin-layer L2s (ai-assistant, plugin-distribution, ai-api-plugin, definition-integration, cli) gated on `multi-repo` Stable; `compatibility-policy` + `examples-framework` need no L2 (governance/convention). Prior: **5 new L2 Go contracts authored for Phase 5** (`/magic.spec`): `l2-{audio-system,asset-formats,2d-rendering,animation-system,tweening-system}-go` — each `Implements:` its Draft L1 parent, status `Draft` (L1 parent Draft + no implementation → Canonical References stub → Stable correctly blocked). Achieves L1+L2 parity with Phases 1–4 ahead of Phase 5 execution. 5 new hard L2→L1 edges (29 total), 1:1, acyclic. `l2-2d-rendering-go` references the now-Stable render-core SoA infra.

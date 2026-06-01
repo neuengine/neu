@@ -59,6 +59,14 @@ func Decode(r *bufio.Reader) (any, Kind, error) {
 		return unmarshalInto[NetworkAlert](line, peek.Type)
 	case KindDiagnosticSnap:
 		return unmarshalInto[DiagnosticSnapshot](line, peek.Type)
+	case KindGraphBreakpointHit:
+		return unmarshalInto[GraphBreakpointHit](line, peek.Type)
+	case KindGraphExecutionTrace:
+		return unmarshalInto[GraphExecutionTraceEvent](line, peek.Type)
+	case KindGraphRuntimeError:
+		return unmarshalInto[GraphRuntimeError](line, peek.Type)
+	case KindGraphLiveUpdate:
+		return unmarshalInto[GraphLiveUpdate](line, peek.Type)
 	default:
 		return nil, peek.Type, ErrUnknownKind
 	}

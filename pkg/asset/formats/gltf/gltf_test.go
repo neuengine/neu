@@ -39,10 +39,10 @@ func encodeU16(vals ...uint16) []byte {
 // testBuffer builds the binary backing buffer for the two-mesh test asset:
 // a triangle (3 verts) and a quad (4 verts), positions + indices.
 func testBuffer() []byte {
-	tri := encodeFloats(0, 0, 0, 1, 0, 0, 0, 1, 0)          // 36 B  @ 0
-	triIdx := encodeU16(0, 1, 2)                            // 6 B   @ 36
+	tri := encodeFloats(0, 0, 0, 1, 0, 0, 0, 1, 0)           // 36 B  @ 0
+	triIdx := encodeU16(0, 1, 2)                             // 6 B   @ 36
 	quad := encodeFloats(0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0) // 48 B  @ 42
-	quadIdx := encodeU16(0, 1, 2, 0, 2, 3)                  // 12 B  @ 90
+	quadIdx := encodeU16(0, 1, 2, 0, 2, 3)                   // 12 B  @ 90
 	out := make([]byte, 0, 102)
 	out = append(out, tri...)
 	out = append(out, triIdx...)

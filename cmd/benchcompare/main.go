@@ -128,10 +128,10 @@ type driftJSON struct {
 
 func writeJSON(w io.Writer, res CompareResult) error {
 	view := struct {
-		Drifts       []driftJSON `json:"drifts"`
-		Added        []string    `json:"added"`
-		Missing      []string    `json:"missing"`
-		HasRegression bool       `json:"has_regression"`
+		Drifts        []driftJSON `json:"drifts"`
+		Added         []string    `json:"added"`
+		Missing       []string    `json:"missing"`
+		HasRegression bool        `json:"has_regression"`
 	}{Added: res.Added, Missing: res.Missing, HasRegression: res.HasRegression()}
 	for _, d := range res.Drifts {
 		dj := driftJSON{Name: d.Name, Metric: d.Metric, Baseline: d.Baseline, Current: d.Current, Regression: d.Regression}

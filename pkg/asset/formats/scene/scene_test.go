@@ -64,8 +64,8 @@ func TestSceneDecodeErrors(t *testing.T) {
 
 	// Out-of-range interning indices (validate, since UnmarshalJSON doesn't check).
 	bad := []enginescene.SerializedScene{
-		{Names: []string{"T"}, Entities: []enginescene.SerializedEntity{{NameIdx: 5}}},                                              // nameIdx OOR
-		{Names: []string{"T"}, Entities: []enginescene.SerializedEntity{{NameIdx: 0, Components: []enginescene.SerializedComponent{{TypeIdx: 9}}}}}, // typeIdx OOR
+		{Names: []string{"T"}, Entities: []enginescene.SerializedEntity{{NameIdx: 5}}},                                                                                                           // nameIdx OOR
+		{Names: []string{"T"}, Entities: []enginescene.SerializedEntity{{NameIdx: 0, Components: []enginescene.SerializedComponent{{TypeIdx: 9}}}}},                                              // typeIdx OOR
 		{Names: []string{"T"}, Variants: []any{1}, Entities: []enginescene.SerializedEntity{{NameIdx: 0, Components: []enginescene.SerializedComponent{{TypeIdx: 0, Props: [][2]int{{0, 7}}}}}}}, // valueIdx OOR
 	}
 	for i, sc := range bad {

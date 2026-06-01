@@ -5,7 +5,7 @@ import "testing"
 func TestCapsHasWithWithout(t *testing.T) {
 	t.Parallel()
 	c := HasGPU | HasKeyboard | HasMouse
-	if !c.Has(HasGPU) || !c.Has(HasKeyboard | HasMouse) {
+	if !c.Has(HasGPU) || !c.Has(HasKeyboard|HasMouse) {
 		t.Error("Has should report set bits (single and combined)")
 	}
 	if c.Has(HasTouch) {

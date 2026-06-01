@@ -52,10 +52,10 @@ func TestParseBenchmarks(t *testing.T) {
 func TestStripProcSuffix(t *testing.T) {
 	t.Parallel()
 	cases := map[string]string{
-		"BenchmarkFoo-8":        "BenchmarkFoo",
-		"BenchmarkFoo-128":      "BenchmarkFoo",
-		"BenchmarkFoo/case-1-8": "BenchmarkFoo/case-1", // only the trailing -N is stripped
-		"BenchmarkNoSuffix":     "BenchmarkNoSuffix",
+		"BenchmarkFoo-8":         "BenchmarkFoo",
+		"BenchmarkFoo-128":       "BenchmarkFoo",
+		"BenchmarkFoo/case-1-8":  "BenchmarkFoo/case-1", // only the trailing -N is stripped
+		"BenchmarkNoSuffix":      "BenchmarkNoSuffix",
 		"BenchmarkTrailingDash-": "BenchmarkTrailingDash-",
 	}
 	for in, want := range cases {
@@ -74,10 +74,10 @@ func TestCompare(t *testing.T) {
 		"BenchmarkRemoved": {NsPerOp: 5, BytesPerOp: 0, AllocsPerOp: 0},
 	}
 	current := []BenchResult{
-		{Name: "BenchmarkLerp", Metrics: Metrics{NsPerOp: 12}},      // +20% ns ⇒ regress
+		{Name: "BenchmarkLerp", Metrics: Metrics{NsPerOp: 12}},                                  // +20% ns ⇒ regress
 		{Name: "BenchmarkSpec", Metrics: Metrics{NsPerOp: 240, BytesPerOp: 64, AllocsPerOp: 3}}, // allocs 2→3 ⇒ regress
-		{Name: "BenchmarkStable", Metrics: Metrics{NsPerOp: 102}},   // +2% ⇒ within threshold, not reported
-		{Name: "BenchmarkNew", Metrics: Metrics{NsPerOp: 50}},       // added
+		{Name: "BenchmarkStable", Metrics: Metrics{NsPerOp: 102}},                               // +2% ⇒ within threshold, not reported
+		{Name: "BenchmarkNew", Metrics: Metrics{NsPerOp: 50}},                                   // added
 	}
 	res := Compare(base, current, 5.0)
 

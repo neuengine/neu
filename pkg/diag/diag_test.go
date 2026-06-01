@@ -189,9 +189,9 @@ func TestModuleFilterHandler(t *testing.T) {
 	h.SetModuleLevel("render", slog.LevelDebug)
 	log := slog.New(h)
 
-	log.Debug("render detail", "module", "render") // passes (render→Debug)
+	log.Debug("render detail", "module", "render")   // passes (render→Debug)
 	log.Debug("physics detail", "module", "physics") // dropped (default Info)
-	log.Info("general") // passes (no module, Info >= default Info)
+	log.Info("general")                              // passes (no module, Info >= default Info)
 
 	out := buf.String()
 	if !strings.Contains(out, "render detail") {

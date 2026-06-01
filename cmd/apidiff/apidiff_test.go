@@ -104,9 +104,9 @@ func TestDiff(t *testing.T) {
 	}}
 	current := Snapshot{Packages: map[string][]Symbol{
 		"pkg/x": {
-			{Name: "F", Kind: "func", Signature: "func F() error"}, // changed
+			{Name: "F", Kind: "func", Signature: "func F() error"},       // changed
 			{Name: "T", Kind: "type", Signature: "type T struct{a int}"}, // unchanged
-			{Name: "H", Kind: "func", Signature: "func H()"}, // added
+			{Name: "H", Kind: "func", Signature: "func H()"},             // added
 		},
 		// pkg/gone removed entirely
 	}}

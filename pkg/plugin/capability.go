@@ -9,22 +9,22 @@ type Capability string
 
 // Built-in capability vocabulary (L1 §4.3).
 const (
-	CapWorldRead        Capability = "world.read"
-	CapWorldCommands    Capability = "world.commands"
-	CapWorldResources   Capability = "world.resources.write"
-	CapFSReadProject    Capability = "fs.read.project"
-	CapFSWriteProject   Capability = "fs.write.project"
-	CapFSReadUser       Capability = "fs.read.user"
-	CapFSWriteUser      Capability = "fs.write.user"
-	CapNetworkOutbound  Capability = "network.outbound"
-	CapNetworkInbound   Capability = "network.inbound"
-	CapProcessSpawn     Capability = "process.spawn"
-	CapEditorUI         Capability = "editor.ui"
-	CapAssetsRead       Capability = "assets.read"
-	CapAssetsWrite      Capability = "assets.write"
-	CapCodegen          Capability = "codegen"
-	CapTimeRealtime     Capability = "time.realtime"
-	CapMetricsPublish   Capability = "metrics.publish"
+	CapWorldRead       Capability = "world.read"
+	CapWorldCommands   Capability = "world.commands"
+	CapWorldResources  Capability = "world.resources.write"
+	CapFSReadProject   Capability = "fs.read.project"
+	CapFSWriteProject  Capability = "fs.write.project"
+	CapFSReadUser      Capability = "fs.read.user"
+	CapFSWriteUser     Capability = "fs.write.user"
+	CapNetworkOutbound Capability = "network.outbound"
+	CapNetworkInbound  Capability = "network.inbound"
+	CapProcessSpawn    Capability = "process.spawn"
+	CapEditorUI        Capability = "editor.ui"
+	CapAssetsRead      Capability = "assets.read"
+	CapAssetsWrite     Capability = "assets.write"
+	CapCodegen         Capability = "codegen"
+	CapTimeRealtime    Capability = "time.realtime"
+	CapMetricsPublish  Capability = "metrics.publish"
 )
 
 // Tier is how a capability is approved.
@@ -42,22 +42,22 @@ const (
 // defaultTiers maps built-in capabilities to their approval tier (L1 §4.3).
 // Unknown / custom capabilities default to TierAlwaysPrompt.
 var defaultTiers = map[Capability]Tier{
-	CapWorldRead:      TierGranted,
-	CapTimeRealtime:   TierGranted,
-	CapMetricsPublish: TierGranted,
-	CapWorldCommands:  TierPrompt,
-	CapWorldResources: TierPrompt,
-	CapFSReadProject:  TierPrompt,
-	CapFSWriteProject: TierPrompt,
+	CapWorldRead:       TierGranted,
+	CapTimeRealtime:    TierGranted,
+	CapMetricsPublish:  TierGranted,
+	CapWorldCommands:   TierPrompt,
+	CapWorldResources:  TierPrompt,
+	CapFSReadProject:   TierPrompt,
+	CapFSWriteProject:  TierPrompt,
 	CapNetworkOutbound: TierPrompt,
-	CapEditorUI:       TierPrompt,
-	CapAssetsRead:     TierPrompt,
-	CapAssetsWrite:    TierPrompt,
-	CapFSReadUser:     TierAlwaysPrompt,
-	CapFSWriteUser:    TierAlwaysPrompt,
-	CapNetworkInbound: TierAlwaysPrompt,
-	CapProcessSpawn:   TierAlwaysPrompt,
-	CapCodegen:        TierAlwaysPrompt,
+	CapEditorUI:        TierPrompt,
+	CapAssetsRead:      TierPrompt,
+	CapAssetsWrite:     TierPrompt,
+	CapFSReadUser:      TierAlwaysPrompt,
+	CapFSWriteUser:     TierAlwaysPrompt,
+	CapNetworkInbound:  TierAlwaysPrompt,
+	CapProcessSpawn:    TierAlwaysPrompt,
+	CapCodegen:         TierAlwaysPrompt,
 }
 
 // DefaultTier returns a capability's approval tier. Topic-scoped capabilities

@@ -15,14 +15,14 @@ type Code string
 // Category ranges (L1 §3.1). A module's codes must fall inside its registered
 // range; the numeric part is the four digits after the leading 'E'.
 const (
-	CategoryCoreMin  uint16 = 0    // E0000–E0999 Core ECS (Entity/Component/World)
-	CategoryCoreMax  uint16 = 999  //
-	CategorySchedMin uint16 = 1000 // E1000–E1999 Scheduling & Systems
-	CategorySchedMax uint16 = 1999 //
+	CategoryCoreMin   uint16 = 0    // E0000–E0999 Core ECS (Entity/Component/World)
+	CategoryCoreMax   uint16 = 999  //
+	CategorySchedMin  uint16 = 1000 // E1000–E1999 Scheduling & Systems
+	CategorySchedMax  uint16 = 1999 //
 	CategoryRenderMin uint16 = 2000 // E2000–E2999 Render & Assets
 	CategoryRenderMax uint16 = 2999 //
-	CategoryPhysMin  uint16 = 3000 // E3000–E3999 Physics & Collision
-	CategoryPhysMax  uint16 = 3999 //
+	CategoryPhysMin   uint16 = 3000 // E3000–E3999 Physics & Collision
+	CategoryPhysMax   uint16 = 3999 //
 )
 
 // Descriptor is the registered metadata for one error code.

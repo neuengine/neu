@@ -23,9 +23,9 @@ type UIDef struct {
 // (type name → value) and nested children.
 type SceneEntity struct {
 	Name       string                    `json:"name"`
-	Components  map[string]map[string]any `json:"components"`
-	Children    []SceneEntity             `json:"children,omitempty"`
-	Template    string                    `json:"template,omitempty"`
+	Components map[string]map[string]any `json:"components"`
+	Children   []SceneEntity             `json:"children,omitempty"`
+	Template   string                    `json:"template,omitempty"`
 }
 
 // SceneDef is a scene definition's content: a list of root entities.

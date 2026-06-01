@@ -111,10 +111,10 @@ type capabilityProxy struct {
 	cfg     []byte
 }
 
-func (p *capabilityProxy) Commands() pkgplugin.CommandIssuer { return taggedCommands{id: p.id} }
-func (p *capabilityProxy) Config() []byte                    { return p.cfg }
+func (p *capabilityProxy) Commands() pkgplugin.CommandIssuer     { return taggedCommands{id: p.id} }
+func (p *capabilityProxy) Config() []byte                        { return p.cfg }
 func (p *capabilityProxy) Capabilities() pkgplugin.CapabilitySet { return p.granted }
-func (p *capabilityProxy) Logger() *slog.Logger              { return p.logger }
+func (p *capabilityProxy) Logger() *slog.Logger                  { return p.logger }
 
 // Check enforces INV-3: an ungranted capability returns a CapabilityError and
 // is logged with plugin ID + capability (the call site is the caller's frame).

@@ -7,12 +7,12 @@ import (
 
 // Validation sentinel errors.
 var (
-	ErrUnknownNode   = errors.New("visualgraph: connection references unknown node")
-	ErrUnknownPin    = errors.New("visualgraph: connection references unknown pin")
-	ErrPinDirection  = errors.New("visualgraph: connection must go Output → Input")
-	ErrKindMismatch  = errors.New("visualgraph: connection mixes Execution and Data pins")
-	ErrTypeMismatch  = errors.New("visualgraph: data pin types are not assignable")
-	ErrGraphCycle    = errors.New("visualgraph: data dependency cycle detected")
+	ErrUnknownNode  = errors.New("visualgraph: connection references unknown node")
+	ErrUnknownPin   = errors.New("visualgraph: connection references unknown pin")
+	ErrPinDirection = errors.New("visualgraph: connection must go Output → Input")
+	ErrKindMismatch = errors.New("visualgraph: connection mixes Execution and Data pins")
+	ErrTypeMismatch = errors.New("visualgraph: data pin types are not assignable")
+	ErrGraphCycle   = errors.New("visualgraph: data dependency cycle detected")
 )
 
 // assignable reports whether an output data type can feed an input data type.

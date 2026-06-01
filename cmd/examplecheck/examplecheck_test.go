@@ -122,7 +122,7 @@ func TestExamplesFromPaths(t *testing.T) {
 		"examples/2d/main_test.go",
 		"examples/unknown/main.go", // not in known → ignored
 		"pkg/render/sprite.go",     // not under examples → ignored
-		"examples/ui/", // trailing slash
+		"examples/ui/",             // trailing slash
 	}
 	got := examplesFromPaths("examples", paths, known)
 	want := "2d,ui,window"
@@ -147,11 +147,11 @@ func TestEvaluate(t *testing.T) {
 	names := []string{"ok1", "drifted", "newhash", "smoke", "broken"}
 	goldens := map[string]uint64{"ok1": 100, "drifted": 200}
 	outputs := map[string]string{
-		"ok1":      "PASS: ok1 hash=100\n",
-		"drifted":  "PASS: drifted hash=999\n", // golden 200 → drift
-		"newhash":  "PASS: newhash hash=42\n",  // no golden → new
-		"smoke":    "PASS ran fine\n",          // no hash → smoke
-		"broken":   "FAIL: kaboom\n",           // fail
+		"ok1":     "PASS: ok1 hash=100\n",
+		"drifted": "PASS: drifted hash=999\n", // golden 200 → drift
+		"newhash": "PASS: newhash hash=42\n",  // no golden → new
+		"smoke":   "PASS ran fine\n",          // no hash → smoke
+		"broken":  "FAIL: kaboom\n",           // fail
 	}
 	var buf bytes.Buffer
 	recorded, failed, drifted := evaluate(names, goldens, fakeRunner(outputs, nil), &buf)

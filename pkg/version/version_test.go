@@ -8,9 +8,9 @@ import (
 func TestParse(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
-		in              string
-		want            Version
-		wantErr         bool
+		in      string
+		want    Version
+		wantErr bool
 	}{
 		{"1.4.2", Version{1, 4, 2}, false},
 		{"v1.4.2-rc1+build", Version{1, 4, 2}, false}, // 'v' + pre-release/build stripped

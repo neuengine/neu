@@ -40,7 +40,9 @@ func (doctorCmd) Run(_ context.Context, _ []string, out *Output) error {
 type scaffoldCmd struct{}
 
 func (scaffoldCmd) Name() string { return "scaffold" }
-func (scaffoldCmd) Help() string { return "generate a stub (component|system|plugin) — overwrite-safe" }
+func (scaffoldCmd) Help() string {
+	return "generate a stub (component|system|plugin) — overwrite-safe"
+}
 
 func (scaffoldCmd) Run(_ context.Context, args []string, out *Output) error {
 	if len(args) < 2 {

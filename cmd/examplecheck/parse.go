@@ -18,8 +18,8 @@ import (
 
 // Result is the parsed outcome of running one example.
 type Result struct {
-	OK      bool   // ran to completion with no FAIL line and a clean exit
-	HasHash bool   // emitted a "hash=<N>" value (golden-checkable)
+	OK      bool // ran to completion with no FAIL line and a clean exit
+	HasHash bool // emitted a "hash=<N>" value (golden-checkable)
 	Hash    uint64
 }
 

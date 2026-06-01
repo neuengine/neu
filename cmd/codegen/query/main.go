@@ -89,9 +89,9 @@ func genArity(n int) string {
 	for i := range letters {
 		letters[i] = letter(i)
 	}
-	params := strings.Join(letters, ", ")           // "A, B, C"
-	constraint := params + " any"                    // "A, B, C any"
-	typeArgs := "[" + params + "]"                   // "[A, B, C]"
+	params := strings.Join(letters, ", ") // "A, B, C"
+	constraint := params + " any"         // "A, B, C any"
+	typeArgs := "[" + params + "]"        // "[A, B, C]"
 
 	var b strings.Builder
 	p := func(format string, a ...any) { fmt.Fprintf(&b, format, a...) }

@@ -16,9 +16,9 @@ func TestValResolve(t *testing.T) {
 		ok   bool
 	}{
 		{Px(50), 50, true},
-		{Percent(25), 50, true},   // 25% of 200
-		{Vw(10), 192, true},       // 10% of 1920
-		{Vh(50), 540, true},       // 50% of 1080
+		{Percent(25), 50, true}, // 25% of 200
+		{Vw(10), 192, true},     // 10% of 1920
+		{Vh(50), 540, true},     // 50% of 1080
 		{Auto, 0, false},
 	}
 	for _, c := range cases {

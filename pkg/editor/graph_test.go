@@ -19,8 +19,8 @@ var (
 	_ editor.GraphDebugger     = (*fakeBridge)(nil)
 )
 
-func (*fakeBridge) OnGraphOpened(string)   {}
-func (*fakeBridge) OnGraphClosed(string)   {}
+func (*fakeBridge) OnGraphOpened(string) {}
+func (*fakeBridge) OnGraphClosed(string) {}
 func (*fakeBridge) OnNodeSelected(graphID, nodeID string) editor.NodeInspection {
 	return editor.NodeInspection{NodeID: nodeID, NodeType: "math.Add", ExecutionCount: 1, PinValues: map[string]any{"result": 5}}
 }
@@ -76,9 +76,13 @@ func (b *fakeBridge) ListBreakpoints(string) []string {
 	}
 	return out
 }
-func (*fakeBridge) StepOver(string) editor.GraphExecutionFrame { return editor.GraphExecutionFrame{StepIndex: 1} }
-func (*fakeBridge) StepInto(string) editor.GraphExecutionFrame { return editor.GraphExecutionFrame{StepIndex: 2} }
-func (*fakeBridge) Continue(string) error                      { return nil }
+func (*fakeBridge) StepOver(string) editor.GraphExecutionFrame {
+	return editor.GraphExecutionFrame{StepIndex: 1}
+}
+func (*fakeBridge) StepInto(string) editor.GraphExecutionFrame {
+	return editor.GraphExecutionFrame{StepIndex: 2}
+}
+func (*fakeBridge) Continue(string) error { return nil }
 func (*fakeBridge) GetExecutionTrace(string, int) []editor.GraphExecutionFrame {
 	return []editor.GraphExecutionFrame{{NodeID: "n1"}}
 }

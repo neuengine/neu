@@ -1,7 +1,7 @@
 # Examples Framework
 
-**Version:** 0.4.0
-**Status:** Draft
+**Version:** 0.5.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -134,15 +134,14 @@ Until then, the framework prioritizes a small number of honest validation exampl
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- Realized by the Track I tooling: cmd/examplecheck + conventions + scaffold + goldens. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| examplecheck | cmd/examplecheck/ | Mechanical validation harness — discovers/runs examples, gates against goldens, selective build (§4.5, INV-3) |
+| conventions | examples/README.md | Per-example contract + golden-gate documentation (§4.4) |
+| template | examples/_template/ | The runnable-example scaffold (`run()`/`main()`/`main_test.go` contract, §4.4) |
+| goldens | examples/goldens.json | Committed golden registry — the Stable mechanical-validation gate (§4.5) |
 
 ## Document History
 
@@ -152,4 +151,4 @@ Until then, the framework prioritizes a small number of honest validation exampl
 | 0.2.0 | 2026-03-25 | Expanded: full example catalog from reference engine (280+ examples across 28 categories). Added categories: camera, gizmos, picking, time, ui, shader, showcase. Excluded language-specific examples. |
 | 0.3.0 | 2026-03-26 | Added showcase runner section (bulk execution, visual regression, screenshot capture). Added build-tooling cross-reference. |
 | 0.4.0 | 2026-03-31 | Reframed the spec around staged rollout, placeholder paths, and honest phase-based validation. |
-| — | — | Planned examples: [examples/](../../../examples/), [examples/ecs/](../../../examples/ecs/), [examples/world/](../../../examples/world/) |
+| 0.5.0 | 2026-06-01 | Promoted Draft → Stable (`/magic.task` Pre-Planning Stabilization). Realized by Track I: `cmd/examplecheck` is the §4.5 mechanical-validation gate (golden drift + selective build), `examples/_template/` + `examples/README.md` codify the §4.4 per-example contract, `examples/goldens.json` is the committed gate. `cmd/showcase/` remains deferred **by the spec itself** (§4.6) — not an overclaim. Canonical References populated. |

@@ -1,7 +1,7 @@
 # Compatibility and Versioning Policy
 
-**Version:** 0.3.0
-**Status:** Draft
+**Version:** 0.4.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -69,15 +69,15 @@ If a new Go version introduces a critical performance feature (like a new GC or 
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
+<!-- Realized by the Track J tooling: pkg/version (policy) + cmd/apidiff (enforcement) + CI. -->
 
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| version-policy | pkg/version/policy.go | Engine SemVer policy + `MinGoToolchain` (1.26.3) + `GoToolchainConstraint`/`IsGoToolchainSupported` (§2–§4) |
+| version-core | pkg/version/version.go | `Version` + `Parse` + `Compare` — the SemVer value type (§2) |
+| version-constraint | pkg/version/constraint.go | Cargo-subset `Constraint` (caret-on-0.x = the §5.1 0.x breaking rule) |
+| apidiff | cmd/apidiff/ | Public-API snapshot + breaking-change gate enforcing §5.1 API stability |
+| ci-matrix | .github/workflows/ci.yml | CI Go-version build/test + `-race` + benchmark gate enforcing §3/§6 |
 
 ## Document History
 
@@ -86,4 +86,4 @@ If a new Go version introduces a critical performance feature (like a new GC or 
 | 0.1.0 | 2026-03-27 | Initial draft |
 | 0.2.0 | 2026-03-30 | Added C26 example correlation placeholder for compatibility validation |
 | 0.3.0 | 2026-04-19 | Added `## Related Specifications` and `## 1. Motivation` sections; renumbered §1–§5 → §2–§6 (RULES §5/§6 compliance) |
-| — | — | Planned examples: `examples/app/version_compatibility/` |
+| 0.4.0 | 2026-06-01 | Promoted Draft → Stable (`/magic.task` Pre-Planning Stabilization). Fully realized by Track J: `pkg/version` (SemVer + Go-toolchain matrix — `MinGoToolchain` matches §3's v0.1.x → Go 1.26.3 row) + `cmd/apidiff` (the §5.1 breaking-change gate over a committed `api/snapshot.json`) + `.github/workflows/ci.yml` (§3/§6 Go-version + race + bench enforcement). Canonical References populated; no deferred headline. |

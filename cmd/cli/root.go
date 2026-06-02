@@ -38,7 +38,7 @@ func NewOutput(w, errW io.Writer) *Output { return &Output{w: w, errW: errW} }
 // Linef writes a human-readable line; suppressed in JSON mode.
 func (o *Output) Linef(format string, args ...any) {
 	if !o.JSON {
-		fmt.Fprintf(o.w, format+"\n", args...)
+		_, _ = fmt.Fprintf(o.w, format+"\n", args...)
 	}
 }
 
@@ -58,7 +58,7 @@ func (o *Output) Errorf(format string, args ...any) {
 		_ = json.NewEncoder(o.errW).Encode(map[string]string{"error": fmt.Sprintf(format, args...)})
 		return
 	}
-	fmt.Fprintf(o.errW, "error: "+format+"\n", args...)
+	_, _ = fmt.Fprintf(o.errW, "error: "+format+"\n", args...)
 }
 
 // Router dispatches the first argument to a registered Command (INV-3: only

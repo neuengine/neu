@@ -102,7 +102,7 @@ func TestPluginValidate(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
 	good := filepath.Join(dir, "plugin.toml")
-	os.WriteFile(good, []byte(`[plugin]
+	if err := os.WriteFile(good, []byte(`[plugin]
 id = "com.example.test"
 version = "1.0.0"
 mode = "in-process"
@@ -113,7 +113,9 @@ engine_version = "^1.0.0"
 [entry.in_process]
 package_path = "github.com/example/test"
 factory = "New"
-`), 0o644)
+`), 0o644); err != nil {
+		t.Fatal(err)
+	}
 
 	if code, out, _ := run("plugin", "validate", good); code != 0 || !strings.Contains(out, "com.example.test") {
 		t.Errorf("validate good: code=%d out=%q", code, out)
@@ -121,7 +123,9 @@ factory = "New"
 
 	// Invalid manifest (missing engine_version) → exit 1.
 	bad := filepath.Join(dir, "bad.toml")
-	os.WriteFile(bad, []byte("[plugin]\nid = \"a.b\"\nversion = \"1.0.0\"\nmode = \"in-process\"\n"), 0o644)
+	if err := os.WriteFile(bad, []byte("[plugin]\nid = \"a.b\"\nversion = \"1.0.0\"\nmode = \"in-process\"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
 	if code, _, _ := run("plugin", "validate", bad); code != 1 {
 		t.Errorf("validate bad exit = %d, want 1", code)
 	}
@@ -140,8 +144,10 @@ func TestPluginList(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
 	pdir := filepath.Join(dir, "com.example.one")
-	os.MkdirAll(pdir, 0o755)
-	os.WriteFile(filepath.Join(pdir, "plugin.toml"), []byte(`[plugin]
+	if err := os.MkdirAll(pdir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(pdir, "plugin.toml"), []byte(`[plugin]
 id = "com.example.one"
 version = "2.1.0"
 mode = "in-process"
@@ -152,7 +158,9 @@ engine_version = "^1.0.0"
 [entry.in_process]
 package_path = "x"
 factory = "New"
-`), 0o644)
+`), 0o644); err != nil {
+		t.Fatal(err)
+	}
 
 	code, out, _ := run("plugin", "list", dir)
 	if code != 0 || !strings.Contains(out, "com.example.one") || !strings.Contains(out, "2.1.0") {

@@ -304,9 +304,11 @@ type failBackend struct{}
 func (failBackend) CreateWindow(entity.Entity, pkgwindow.WindowDescriptor) (pkgwindow.RawWindowHandle, error) {
 	return pkgwindow.RawWindowHandle{}, errors.New("create boom")
 }
-func (failBackend) DestroyWindow(entity.Entity) error                  { return errors.New("destroy boom") }
-func (failBackend) ApplyChanges(entity.Entity, pkgwindow.WindowDiff) error { return errors.New("apply boom") }
-func (failBackend) PollEvents() []pkgwindow.PlatformEvent               { return nil }
+func (failBackend) DestroyWindow(entity.Entity) error { return errors.New("destroy boom") }
+func (failBackend) ApplyChanges(entity.Entity, pkgwindow.WindowDiff) error {
+	return errors.New("apply boom")
+}
+func (failBackend) PollEvents() []pkgwindow.PlatformEvent { return nil }
 
 var _ pkgwindow.WindowBackend = failBackend{}
 

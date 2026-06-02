@@ -249,8 +249,8 @@ func UnmarshalBinary(data []byte) (SerializedScene, error) {
 // ─── binary helpers ──────────────────────────────────────────────────────────
 
 func writeBytes(w *bytes.Buffer, b []byte)  { w.Write(b) }
-func writeUint16(w *bytes.Buffer, v uint16) { binary.Write(w, binary.LittleEndian, v) }
-func writeUint32(w *bytes.Buffer, v uint32) { binary.Write(w, binary.LittleEndian, v) }
+func writeUint16(w *bytes.Buffer, v uint16) { _ = binary.Write(w, binary.LittleEndian, v) }
+func writeUint32(w *bytes.Buffer, v uint32) { _ = binary.Write(w, binary.LittleEndian, v) }
 func writeString(w *bytes.Buffer, s string) {
 	writeUint32(w, uint32(len(s)))
 	w.WriteString(s)

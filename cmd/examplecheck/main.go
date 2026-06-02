@@ -61,17 +61,17 @@ func run(argv []string, stdout, stderr io.Writer) int {
 func execute(cfg config, runner exampleRunner, stdout, stderr io.Writer) int {
 	names, err := discoverExamples(cfg.root)
 	if err != nil {
-		fmt.Fprintf(stderr, "examplecheck: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "examplecheck: %v\n", err)
 		return 2
 	}
 	if len(names) == 0 {
-		fmt.Fprintf(stderr, "examplecheck: no examples found in %s\n", cfg.root)
+		_, _ = fmt.Fprintf(stderr, "examplecheck: no examples found in %s\n", cfg.root)
 		return 2
 	}
 
 	if cfg.list {
 		for _, n := range names {
-			fmt.Fprintln(stdout, n)
+			_, _ = fmt.Fprintln(stdout, n)
 		}
 		return 0
 	}
@@ -79,19 +79,19 @@ func execute(cfg config, runner exampleRunner, stdout, stderr io.Writer) int {
 	if cfg.changed != "" {
 		paths, err := gitChangedPaths(context.Background(), cfg.changed)
 		if err != nil {
-			fmt.Fprintf(stderr, "examplecheck: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "examplecheck: %v\n", err)
 			return 2
 		}
 		names = examplesFromPaths(cfg.root, paths, names)
 		if len(names) == 0 {
-			fmt.Fprintf(stdout, "examplecheck: no examples changed since %s\n", cfg.changed)
+			_, _ = fmt.Fprintf(stdout, "examplecheck: no examples changed since %s\n", cfg.changed)
 			return 0
 		}
 	}
 
 	goldens, err := LoadGoldens(cfg.goldensPath)
 	if err != nil {
-		fmt.Fprintf(stderr, "examplecheck: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "examplecheck: %v\n", err)
 		return 2
 	}
 	recorded, failed, drifted := evaluate(names, goldens.Examples, runner, stdout)
@@ -103,18 +103,18 @@ func execute(cfg config, runner exampleRunner, stdout, stderr io.Writer) int {
 			Examples:  recorded,
 		}
 		if err := g.Save(cfg.goldensPath); err != nil {
-			fmt.Fprintf(stderr, "examplecheck: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "examplecheck: %v\n", err)
 			return 2
 		}
-		fmt.Fprintf(stdout, "examplecheck: wrote %d goldens to %s (%d failed)\n", len(recorded), cfg.goldensPath, failed)
+		_, _ = fmt.Fprintf(stdout, "examplecheck: wrote %d goldens to %s (%d failed)\n", len(recorded), cfg.goldensPath, failed)
 		return 0
 	}
 
 	if failed > 0 || drifted > 0 {
-		fmt.Fprintf(stdout, "examplecheck: %d failed, %d drifted\n", failed, drifted)
+		_, _ = fmt.Fprintf(stdout, "examplecheck: %d failed, %d drifted\n", failed, drifted)
 		return 1
 	}
-	fmt.Fprintf(stdout, "examplecheck: %d examples OK\n", len(names))
+	_, _ = fmt.Fprintf(stdout, "examplecheck: %d examples OK\n", len(names))
 	return 0
 }
 
@@ -130,19 +130,19 @@ func evaluate(names []string, goldens map[string]uint64, runner exampleRunner, w
 		switch classify(res, golden, hasGolden) {
 		case "fail":
 			failed++
-			fmt.Fprintf(w, "FAIL    %s\n", name)
+			_, _ = fmt.Fprintf(w, "FAIL    %s\n", name)
 		case "drift":
 			drifted++
 			recorded[name] = res.Hash
-			fmt.Fprintf(w, "DRIFT   %s hash=%d, golden=%d\n", name, res.Hash, golden)
+			_, _ = fmt.Fprintf(w, "DRIFT   %s hash=%d, golden=%d\n", name, res.Hash, golden)
 		case "new":
 			recorded[name] = res.Hash
-			fmt.Fprintf(w, "new     %s hash=%d (no golden)\n", name, res.Hash)
+			_, _ = fmt.Fprintf(w, "new     %s hash=%d (no golden)\n", name, res.Hash)
 		case "ok":
 			recorded[name] = res.Hash
-			fmt.Fprintf(w, "ok      %s hash=%d\n", name, res.Hash)
+			_, _ = fmt.Fprintf(w, "ok      %s hash=%d\n", name, res.Hash)
 		default: // smoke
-			fmt.Fprintf(w, "ok      %s (smoke)\n", name)
+			_, _ = fmt.Fprintf(w, "ok      %s (smoke)\n", name)
 		}
 	}
 	return recorded, failed, drifted

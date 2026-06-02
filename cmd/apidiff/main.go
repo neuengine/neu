@@ -29,27 +29,27 @@ func run(argv []string, stdout, stderr io.Writer) int {
 
 	current, err := scanPackages(*pkgs)
 	if err != nil {
-		fmt.Fprintf(stderr, "apidiff: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "apidiff: %v\n", err)
 		return 2
 	}
 	if len(current) == 0 {
-		fmt.Fprintf(stderr, "apidiff: no packages found under %s\n", *pkgs)
+		_, _ = fmt.Fprintf(stderr, "apidiff: no packages found under %s\n", *pkgs)
 		return 2
 	}
 
 	if *update {
 		snap := Snapshot{GoVersion: runtime.Version(), Updated: time.Now().UTC().Format(time.RFC3339), Packages: current}
 		if err := snap.Save(*snapPath); err != nil {
-			fmt.Fprintf(stderr, "apidiff: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "apidiff: %v\n", err)
 			return 2
 		}
-		fmt.Fprintf(stdout, "apidiff: wrote snapshot of %d packages to %s\n", len(current), *snapPath)
+		_, _ = fmt.Fprintf(stdout, "apidiff: wrote snapshot of %d packages to %s\n", len(current), *snapPath)
 		return 0
 	}
 
 	old, err := LoadSnapshot(*snapPath)
 	if err != nil {
-		fmt.Fprintf(stderr, "apidiff: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "apidiff: %v\n", err)
 		return 2
 	}
 	changes := Diff(old, Snapshot{Packages: current})
@@ -58,7 +58,7 @@ func run(argv []string, stdout, stderr io.Writer) int {
 		enc := json.NewEncoder(stdout)
 		enc.SetIndent("", "  ")
 		if err := enc.Encode(changes); err != nil {
-			fmt.Fprintf(stderr, "apidiff: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "apidiff: %v\n", err)
 			return 2
 		}
 	} else {
@@ -73,20 +73,20 @@ func run(argv []string, stdout, stderr io.Writer) int {
 // writeReport renders a human-readable API diff.
 func writeReport(w io.Writer, c Changes) {
 	for _, ch := range c.Removed {
-		fmt.Fprintf(w, "REMOVED %s %s %s\n", ch.Pkg, ch.Kind, ch.Name)
+		_, _ = fmt.Fprintf(w, "REMOVED %s %s %s\n", ch.Pkg, ch.Kind, ch.Name)
 	}
 	for _, ch := range c.Changed {
-		fmt.Fprintf(w, "CHANGED %s %s %s\n        - %s\n        + %s\n", ch.Pkg, ch.Kind, ch.Name, ch.Old, ch.New)
+		_, _ = fmt.Fprintf(w, "CHANGED %s %s %s\n        - %s\n        + %s\n", ch.Pkg, ch.Kind, ch.Name, ch.Old, ch.New)
 	}
 	for _, ch := range c.Added {
-		fmt.Fprintf(w, "added   %s %s %s\n", ch.Pkg, ch.Kind, ch.Name)
+		_, _ = fmt.Fprintf(w, "added   %s %s %s\n", ch.Pkg, ch.Kind, ch.Name)
 	}
 	switch {
 	case c.Breaking():
-		fmt.Fprintf(w, "apidiff: BREAKING — %d removed, %d changed, %d added\n", len(c.Removed), len(c.Changed), len(c.Added))
+		_, _ = fmt.Fprintf(w, "apidiff: BREAKING — %d removed, %d changed, %d added\n", len(c.Removed), len(c.Changed), len(c.Added))
 	case len(c.Added) > 0:
-		fmt.Fprintf(w, "apidiff: OK — %d additions (backward-compatible)\n", len(c.Added))
+		_, _ = fmt.Fprintf(w, "apidiff: OK — %d additions (backward-compatible)\n", len(c.Added))
 	default:
-		fmt.Fprintln(w, "apidiff: OK — no API changes")
+		_, _ = fmt.Fprintln(w, "apidiff: OK — no API changes")
 	}
 }

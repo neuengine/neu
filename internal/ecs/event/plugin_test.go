@@ -33,9 +33,9 @@ func (b *captureBuilder) AddSystems(schedule string, ss ...scheduler.System) app
 	}
 	return b
 }
-func (b *captureBuilder) SetResource(any) appface.Builder            { return b }
-func (b *captureBuilder) InitResource(any) appface.Builder           { return b }
-func (b *captureBuilder) AddPlugin(appface.Plugin) appface.Builder   { return b }
+func (b *captureBuilder) SetResource(any) appface.Builder                { return b }
+func (b *captureBuilder) InitResource(any) appface.Builder               { return b }
+func (b *captureBuilder) AddPlugin(appface.Plugin) appface.Builder       { return b }
 func (b *captureBuilder) AddPlugins(appface.PluginGroup) appface.Builder { return b }
 
 var _ appface.Builder = (*captureBuilder)(nil)

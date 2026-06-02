@@ -33,7 +33,7 @@ func run(argv []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	if *currentPath != "" {
 		f, err := os.Open(*currentPath)
 		if err != nil {
-			fmt.Fprintf(stderr, "benchcompare: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "benchcompare: %v\n", err)
 			return 2
 		}
 		defer func() { _ = f.Close() }()
@@ -42,34 +42,34 @@ func run(argv []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 	results, err := ParseBenchmarks(src)
 	if err != nil {
-		fmt.Fprintf(stderr, "benchcompare: parse: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "benchcompare: parse: %v\n", err)
 		return 2
 	}
 	if len(results) == 0 {
-		fmt.Fprintln(stderr, "benchcompare: no benchmark results found in input")
+		_, _ = fmt.Fprintln(stderr, "benchcompare: no benchmark results found in input")
 		return 2
 	}
 
 	if *update {
 		b := baselineFrom(results, runtime.Version(), time.Now().UTC().Format(time.RFC3339))
 		if err := b.Save(*baselinePath); err != nil {
-			fmt.Fprintf(stderr, "benchcompare: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "benchcompare: %v\n", err)
 			return 2
 		}
-		fmt.Fprintf(stdout, "benchcompare: wrote baseline with %d benchmarks to %s\n", len(b.Results), *baselinePath)
+		_, _ = fmt.Fprintf(stdout, "benchcompare: wrote baseline with %d benchmarks to %s\n", len(b.Results), *baselinePath)
 		return 0
 	}
 
 	base, err := LoadBaseline(*baselinePath)
 	if err != nil {
-		fmt.Fprintf(stderr, "benchcompare: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "benchcompare: %v\n", err)
 		return 2
 	}
 	res := Compare(base.Results, results, *threshold)
 
 	if *asJSON {
 		if err := writeJSON(stdout, res); err != nil {
-			fmt.Fprintf(stderr, "benchcompare: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "benchcompare: %v\n", err)
 			return 2
 		}
 	} else {
@@ -83,25 +83,25 @@ func run(argv []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 // writeReport renders a human-readable comparison summary.
 func writeReport(w io.Writer, base Baseline, res CompareResult, threshold float64) {
-	fmt.Fprintf(w, "benchcompare: %d baseline benchmarks, threshold ±%.1f%%\n", len(base.names()), threshold)
+	_, _ = fmt.Fprintf(w, "benchcompare: %d baseline benchmarks, threshold ±%.1f%%\n", len(base.names()), threshold)
 	for _, d := range res.Drifts {
 		tag := "ok     "
 		if d.Regression {
 			tag = "REGRESS"
 		}
-		fmt.Fprintf(w, "  %s %-40s %-10s %.4g → %.4g (%s)\n",
+		_, _ = fmt.Fprintf(w, "  %s %-40s %-10s %.4g → %.4g (%s)\n",
 			tag, d.Name, d.Metric, d.Baseline, d.Current, formatPct(d.DeltaPct))
 	}
 	for _, n := range res.Added {
-		fmt.Fprintf(w, "  new     %s (not in baseline)\n", n)
+		_, _ = fmt.Fprintf(w, "  new     %s (not in baseline)\n", n)
 	}
 	for _, n := range res.Missing {
-		fmt.Fprintf(w, "  missing %s (in baseline, not run)\n", n)
+		_, _ = fmt.Fprintf(w, "  missing %s (in baseline, not run)\n", n)
 	}
 	if res.HasRegression() {
-		fmt.Fprintln(w, "benchcompare: REGRESSION detected")
+		_, _ = fmt.Fprintln(w, "benchcompare: REGRESSION detected")
 	} else {
-		fmt.Fprintln(w, "benchcompare: OK")
+		_, _ = fmt.Fprintln(w, "benchcompare: OK")
 	}
 }
 

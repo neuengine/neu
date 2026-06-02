@@ -97,7 +97,7 @@ func (pluginCmd) Help() string { return "manage plugins: validate, list" }
 
 func (pluginCmd) Run(_ context.Context, args []string, out *Output) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: plugin <validate|list> ...")
+		return fmt.Errorf("usage: plugin <validate|list>")
 	}
 	switch args[0] {
 	case "validate":

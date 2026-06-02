@@ -32,18 +32,18 @@ func run(argv []string, stdout, stderr io.Writer) int {
 		return 2
 	}
 	if *min < 2 || *max < *min || *max > 26 {
-		fmt.Fprintf(stderr, "codegen/query: invalid arity range [%d, %d] (want 2 <= min <= max <= 26)\n", *min, *max)
+		_, _ = fmt.Fprintf(stderr, "codegen/query: invalid arity range [%d, %d] (want 2 <= min <= max <= 26)\n", *min, *max)
 		return 2
 	}
 
 	src, err := genSource(*min, *max)
 	if err != nil {
-		fmt.Fprintf(stderr, "codegen/query: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "codegen/query: %v\n", err)
 		return 1
 	}
 	if *out != "" {
 		if err := os.WriteFile(*out, src, 0o644); err != nil {
-			fmt.Fprintf(stderr, "codegen/query: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "codegen/query: %v\n", err)
 			return 2
 		}
 		return 0
@@ -94,7 +94,7 @@ func genArity(n int) string {
 	typeArgs := "[" + params + "]"        // "[A, B, C]"
 
 	var b strings.Builder
-	p := func(format string, a ...any) { fmt.Fprintf(&b, format, a...) }
+	p := func(format string, a ...any) { _, _ = fmt.Fprintf(&b, format, a...) }
 
 	// TupleN struct.
 	p("\n// Tuple%d is the value yielded by [Query%d.All].\n", n, n)

@@ -212,13 +212,9 @@ func TestProtocol_NoPackageInit(t *testing.T) {
 	// go/ast walk via source is the most reliable. Use go list -json to get
 	// source files and check for func init() presence.
 	cmd := exec.Command("go", "list", "-json", "github.com/neuengine/neu/pkg/protocol")
-	out, err := cmd.Output()
+	_, err := cmd.Output()
 	if err != nil {
 		t.Skipf("go list failed: %v", err)
-	}
-	// Quick text check — no need to parse the full JSON.
-	if bytes.Contains(out, []byte(`"TestGoFiles"`)) {
-		// present but that's test files
 	}
 	// A func init() in the package would show up in the source. Use go vet or
 	// a source grep as a simple guard here.

@@ -26,11 +26,11 @@ func run(argv []string, stdout, stderr io.Writer) int {
 
 	specs, err := scanSpecs(*specsDir)
 	if err != nil {
-		fmt.Fprintf(stderr, "releasenotes: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, "releasenotes: %v\n", err)
 		return 2
 	}
 	if len(specs) == 0 {
-		fmt.Fprintf(stderr, "releasenotes: no spec files found in %s\n", *specsDir)
+		_, _ = fmt.Fprintf(stderr, "releasenotes: no spec files found in %s\n", *specsDir)
 		return 2
 	}
 
@@ -43,12 +43,12 @@ func run(argv []string, stdout, stderr io.Writer) int {
 
 	if *outPath != "" {
 		if err := os.WriteFile(*outPath, []byte(output), 0o644); err != nil {
-			fmt.Fprintf(stderr, "releasenotes: %v\n", err)
+			_, _ = fmt.Fprintf(stderr, "releasenotes: %v\n", err)
 			return 2
 		}
 		return 0
 	}
-	fmt.Fprint(stdout, output)
+	_, _ = fmt.Fprint(stdout, output)
 	return 0
 }
 

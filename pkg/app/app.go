@@ -4,6 +4,7 @@ package app
 
 import (
 	"reflect"
+	"slices"
 
 	"github.com/neuengine/neu/internal/ecs/event"
 	"github.com/neuengine/neu/internal/ecs/scheduler"
@@ -52,6 +53,7 @@ type App struct {
 	executor   *scheduler.SequentialExecutor
 	registry   *pluginRegistry
 	subApps    map[string]*SubApp
+	lifecycle  []appface.FullPlugin // plugins implementing the full lifecycle
 	runner     RunnerFn
 	exitReader *event.EventReader[AppExit]
 	runMode    RunMode
@@ -111,12 +113,17 @@ func (a *App) InitResource(value any) appface.Builder {
 }
 
 // AddPlugin adds p to the app. Build is called immediately; duplicates ignored.
+// If p also implements appface.FullPlugin, it is enrolled for the Ready/Finish/
+// Cleanup lifecycle phases driven by Run.
 func (a *App) AddPlugin(p appface.Plugin) appface.Builder {
 	typeName := reflect.TypeOf(p).String()
 	if !a.registry.register(typeName) {
 		return a // already registered
 	}
 	p.Build(a)
+	if fp, ok := p.(appface.FullPlugin); ok {
+		a.lifecycle = append(a.lifecycle, fp)
+	}
 	return a
 }
 
@@ -171,15 +178,28 @@ func (a *App) Run() error {
 		}
 	}
 
-	if a.runMode == RunOnce {
-		if err := a.update(); err != nil {
-			return err
-		}
-		return a.exitErr()
+	// Warm-up: call Ready on every FullPlugin now that all Builds are done.
+	for _, fp := range a.lifecycle {
+		fp.Ready(a)
 	}
 
-	if err := a.runner(a); err != nil {
-		return err
+	var runErr error
+	if a.runMode == RunOnce {
+		runErr = a.update()
+	} else {
+		runErr = a.runner(a)
+	}
+
+	// Shutdown: drive Finish then Cleanup in reverse registration order.
+	for _, fp := range slices.Backward(a.lifecycle) {
+		fp.Finish(a)
+	}
+	for _, fp := range slices.Backward(a.lifecycle) {
+		fp.Cleanup(a)
+	}
+
+	if runErr != nil {
+		return runErr
 	}
 	return a.exitErr()
 }

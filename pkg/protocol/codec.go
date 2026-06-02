@@ -67,6 +67,16 @@ func Decode(r *bufio.Reader) (any, Kind, error) {
 		return unmarshalInto[GraphRuntimeError](line, peek.Type)
 	case KindGraphLiveUpdate:
 		return unmarshalInto[GraphLiveUpdate](line, peek.Type)
+	case KindPluginInit:
+		return unmarshalInto[PluginInit](line, peek.Type)
+	case KindPluginHello:
+		return unmarshalInto[PluginHello](line, peek.Type)
+	case KindPluginLifecycle:
+		return unmarshalInto[PluginLifecycle](line, peek.Type)
+	case KindPluginLifecycleDone:
+		return unmarshalInto[PluginLifecycleDone](line, peek.Type)
+	case KindPluginError:
+		return unmarshalInto[PluginError](line, peek.Type)
 	default:
 		return nil, peek.Type, ErrUnknownKind
 	}

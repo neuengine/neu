@@ -100,6 +100,11 @@ into the App framework's schedule, event bus, plugin lifecycle, and World (the d
 "glue" noted across the Done tasks below). Grouped + dependency-ordered for
 `/magic.run`. **Group 1 started 2026-06-02** — T-6C04 diagnostic built-in metrics landed (the App-integration `Plugin`+resource+system pattern is now proven headlessly); remaining G1/G2/G3/G4 follow the build order below.
 
+### Group 0 — App-loop foundations (enable the event-emitting systems below)
+
+- [x] [T-6X01] Event-bus loop integration: `EventsPlugin` (`internal/ecs/event`) — a `First`-schedule `ecs.SwapEvents` system runs `SwapAll`+`CleanupAll` each frame, added to `DefaultPlugins` first. *(**Done 2026-06-02** — without it the double-buffered buses never rotate in an App loop, so any system's events stay unreadable. Unblocks window `PlatformEvent` emission [T-6B03], AppExit-as-event, and ai SSE/event streaming [O03]. Tested: 2-frame retention/rotation + empty-registry no-op.)*
+- [ ] [T-6X02] `AppExit` a system can raise (none exists; `App.Exit()` is *App-only*). Place in `pkg/app` (no cycle — pkg/app doesn't import window) as an event/resource the runner drains after `update()`. **Blocks T-6B03's exit-on-close.**
+
 ### Group 1 — Engine-core ECS-system glue (independent; each ← its Stable subsystem + the App schedule)
 
 - [ ] [T-6A03] Definition hot-reload: `AssetEvent[Definition]::Modified` → despawn + re-instantiate system (needs asset framework + Commands). *(task exists below, deferred)*

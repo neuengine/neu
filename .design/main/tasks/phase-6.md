@@ -103,7 +103,7 @@ into the App framework's schedule, event bus, plugin lifecycle, and World (the d
 ### Group 0 — App-loop foundations (enable the event-emitting systems below)
 
 - [x] [T-6X01] Event-bus loop integration: `EventsPlugin` (`internal/ecs/event`) — a `First`-schedule `ecs.SwapEvents` system runs `SwapAll`+`CleanupAll` each frame, added to `DefaultPlugins` first. *(**Done 2026-06-02** — without it the double-buffered buses never rotate in an App loop, so any system's events stay unreadable. Unblocks window `PlatformEvent` emission [T-6B03], AppExit-as-event, and ai SSE/event streaming [O03]. Tested: 2-frame retention/rotation + empty-registry no-op.)*
-- [ ] [T-6X02] `AppExit` a system can raise (none exists; `App.Exit()` is *App-only*). Place in `pkg/app` (no cycle — pkg/app doesn't import window) as an event/resource the runner drains after `update()`. **Blocks T-6B03's exit-on-close.**
+- [x] [T-6X02] `AppExit` a system can raise (`App.Exit()` is *App-only*; a system only gets `*world.World`). `pkg/app/exit.go`: `AppExit{Code uint8}` event + `RequestExit(w, code)` helper (no-op off-loop) + `ExitError` (non-zero code → `App.Run` returns it); the runner drains it at the tail of `update()` (alloc-free `IsEmpty` gate, C-004) into the same `shouldExit` flag, plus a public `ShouldExit()` for custom runners. *(**Done 2026-06-02** — bus registered in `NewApp`; same-frame delivery via the current-buffer read; **87.6% pkg cov**, exit.go 100%. Unblocks T-6B03's exit-on-close: `internal/window` → `pkg/app` is acyclic [pkg/app doesn't import window].)*
 
 ### Group 1 — Engine-core ECS-system glue (independent; each ← its Stable subsystem + the App schedule)
 

@@ -5,6 +5,7 @@ package app
 import (
 	"reflect"
 
+	"github.com/neuengine/neu/internal/ecs/event"
 	"github.com/neuengine/neu/internal/ecs/scheduler"
 	"github.com/neuengine/neu/internal/ecs/world"
 	"github.com/neuengine/neu/pkg/app/appface"
@@ -52,8 +53,10 @@ type App struct {
 	registry   *pluginRegistry
 	subApps    map[string]*SubApp
 	runner     RunnerFn
+	exitReader *event.EventReader[AppExit]
 	runMode    RunMode
 	shouldExit bool
+	exitCode   uint8
 }
 
 // NewApp creates an App with an empty World and default schedules.
@@ -66,6 +69,9 @@ func NewApp() *App {
 		subApps:   make(map[string]*SubApp),
 	}
 	a.runner = defaultRunner
+	// Register the AppExit bus up-front so any system can RequestExit on this
+	// World, regardless of whether the loop runs via Run or a custom runner.
+	event.RegisterEvent[AppExit](a.w)
 	return a
 }
 
@@ -134,8 +140,14 @@ func (a *App) SetRunMode(mode RunMode) *App {
 	return a
 }
 
-// Exit requests the main loop to stop after the current frame.
+// Exit requests the main loop to stop after the current frame. It is the
+// App-level counterpart to a system raising [AppExit] via [RequestExit]; both
+// converge on the same shutdown flag.
 func (a *App) Exit() { a.shouldExit = true }
+
+// ShouldExit reports whether a stop has been requested (via [App.Exit] or a
+// system-raised [AppExit]). Custom runners loop on its negation.
+func (a *App) ShouldExit() bool { return a.shouldExit }
 
 // SubApp returns the SubApp registered under label, or nil.
 func (a *App) SubApp(label string) *SubApp { return a.subApps[label] }
@@ -160,10 +172,16 @@ func (a *App) Run() error {
 	}
 
 	if a.runMode == RunOnce {
-		return a.update()
+		if err := a.update(); err != nil {
+			return err
+		}
+		return a.exitErr()
 	}
 
-	return a.runner(a)
+	if err := a.runner(a); err != nil {
+		return err
+	}
+	return a.exitErr()
 }
 
 // Update runs one frame: all per-frame schedules in order, then all SubApps.
@@ -186,6 +204,7 @@ func (a *App) update() error {
 		}
 	}
 	a.w.ApplyDeferred()
+	a.drainExitEvents()
 	return nil
 }
 

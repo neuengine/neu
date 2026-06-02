@@ -91,6 +91,52 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 - Track N → Phase 2 App Framework (Plugin trait re-export from `pkg/plugin/`), Phase 2 Multi-Repo Architecture (pkg/ boundary contract).
 - Track P → Phase 1 Type Registry (auto-registration of node definitions), Phase 1 Event System.
 
+## App-Integration Cohort (next activation — decomposed 2026-06-01, PAUSED by user)
+
+The standalone P6 surface is complete (engine-core 12 Stable; tooling E/F/I/J/L/M done;
+editor/graph cores N/H/O/P + the P04 editor-bridge **contract** done; governance Stable).
+The **remainder is one cohesive App-integration pass** — concrete implementations wired
+into the App framework's schedule, event bus, plugin lifecycle, and World (the deferred
+"glue" noted across the Done tasks below). Grouped + dependency-ordered for
+`/magic.run`. **Group 1 started 2026-06-02** — T-6C04 diagnostic built-in metrics landed (the App-integration `Plugin`+resource+system pattern is now proven headlessly); remaining G1/G2/G3/G4 follow the build order below.
+
+### Group 1 — Engine-core ECS-system glue (independent; each ← its Stable subsystem + the App schedule)
+
+- [ ] [T-6A03] Definition hot-reload: `AssetEvent[Definition]::Modified` → despawn + re-instantiate system (needs asset framework + Commands). *(task exists below, deferred)*
+- [ ] [T-6B03] Window-sync system: `DiffWindow` → backend apply + `PollEvents` → `PlatformEvent`s, in `PreUpdate` (needs Commands + Query + change-detection). — `internal/window/`
+- [~] [T-6C04] Diagnostic built-in metrics (FPS / frame-time / entity-count) + debug overlay rendered via UI text (needs Track D + frame timing). — `internal/diag/` *(**built-in metrics Done 2026-06-02** — `internal/diag/builtins.go` `DiagnosticsPlugin`: registers fps/frame_time_ms/entity_count + a `Last`-schedule collection system reading `gametime.RealTime` delta + summing archetype rows, INV-1 zero-cost gate; **96.7% cov**, headless-tested via a fake `appface.Builder`. **Overlay deferred** — needs Track D ui text rendering [x/image/font ADR].)*
+- [ ] [T-6D04] UI interaction system in `PreUpdate`: hit-test + focus + `MouseFilter` wired into the schedule + `FontAtlas` glyph upload (gated on the `x/image/font` ADR for a real rasterizer). — `internal/ui/`
+
+### Group 2 — Plugin distribution App-integration (Track N; ← Phase 2 App Framework)
+
+- [ ] [T-6N03·rem] In-process loader remainder: discovery (4 sources) + capability-prompt persistence + in-process Build/Ready/Finish lifecycle wiring. — `internal/plugin/`
+- [ ] [T-6N04] OOP loader: `internal/plugin/oop/` subprocess spawn (cwd-restricted) + `pkg/protocol` handshake (reuses Track H `StdioConnection`) + host-side proxy `Plugin` + failure isolation (INV-8). *(← Track H transports [done] + `pkg/protocol` [done])*
+
+### Group 3 — AI assistant/API App-integration (Tracks H/O; ← N lifecycle + Phase 1 event bus + Track A)
+
+- [ ] [T-6H02·rem] Transports: websocket/http (ws needs a dep ADR) + `ContextProvider` EditorContext assembly + editor UI panels (editor-repo).
+- [ ] [T-6O01·rem / T-6O03·rem] Lifecycle (`New`/Build/Ready/Finish + ServiceRegistry) + SSE streaming + 8-method dispatch + token/cost diagnostics + in/out-of-process parity harness; Anthropic/Gemini/local providers. *(Skeptic: split — this is 3–4 tasks)*
+
+### Group 4 — Visual-graph editor wiring (Track P; ← App schedule + visualgraph interpreter + protocol graph IPC)
+
+- [ ] [T-6P04·rem] Concrete `GraphEditorPlugin`/`NodeRegistryQuery`/`GraphDebugger` impls (map `pkg/visualgraph` → the editor-local DTOs) + `graphDebugSyncSystem` (`PostUpdate`, editor-attached) emitting the `pkg/protocol` graph IPC events.
+
+### Validation
+
+- [ ] [T-6T07] App-integration validation: an `examples/editor/` (or integration test) wiring window + ui + diagnostics + definition hot-reload end-to-end, plus an in-process plugin load and a graph-debug round-trip over `pkg/protocol`. Hash-stable where deterministic (C29-style).
+
+**Build order / critical path:**
+`{Group 1 engine-core glue ‖ T-6N03·rem}` (foundation — depend only on Stable subsystems + the App schedule) → `T-6N04` (← H transports) → `Group 3 O/H wiring` (← N lifecycle + event bus + H dispatch) → `T-6P04·rem` (← schedule + graph IPC) → `T-6T07`.
+
+**Planning Skeptic (C24):**
+
+- *Optimism:* Group 3 (`O01/O03·rem`) is under-sized — SSE + 8-method dispatch + lifecycle + multi-provider is realistically 3–4 tasks; expect a split on activation. UI glue (T-6D04) folds hit-test + focus + font-upload into one line — likely 2.
+- *Shared bottleneck:* all four groups write into the **App schedule (`AddSystems`/`AddPlugins`) + plugin lifecycle** — serialize schedule-touching tasks (Manager role) to avoid churn; that surface is the shared resource, not the per-package files.
+- *External-dep gates (C-003):* T-6D04 needs the `x/image/font` ADR (real glyph rasterizer); T-6H02·rem needs a websocket dep ADR. Both must be resolved or explicitly stubbed before those tasks close.
+- *Cascade:* `T-6P04·rem` + `T-6T07` sit at the tail — if N04/O-wiring slips, the end-to-end validation **and** the five held-spec promotions slip with them.
+
+**Promotion outcome:** completing this cohort + `T-6T07` unblocks promoting (or asset-formats-style narrowing) the **5 held editor-feature specs** (cli-tooling, plugin-distribution, ai-assistant-system, ai-api-plugin, visual-graph-editor-bridge) + their L1 parents — the last Draft→Stable batch of Phase 6.
+
 ## Atomic Checklist
 
 ### Track A — Definition System

@@ -91,36 +91,47 @@ Per user direction, **only the engine-core tracks are active this pass**: **A** 
 - Track N → Phase 2 App Framework (Plugin trait re-export from `pkg/plugin/`), Phase 2 Multi-Repo Architecture (pkg/ boundary contract).
 - Track P → Phase 1 Type Registry (auto-registration of node definitions), Phase 1 Event System.
 
-## App-Integration Cohort (next activation — decomposed 2026-06-01, PAUSED by user)
+## App-Integration Cohort (decomposed 2026-06-01 · re-decomposed 2026-06-02)
 
 The standalone P6 surface is complete (engine-core 12 Stable; tooling E/F/I/J/L/M done;
 editor/graph cores N/H/O/P + the P04 editor-bridge **contract** done; governance Stable).
 The **remainder is one cohesive App-integration pass** — concrete implementations wired
 into the App framework's schedule, event bus, plugin lifecycle, and World (the deferred
-"glue" noted across the Done tasks below). Grouped + dependency-ordered for
-`/magic.run`. **Group 1 started 2026-06-02** — T-6C04 diagnostic built-in metrics landed (the App-integration `Plugin`+resource+system pattern is now proven headlessly); remaining G1/G2/G3/G4 follow the build order below.
+"glue" noted across the Done tasks below). Grouped + dependency-ordered for `/magic.run`.
 
-### Group 0 — App-loop foundations (enable the event-emitting systems below)
+**Re-decomposition note (2026-06-02):** executing Group 0/1 surfaced two prerequisites the
+original plan silently folded into their feature tasks — now hoisted into Group 0 as explicit
+gate tasks: **T-6X03** (an asset-event ECS bridge that T-6A03 hot-reload requires — the asset
+framework has no event mechanism yet) and **T-6X04** (the `x/image/font` C-003 third-party-dep
+ADR that T-6D04 ui-interaction + the T-6C04 overlay require — a user decision). Group 3 is also
+split per the prior Skeptic flag. **Done so far:** T-6X01 + T-6X02 (Group 0 loop primitives),
+T-6C04 metrics, T-6B03 window-sync.
+
+### Group 0 — App-loop & framework foundations (shared enablers; build first)
 
 - [x] [T-6X01] Event-bus loop integration: `EventsPlugin` (`internal/ecs/event`) — a `First`-schedule `ecs.SwapEvents` system runs `SwapAll`+`CleanupAll` each frame, added to `DefaultPlugins` first. *(**Done 2026-06-02** — without it the double-buffered buses never rotate in an App loop, so any system's events stay unreadable. Unblocks window `PlatformEvent` emission [T-6B03], AppExit-as-event, and ai SSE/event streaming [O03]. Tested: 2-frame retention/rotation + empty-registry no-op.)*
 - [x] [T-6X02] `AppExit` a system can raise (`App.Exit()` is *App-only*; a system only gets `*world.World`). `pkg/app/exit.go`: `AppExit{Code uint8}` event + `RequestExit(w, code)` helper (no-op off-loop) + `ExitError` (non-zero code → `App.Run` returns it); the runner drains it at the tail of `update()` (alloc-free `IsEmpty` gate, C-004) into the same `shouldExit` flag, plus a public `ShouldExit()` for custom runners. *(**Done 2026-06-02** — bus registered in `NewApp`; same-frame delivery via the current-buffer read; **87.6% pkg cov**, exit.go 100%. Unblocks T-6B03's exit-on-close: `internal/window` → `pkg/app` is acyclic [pkg/app doesn't import window].)*
+- [x] [T-6X03] **Asset-event ECS bridge** (NEW 2026-06-02 — prerequisite for T-6A03). *(**Done 2026-06-02.**)* `pkg/asset/events.go`: `AssetEvent[A]{Kind: Created/Modified/Removed; ID AssetID; Path string}` + an ECS-free reload-emit mechanism — `WatchReloads[A](s, emit)` registers a typed emitter + a path-keyed dispatcher; `Load` now records a `path → (reflect.Type, AssetID)` map (`AssetServer` core extension — previously only `inflight` path→loading); `Reload[A]` fires `AssetEvent[A]{Modified}` synchronously; `dispatchReload(path)` re-enters the generic `Reload[A]` from a runtime-typed trigger. `watch_dev.go` `NewReloadWatcher` (//go:build dev) wires the existing stdlib `fileWatcher.onReload`→`dispatchReload`. `internal/asset/bridge.go` `WatchAssetType[A](s, w)` is the **ECS bridge** — registers the event + sends each `AssetEvent[A]` on the world bus (rides T-6X01's per-frame swap). Stdlib-only (C-003); the event path works in all builds, auto-watch is dev-only. **pkg/asset 94.8% / internal/asset 100% cov** (incl. a dev mtime→event end-to-end test); 71 pkgs green. **Unblocks T-6A03.** *Skeptic was right — the path→ID piece is a genuine `AssetServer` core change, kept additive (`Reload` emits only when a watcher is registered → existing callers unchanged).*
+- [ ] [T-6X04] **ADR gate: `x/image/font` (C-003 — USER DECISION)** (NEW 2026-06-02 — prerequisite for T-6D04 + the T-6C04 overlay). A real glyph rasterizer needs TTF rasterization; the stdlib has none. **Decide** (user, C-003): (a) accept `golang.org/x/image/font` + `golang.org/x/image` as the engine's **first third-party dependency** (record the ADR + justification in `RULES.md`/an ADR doc), (b) ship a stdlib-only bitmap-font fallback, or (c) defer UI text indefinitely. **Blocks T-6D04 + the T-6C04 debug overlay.** Author the ADR via `/magic.spec`/`/magic.rule` once decided. *(Decision artifact, not a code task — sits as a gate.)*
 
-### Group 1 — Engine-core ECS-system glue (independent; each ← its Stable subsystem + the App schedule)
+### Group 1 — Engine-core ECS-system glue (each ← its Stable subsystem + the App schedule + its Group-0 enabler)
 
-- [ ] [T-6A03] Definition hot-reload: `AssetEvent[Definition]::Modified` → despawn + re-instantiate system (needs asset framework + Commands). *(task exists below, deferred)*
+- [ ] [T-6A03] Definition hot-reload (← **T-6X03** asset-event bridge): a system reads `EventReader[AssetEvent[Definition]]` and, on `Modified`, despawns the definition's previously-instantiated entities and re-instantiates through the `CommandSink`. Needs a per-`DefinitionInstance` **spawned-entity registry** (despawn must know *what* to despawn) + Commands. — `internal/definition/` (new) / `pkg/definition` system. *Skeptic: the instance→entities registry + the reload system are likely 2 sub-tasks. Now correctly gated on T-6X03 (previously assumed an asset-event mechanism that did not exist).*
 - [x] [T-6B03] Window-sync system: `DiffWindow` → backend apply + `PollEvents` → `PlatformEvent`s, in `PreUpdate`. — `internal/window/sync.go` `SyncPlugin` + `windowRuntime` resource. *(**Done 2026-06-02** — `PreUpdate` `window.Sync` system: create/apply(diff)/destroy each `Window` entity against a last-applied snapshot [INV-4: unchanged ⇒ empty diff ⇒ no `ApplyChanges`], poll the backend → mirror each `PlatformEvent` onto the bus + fold focus/size/move/scale back into the component, and translate a `CausesAppExit` close into `app.RequestExit` per `ExitCondition`. Opt-in (not in `DefaultPlugins` — CI stays window-free); default headless backend. `internal/window`→`pkg/app` is acyclic. **90.4% pkg cov** [sync.go ~100%]; full App-loop exit test green.)*
-- [~] [T-6C04] Diagnostic built-in metrics (FPS / frame-time / entity-count) + debug overlay rendered via UI text (needs Track D + frame timing). — `internal/diag/` *(**built-in metrics Done 2026-06-02** — `internal/diag/builtins.go` `DiagnosticsPlugin`: registers fps/frame_time_ms/entity_count + a `Last`-schedule collection system reading `gametime.RealTime` delta + summing archetype rows, INV-1 zero-cost gate; **96.7% cov**, headless-tested via a fake `appface.Builder`. **Overlay deferred** — needs Track D ui text rendering [x/image/font ADR].)*
-- [ ] [T-6D04] UI interaction system in `PreUpdate`: hit-test + focus + `MouseFilter` wired into the schedule + `FontAtlas` glyph upload (gated on the `x/image/font` ADR for a real rasterizer). — `internal/ui/`
+- [~] [T-6C04] Diagnostic built-in metrics (FPS / frame-time / entity-count) + debug overlay rendered via UI text. — `internal/diag/` *(**built-in metrics Done 2026-06-02** — `internal/diag/builtins.go` `DiagnosticsPlugin`: registers fps/frame_time_ms/entity_count + a `Last`-schedule collection system reading `gametime.RealTime` delta + summing archetype rows, INV-1 zero-cost gate; **96.7% cov**, headless-tested via a fake `appface.Builder`. **Overlay deferred behind T-6X04** — the UI-text path needs a real rasterizer.)*
+- [ ] [T-6D04] UI interaction (← **T-6X04** font ADR): hit-test + focus + `MouseFilter` in `PreUpdate` + `FontAtlas` glyph upload. — `internal/ui/`. *Skeptic: realistically 2 sub-tasks — the interaction system (no font dep, can proceed) ‖ the font-atlas glyph upload (gated on T-6X04). The interaction half is **not** actually font-gated and could land before the ADR resolves.*
 
 ### Group 2 — Plugin distribution App-integration (Track N; ← Phase 2 App Framework)
 
 - [ ] [T-6N03·rem] In-process loader remainder: discovery (4 sources) + capability-prompt persistence + in-process Build/Ready/Finish lifecycle wiring. — `internal/plugin/`
 - [ ] [T-6N04] OOP loader: `internal/plugin/oop/` subprocess spawn (cwd-restricted) + `pkg/protocol` handshake (reuses Track H `StdioConnection`) + host-side proxy `Plugin` + failure isolation (INV-8). *(← Track H transports [done] + `pkg/protocol` [done])*
 
-### Group 3 — AI assistant/API App-integration (Tracks H/O; ← N lifecycle + Phase 1 event bus + Track A)
+### Group 3 — AI assistant/API App-integration (SPLIT 2026-06-02 per Skeptic; ← N lifecycle + event bus + Track A)
 
-- [ ] [T-6H02·rem] Transports: websocket/http (ws needs a dep ADR) + `ContextProvider` EditorContext assembly + editor UI panels (editor-repo).
-- [ ] [T-6O01·rem / T-6O03·rem] Lifecycle (`New`/Build/Ready/Finish + ServiceRegistry) + SSE streaming + 8-method dispatch + token/cost diagnostics + in/out-of-process parity harness; Anthropic/Gemini/local providers. *(Skeptic: split — this is 3–4 tasks)*
+- [ ] [T-6H02·rem] Transports + context: `http` transport (stdlib `net/http` — no ADR) + `ContextProvider` EditorContext assembly. The **websocket** transport is gated on a separate **ws-dep ADR** (C-003) — ship http first, ws behind that gate; editor UI panels live in the editor repo. — `pkg/assistant/`
+- [ ] [T-6O01·rem] AI-API plugin lifecycle: `New`/Build/Ready/Finish + `ServiceRegistry` registration (← T-6N03·rem in-process lifecycle). — `pkg/plugins/aiapi/`
+- [ ] [T-6O03·rem] Streaming + dispatch: SSE streaming (← T-6X01 event bus) + the 8-method assistant dispatch + token/cost diagnostics (→ `pkg/diag`). (← T-6O01·rem)
+- [ ] [T-6O05·rem] Providers + parity: Anthropic/Gemini/local providers + the in/out-of-process parity harness (the OOP half ← T-6N04). — `pkg/plugins/aiapi/`
 
 ### Group 4 — Visual-graph editor wiring (Track P; ← App schedule + visualgraph interpreter + protocol graph IPC)
 
@@ -130,15 +141,23 @@ into the App framework's schedule, event bus, plugin lifecycle, and World (the d
 
 - [ ] [T-6T07] App-integration validation: an `examples/editor/` (or integration test) wiring window + ui + diagnostics + definition hot-reload end-to-end, plus an in-process plugin load and a graph-debug round-trip over `pkg/protocol`. Hash-stable where deterministic (C29-style).
 
-**Build order / critical path:**
-`{Group 1 engine-core glue ‖ T-6N03·rem}` (foundation — depend only on Stable subsystems + the App schedule) → `T-6N04` (← H transports) → `Group 3 O/H wiring` (← N lifecycle + event bus + H dispatch) → `T-6P04·rem` (← schedule + graph IPC) → `T-6T07`.
+**Revised build order / critical path (2026-06-02):** four parallel fronts, converging tail:
 
-**Planning Skeptic (C24):**
+- `T-6X03 → T-6A03` (asset-event bridge → definition hot-reload)
+- `T-6X04 (USER) → T-6D04 font-upload + T-6C04 overlay` — T-6D04's **interaction half is NOT font-gated** and can land first
+- `T-6N03·rem → T-6N04` (in-process lifecycle → OOP loader)
+- `T-6H02·rem` (http transport + ContextProvider; ws behind its ADR)
 
-- *Optimism:* Group 3 (`O01/O03·rem`) is under-sized — SSE + 8-method dispatch + lifecycle + multi-provider is realistically 3–4 tasks; expect a split on activation. UI glue (T-6D04) folds hit-test + focus + font-upload into one line — likely 2.
-- *Shared bottleneck:* all four groups write into the **App schedule (`AddSystems`/`AddPlugins`) + plugin lifecycle** — serialize schedule-touching tasks (Manager role) to avoid churn; that surface is the shared resource, not the per-package files.
-- *External-dep gates (C-003):* T-6D04 needs the `x/image/font` ADR (real glyph rasterizer); T-6H02·rem needs a websocket dep ADR. Both must be resolved or explicitly stubbed before those tasks close.
-- *Cascade:* `T-6P04·rem` + `T-6T07` sit at the tail — if N04/O-wiring slips, the end-to-end validation **and** the five held-spec promotions slip with them.
+converging: `T-6O01·rem → T-6O03·rem → T-6O05·rem` (O05 also ← T-6N04) → `T-6P04·rem` → `T-6T07`.
+
+**Two decision/ADR gates sit at the front — both user/governance, not code:** **T-6X04** (`x/image/font`, blocks UI text + the diag overlay) and the **ws-dep ADR** (blocks H02's ws transport). Everything else is unblocked.
+
+**Planning Skeptic (C24) — revised 2026-06-02:**
+
+- *Resolved since last pass:* G3 split into 4 (H02·rem, O01·rem, O03·rem, O05·rem); both C-003 gates hoisted to explicit gate tasks (T-6X04 + the ws ADR) rather than inline footnotes; T-6D04 recognized as 2 sub-tasks with the interaction half un-gated.
+- *New optimism risk:* the two new foundations hide work — **T-6X03** carries an `AssetServer` path→ID **core** extension (not just glue), and **T-6A03** hides a `DefinitionInstance → spawned-entities` registry (despawn must know what to remove). Each is realistically 2 sub-tasks.
+- *Shared bottleneck (unchanged):* the App schedule + plugin lifecycle is the cross-group write surface — serialize schedule-touching tasks (Manager role).
+- *Cascade:* T-6X03 now sits on the A03 critical path; `T-6O05·rem ← T-6N04`, so an N04 slip still cascades into O05 + T-6T07 + the five held-spec promotions.
 
 **Promotion outcome:** completing this cohort + `T-6T07` unblocks promoting (or asset-formats-style narrowing) the **5 held editor-feature specs** (cli-tooling, plugin-distribution, ai-assistant-system, ai-api-plugin, visual-graph-editor-bridge) + their L1 parents — the last Draft→Stable batch of Phase 6.
 

@@ -22,6 +22,15 @@ type fileWatcher struct {
 	done     chan struct{}
 }
 
+// NewReloadWatcher starts a dev-mode file watcher that re-enters [Reload] — and
+// so emits an AssetEvent[A] for any type registered via [WatchReloads] — each
+// time a watched file's mtime changes. Register the paths to watch with the
+// returned watcher's Watch method (they must match the keys recorded by Load,
+// i.e. the paths passed to Load); call Stop to shut it down. Dev builds only.
+func (s *AssetServer) NewReloadWatcher(fsys fs.FS, interval time.Duration) *fileWatcher {
+	return newFileWatcher(fsys, interval, s.dispatchReload)
+}
+
 // newFileWatcher returns a watcher that polls at the given interval.
 // onReload is called (on the poll goroutine) for each changed path.
 func newFileWatcher(fsys fs.FS, interval time.Duration, onReload func(string)) *fileWatcher {

@@ -23,17 +23,29 @@ type AssetServer struct {
 	loaders  *loaderRegistry
 	stores   map[reflect.Type]any
 	inflight map[string]*inFlight
-	mu       sync.Mutex
+	// loaded maps each loaded path to the type + current slot id last loaded
+	// from it, so a path-keyed reload (the dev file watcher) resolves to the
+	// correct typed Reload + AssetEvent.
+	loaded map[string]loadedRef
+	// reloadEmitters / reloadDispatch are keyed by asset type and populated by
+	// WatchReloads: the emitter turns a reload into a typed AssetEvent[A]; the
+	// dispatcher re-enters the generic Reload[A] from a runtime-typed trigger.
+	reloadEmitters map[reflect.Type]func(path string, id AssetID)
+	reloadDispatch map[reflect.Type]func(path string)
+	mu             sync.Mutex
 }
 
 // NewAssetServer returns a server backed by vfs and the IO pool.
 func NewAssetServer(vfs *VFS, io *task.IOPool) *AssetServer {
 	return &AssetServer{
-		vfs:      vfs,
-		io:       io,
-		loaders:  newLoaderRegistry(),
-		stores:   make(map[reflect.Type]any),
-		inflight: make(map[string]*inFlight),
+		vfs:            vfs,
+		io:             io,
+		loaders:        newLoaderRegistry(),
+		stores:         make(map[reflect.Type]any),
+		inflight:       make(map[string]*inFlight),
+		loaded:         make(map[string]loadedRef),
+		reloadEmitters: make(map[reflect.Type]func(string, AssetID)),
+		reloadDispatch: make(map[reflect.Type]func(string)),
 	}
 }
 
@@ -82,6 +94,9 @@ func LoadWithSettings[A any, S any](s *AssetServer, path string, settings S) Han
 	h, slot := store.addLoading()
 	entry := &inFlight{r: h.r, id: h.id}
 	s.inflight[path] = entry
+	// Record the path→(type,id) association so a path-keyed reload can resolve
+	// the typed Reload + emit a typed AssetEvent.
+	s.loaded[path] = loadedRef{typ: reflect.TypeFor[A](), id: h.id}
 	s.mu.Unlock()
 
 	// Submit decode to the IOPool — never blocks the calling goroutine.
@@ -129,10 +144,19 @@ func GetLoadState[A any](s *AssetServer, h Handle[A]) LoadState {
 	return store.GetLoadState(h.id)
 }
 
-// Reload marks the slot as Loading and re-submits the decode task, allowing
-// hot-reload of both Loaded and Failed assets.
+// Reload re-submits the decode task for path, allowing hot-reload of both
+// Loaded and Failed assets, and emits an AssetEvent[A]{Modified} when type A was
+// registered via WatchReloads. The event fires synchronously (it does not wait
+// for the async decode to finish); consumers key on the stable Path.
 func Reload[A any](s *AssetServer, path string) Handle[A] {
-	return Load[A](s, path)
+	h := Load[A](s, path)
+	s.mu.Lock()
+	emit := s.reloadEmitters[reflect.TypeFor[A]()]
+	s.mu.Unlock()
+	if emit != nil {
+		emit(path, h.id)
+	}
+	return h
 }
 
 // Unload explicitly removes the slot regardless of its refcount. Callers

@@ -15,11 +15,11 @@ type EngineError interface {
 
 // engineError is the sole built-in EngineError implementation.
 type engineError struct {
+	cause error
+	desc  Descriptor
 	code  Code
 	args  []any
-	cause error      // wrap chain target; nil for a root error
-	trace []uintptr  // populated only in debug builds (INV trace)
-	desc  Descriptor // resolved from the registry at construction; zero if unregistered
+	trace []uintptr
 }
 
 // New builds an EngineError for a registered code. args feed the localized

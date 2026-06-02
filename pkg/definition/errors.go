@@ -20,8 +20,8 @@ func (e ErrDefinitionCycle) Error() string {
 // ErrSchemaInvalid is returned for a structurally malformed definition (bad
 // JSON, missing/duplicate root kind). Err wraps the underlying cause if any.
 type ErrSchemaInvalid struct {
-	Reason string
 	Err    error
+	Reason string
 }
 
 func (e ErrSchemaInvalid) Error() string {

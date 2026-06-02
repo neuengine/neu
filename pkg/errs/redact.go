@@ -10,9 +10,9 @@ import (
 // reaches a log or transport. It is used by API-key-handling plugins (e.g. the
 // AI API plugin) to keep credentials out of error messages and diagnostics.
 type Redactor struct {
-	mu      sync.RWMutex
-	secrets []string
 	mask    string
+	secrets []string
+	mu      sync.RWMutex
 }
 
 // NewRedactor returns a Redactor using the given mask ("" defaults to "***").

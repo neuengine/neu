@@ -21,8 +21,8 @@ import (
 
 // record is one registered plugin's manager state.
 type record struct {
-	manifest pkgplugin.Manifest
 	granted  pkgplugin.CapabilitySet
+	manifest pkgplugin.Manifest
 	state    pkgplugin.State
 }
 
@@ -30,9 +30,9 @@ type record struct {
 // ID uniqueness. It is the engine resource that the loaders and the plugin
 // manager UI read.
 type Manager struct {
-	mu       sync.RWMutex
 	registry map[pkgplugin.PluginID]*record
 	engine   pkgplugin.Version
+	mu       sync.RWMutex
 }
 
 // NewManager returns a manager that gates plugins against the running engine

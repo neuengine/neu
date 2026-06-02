@@ -6,12 +6,12 @@ import "encoding/json"
 // "Text", "Button", ...); Style is a flat property map mirroring the ui.Style
 // fields; Children nest to form the ChildOf hierarchy.
 type UINode struct {
+	Style    map[string]any `json:"style,omitempty"`
+	OnClick  *Action        `json:"on_click,omitempty"`
 	Type     string         `json:"type"`
 	ID       string         `json:"id,omitempty"`
-	Value    string         `json:"value,omitempty"` // text content
-	Style    map[string]any `json:"style,omitempty"`
+	Value    string         `json:"value,omitempty"`
 	Children []UINode       `json:"children,omitempty"`
-	OnClick  *Action        `json:"on_click,omitempty"`
 }
 
 // UIDef is a ui definition's content: a single root node tree.
@@ -22,10 +22,10 @@ type UIDef struct {
 // SceneEntity is one entity in a scene definition: named, with a component map
 // (type name → value) and nested children.
 type SceneEntity struct {
-	Name       string                    `json:"name"`
 	Components map[string]map[string]any `json:"components"`
-	Children   []SceneEntity             `json:"children,omitempty"`
+	Name       string                    `json:"name"`
 	Template   string                    `json:"template,omitempty"`
+	Children   []SceneEntity             `json:"children,omitempty"`
 }
 
 // SceneDef is a scene definition's content: a list of root entities.
@@ -44,16 +44,16 @@ type FlowStateDef struct {
 	UI          string           `json:"ui,omitempty"`
 	Scene       string           `json:"scene,omitempty"`
 	Systems     []string         `json:"systems,omitempty"`
-	Overlay     bool             `json:"overlay,omitempty"`
 	OnEnter     []Action         `json:"on_enter,omitempty"`
 	OnExit      []Action         `json:"on_exit,omitempty"`
 	Transitions []FlowTransition `json:"transitions,omitempty"`
+	Overlay     bool             `json:"overlay,omitempty"`
 }
 
 // FlowDef is a flow definition's content: an initial state plus a state graph.
 type FlowDef struct {
-	InitialState string                  `json:"initial_state"`
 	States       map[string]FlowStateDef `json:"states"`
+	InitialState string                  `json:"initial_state"`
 }
 
 // TemplateDef is a reusable entity blueprint (prefab). It is referenced by other
@@ -67,8 +67,8 @@ type TemplateDef struct {
 // Action is a declarative verb connecting data to engine behavior (L1 §4.6).
 // The "action" key names the verb; all other keys become Params.
 type Action struct {
-	Action string
 	Params map[string]any
+	Action string
 }
 
 // UnmarshalJSON captures the "action" verb and folds the remaining keys into

@@ -17,9 +17,9 @@ type catalogEntry struct {
 // fs.FS (e.g. "errors.en.json"). A missing key degrades to the code's
 // registered Descriptor.Template, then to the bare code — never empty.
 type Catalog struct {
-	mu        sync.RWMutex
-	lang      string
 	templates map[Code]string
+	lang      string
+	mu        sync.RWMutex
 }
 
 // NewCatalog returns an empty catalog. Until Load succeeds it serves the

@@ -118,11 +118,11 @@ func formatPct(p float64) string {
 // delta (jump from a zero baseline) serialises as null instead of failing the
 // encoder (encoding/json rejects Inf/NaN).
 type driftJSON struct {
+	DeltaPct   *float64 `json:"delta_pct"`
 	Name       string   `json:"name"`
 	Metric     string   `json:"metric"`
 	Baseline   float64  `json:"baseline"`
 	Current    float64  `json:"current"`
-	DeltaPct   *float64 `json:"delta_pct"`
 	Regression bool     `json:"regression"`
 }
 

@@ -83,11 +83,11 @@ const smoothingAlpha = 0.2
 // Diagnostic is a named measurement with a rolling history (L1 §4.2).
 type Diagnostic struct {
 	Path     DiagnosticPath
-	Suffix   string // unit label: "fps", "ms", "count"
+	Suffix   string
 	history  RingBuffer[DiagnosticEntry]
-	enabled  bool
 	readers  int
 	smoothed float64
+	enabled  bool
 	smoothOK bool
 }
 

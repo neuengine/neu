@@ -9,9 +9,9 @@ import (
 // Goldens is the committed registry of expected example hashes, keyed by example
 // directory name. Smoke-only examples (no hash) are intentionally absent.
 type Goldens struct {
+	Examples  map[string]uint64 `json:"examples"`
 	GoVersion string            `json:"go_version,omitempty"`
 	Updated   string            `json:"updated,omitempty"`
-	Examples  map[string]uint64 `json:"examples"`
 }
 
 // LoadGoldens reads the golden registry. A missing file yields an empty registry

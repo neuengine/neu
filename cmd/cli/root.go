@@ -25,11 +25,11 @@ type Command interface {
 
 // Output renders command results as human text or stable JSON (INV-4).
 type Output struct {
-	JSON  bool
 	w     io.Writer
 	errW  io.Writer
-	Force bool // --force: allow overwrite (INV-1)
-	Dry   bool // --dry-run: preview, write nothing
+	JSON  bool
+	Force bool
+	Dry   bool
 }
 
 // NewOutput builds an Output writing to w (stdout) and errW (stderr).

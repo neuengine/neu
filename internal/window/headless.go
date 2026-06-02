@@ -18,11 +18,11 @@ import (
 // records a call log and replays a scripted event queue, giving deterministic
 // behavior for CI and tests (mirrors the audio HeadlessBackend pattern).
 type HeadlessWindowBackend struct {
-	mu      sync.Mutex
-	seq     uint64
 	handles map[ecs.Entity]pkgwindow.RawWindowHandle
 	calls   []string
-	queue   [][]pkgwindow.PlatformEvent // one entry per frame; PollEvents pops the front
+	queue   [][]pkgwindow.PlatformEvent
+	seq     uint64
+	mu      sync.Mutex
 }
 
 // NewHeadlessWindowBackend returns an empty headless backend.

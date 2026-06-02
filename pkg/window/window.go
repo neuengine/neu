@@ -106,18 +106,18 @@ type CursorOptions struct {
 // mutate it; the backend synchronizes platform state from a per-frame diff.
 type Window struct {
 	Title       string
-	Mode        WindowMode
-	Resolution  WindowResolution
+	Canvas      string
 	Position    WindowPosition
-	Resizable   bool
-	Decorations bool
-	Transparent bool
-	Visible     bool
-	Focused     bool // read-only; driven by events
-	PresentMode PresentMode
+	Resolution  WindowResolution
 	Cursor      CursorOptions
+	Transparent bool
+	Decorations bool
+	Visible     bool
+	Focused     bool
+	PresentMode PresentMode
+	Resizable   bool
 	ImeEnabled  bool
-	Canvas      string // web target element selector; "" ⇒ native
+	Mode        WindowMode
 }
 
 // DefaultWindow returns a sensible windowed default (1280×720, decorated, visible).

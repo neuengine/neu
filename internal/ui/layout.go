@@ -17,11 +17,11 @@ import (
 // Solve, Rect holds the computed position and size (logical pixels). Dirty drives
 // incremental relayout (INV-1): SolveIfDirty skips a fully-clean tree.
 type LayoutNode struct {
-	Style      pkgui.Style
 	Children   []*LayoutNode
+	solveCount int
+	Style      pkgui.Style
 	Rect       pkgui.LayoutRect
 	Dirty      bool
-	solveCount int // test/diagnostic: times this node was laid out
 }
 
 // Viewport carries the root available size and the viewport dimensions used to

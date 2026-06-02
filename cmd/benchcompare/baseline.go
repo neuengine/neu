@@ -10,9 +10,9 @@ import (
 // Baseline is the committed reference set of benchmark metrics keyed by canonical
 // benchmark name. It is regenerated with `benchcompare -update`.
 type Baseline struct {
+	Results   map[string]Metrics `json:"results"`
 	GoVersion string             `json:"go_version,omitempty"`
 	Updated   string             `json:"updated,omitempty"`
-	Results   map[string]Metrics `json:"results"`
 }
 
 // LoadBaseline reads and decodes a baseline JSON file.

@@ -10,10 +10,10 @@ import (
 type PinDescriptor struct {
 	ID        string
 	Name      string
+	DataType  string
 	Direction Direction
 	Kind      Kind
-	DataType  string
-	Optional  bool // a Data input that does not require a connection
+	Optional  bool
 }
 
 // NodeDescriptor describes a registered node type — the source of truth the
@@ -31,8 +31,8 @@ type NodeDescriptor struct {
 // startup (built-ins + auto-generated from the TypeRegistry), then queried by
 // the editor and the interpreter.
 type NodeRegistry struct {
-	mu    sync.RWMutex
 	types map[string]NodeDescriptor
+	mu    sync.RWMutex
 }
 
 // NewNodeRegistry returns an empty registry.

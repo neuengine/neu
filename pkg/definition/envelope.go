@@ -72,9 +72,9 @@ type rawEnvelope struct {
 // kind-specific model (*UIDef, *SceneDef, *FlowDef, or *TemplateDef). Includes
 // lists the asset paths this definition references (the INV-5 DAG edges).
 type Definition struct {
-	Kind     Kind
+	Content  any
 	Version  string
 	Metadata Metadata
 	Includes []string
-	Content  any
+	Kind     Kind
 }

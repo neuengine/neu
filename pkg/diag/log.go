@@ -16,9 +16,9 @@ const LevelTrace LogLevel = slog.LevelDebug - 4
 // levelConfig hol-ds the per-module thresholds shared across a handler and all
 // of its WithAttrs/WithGroup derivations (single mutex — clones never copy it).
 type levelConfig struct {
-	mu     sync.RWMutex
 	levels map[string]LogLevel
 	def    LogLevel
+	mu     sync.RWMutex
 }
 
 func (c *levelConfig) levelFor(module string) LogLevel {

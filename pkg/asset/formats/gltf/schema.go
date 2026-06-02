@@ -67,19 +67,19 @@ type primitive struct {
 }
 
 type gltfMaterial struct {
-	Name        string            `json:"name"`
 	PBR         *pbrMetallicRough `json:"pbrMetallicRoughness"`
-	Emissive    []float32         `json:"emissiveFactor"`
-	AlphaMode   string            `json:"alphaMode"`
 	AlphaCutoff *float32          `json:"alphaCutoff"`
+	Name        string            `json:"name"`
+	AlphaMode   string            `json:"alphaMode"`
+	Emissive    []float32         `json:"emissiveFactor"`
 	DoubleSided bool              `json:"doubleSided"`
 }
 
 type pbrMetallicRough struct {
-	BaseColorFactor  []float32   `json:"baseColorFactor"`
 	MetallicFactor   *float32    `json:"metallicFactor"`
 	RoughnessFactor  *float32    `json:"roughnessFactor"`
 	BaseColorTexture *textureRef `json:"baseColorTexture"`
+	BaseColorFactor  []float32   `json:"baseColorFactor"`
 }
 
 type textureRef struct {
@@ -89,18 +89,18 @@ type textureRef struct {
 
 type accessor struct {
 	BufferView    *uint32 `json:"bufferView"`
-	ByteOffset    uint32  `json:"byteOffset"`
-	ComponentType int     `json:"componentType"`
-	Count         uint32  `json:"count"`
 	Type          string  `json:"type"`
+	ComponentType int     `json:"componentType"`
+	ByteOffset    uint32  `json:"byteOffset"`
+	Count         uint32  `json:"count"`
 	Normalized    bool    `json:"normalized"`
 }
 
 type bufferView struct {
+	ByteStride *uint32 `json:"byteStride"`
 	Buffer     uint32  `json:"buffer"`
 	ByteOffset uint32  `json:"byteOffset"`
 	ByteLength uint32  `json:"byteLength"`
-	ByteStride *uint32 `json:"byteStride"`
 }
 
 type buffer struct {
@@ -109,14 +109,14 @@ type buffer struct {
 }
 
 type gltfImage struct {
+	BufferView *uint32 `json:"bufferView"`
 	Name       string  `json:"name"`
 	URI        string  `json:"uri"`
 	MimeType   string  `json:"mimeType"`
-	BufferView *uint32 `json:"bufferView"`
 }
 
 type gltfTexture struct {
-	Name    string  `json:"name"`
 	Source  *uint32 `json:"source"`
 	Sampler *uint32 `json:"sampler"`
+	Name    string  `json:"name"`
 }

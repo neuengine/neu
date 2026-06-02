@@ -19,13 +19,13 @@ func (h RawWindowHandle) IsValid() bool { return h.id != 0 }
 // WindowDescriptor is the immutable subset of Window needed to create a window.
 type WindowDescriptor struct {
 	Title       string
+	Canvas      string
+	Position    WindowPosition
 	Resolution  WindowResolution
 	Mode        WindowMode
-	Position    WindowPosition
 	Decorations bool
 	Transparent bool
 	PresentMode PresentMode
-	Canvas      string
 }
 
 // DescriptorFromWindow extracts the creation descriptor from a Window.

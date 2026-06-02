@@ -14,9 +14,9 @@ type GizmoVertex struct {
 
 // GizmoText is a world-space text label queued for the gizmo pass.
 type GizmoText struct {
-	Position pkgmath.Vec3
 	Text     string
 	Color    pkgmath.LinearRgba
+	Position pkgmath.Vec3
 }
 
 // Gizmos is the immediate-mode debug-drawing API (L1 §4.6). Calls append to a

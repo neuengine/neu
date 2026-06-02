@@ -37,18 +37,18 @@ type GraphExecutionFrame struct {
 
 // GraphBreakpointHit (Engine → Editor): execution paused at a breakpoint.
 type GraphBreakpointHit struct {
-	Frame    GraphExecutionFrame `json:"frame"`
 	Type     Kind                `json:"type"`
 	GraphID  string              `json:"graph_id"`
 	NodeID   string              `json:"node_id"`
+	Frame    GraphExecutionFrame `json:"frame"`
 	EntityID uint64              `json:"entity_id"`
 }
 
 // GraphExecutionTraceEvent (Engine → Editor): a real-time execution trace.
 type GraphExecutionTraceEvent struct {
-	Frames   []GraphExecutionFrame `json:"frames"`
 	Type     Kind                  `json:"type"`
 	GraphID  string                `json:"graph_id"`
+	Frames   []GraphExecutionFrame `json:"frames"`
 	EntityID uint64                `json:"entity_id"`
 }
 

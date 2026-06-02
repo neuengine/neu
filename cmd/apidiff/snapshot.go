@@ -13,9 +13,9 @@ import (
 // Snapshot is the committed record of the exported API surface, keyed by
 // package directory (slash path relative to the module root).
 type Snapshot struct {
+	Packages  map[string][]Symbol `json:"packages"`
 	GoVersion string              `json:"go_version,omitempty"`
 	Updated   string              `json:"updated,omitempty"`
-	Packages  map[string][]Symbol `json:"packages"`
 }
 
 // LoadSnapshot reads the committed snapshot. A missing file yields an empty

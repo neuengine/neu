@@ -28,11 +28,11 @@ const (
 // Descriptor is the registered metadata for one error code.
 type Descriptor struct {
 	Code     Code
+	Module   string
+	Template string
+	Solution string
 	Severity Severity
 	Audience Audience
-	Module   string // "ecs", "render", "physics"
-	Template string // default-locale message template (fmt-style verbs)
-	Solution string // actionable developer advice
 }
 
 // ErrDuplicateCode is returned when a code is registered twice.

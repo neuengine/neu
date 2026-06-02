@@ -28,21 +28,21 @@ const (
 
 // Pin is an input or output socket on a node.
 type Pin struct {
+	DefaultValue any
 	ID           string
 	Name         string
+	DataType     string
 	Direction    Direction
 	Kind         Kind
-	DataType     string // type name for Data pins (e.g. "float32", "Vec3")
-	DefaultValue any    // fallback when a Data input has no connection
 }
 
 // Node is one node in a graph: a registered type plus its pins and constant
 // properties.
 type Node struct {
-	ID         string
-	Type       string // registered node type, e.g. "math.Add"
-	Pins       []Pin
 	Properties map[string]any
+	ID         string
+	Type       string
+	Pins       []Pin
 }
 
 // Pin returns the pin with the given id, or false.
@@ -65,9 +65,9 @@ type Connection struct {
 
 // VariableDecl is a graph-local variable declaration.
 type VariableDecl struct {
+	Default any
 	Name    string
 	Type    string
-	Default any
 }
 
 // GraphDefinition is the runtime graph model (the parsed "graph" definition).

@@ -50,12 +50,14 @@ func (k PlatformEventKind) String() string {
 // window entity so multi-window input is unambiguous (L1 §4.7). Payload fields
 // are interpreted per Kind; unused fields are zero.
 type PlatformEvent struct {
-	Kind          PlatformEventKind
-	Window        ecs.Entity
-	Width, Height uint32  // Resized
-	X, Y          int     // Moved, CursorMoved (logical pixels)
-	Focused       bool    // Focused
-	ScaleFactor   float64 // ScaleFactorChanged
+	Window      ecs.Entity
+	X           int
+	Y           int
+	ScaleFactor float64
+	Width       uint32
+	Height      uint32
+	Kind        PlatformEventKind
+	Focused     bool
 }
 
 // CausesAppExit reports whether a close event on window e should trigger AppExit

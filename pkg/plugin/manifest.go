@@ -19,19 +19,19 @@ type EntrySpec struct {
 // Manifest is the parsed `plugin.toml` (L1 §4.2). It is validated up front so a
 // plugin with an invalid manifest is rejected before any code runs (INV-1).
 type Manifest struct {
+	Entry          EntrySpec
 	ID             PluginID
 	Version        string
 	Name           string
 	Description    string
-	Authors        []string
-	License        string
-	Mode           Mode
-	EngineVersion  string // SemVer range constraint (INV-2)
-	Platforms      []string
-	RequiredCaps   []Capability
-	OptionalCaps   []Capability
-	Entry          EntrySpec
 	ChecksumSHA256 string
+	License        string
+	EngineVersion  string
+	RequiredCaps   []Capability
+	Platforms      []string
+	OptionalCaps   []Capability
+	Authors        []string
+	Mode           Mode
 }
 
 // Validate performs semantic checks beyond parse: required fields present, the

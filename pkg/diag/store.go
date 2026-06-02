@@ -10,8 +10,8 @@ import (
 // concurrent reads; per-diagnostic sample writes are serialized by system
 // scheduling (L1 §4.1), so the hot Push path takes only a read lock.
 type DiagnosticsStore struct {
-	mu      sync.RWMutex
 	metrics map[DiagnosticPath]*Diagnostic
+	mu      sync.RWMutex
 }
 
 // NewDiagnosticsStore returns an empty store.

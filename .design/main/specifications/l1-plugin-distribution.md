@@ -1,7 +1,7 @@
 # Plugin Distribution System
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -326,4 +326,5 @@ Diagnostic system (`l1-diagnostic-system.md`) integration: each active plugin co
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-01 | Initial draft — third-party plugin distribution: manifest, modes, discovery, capabilities, public SDK |
+| 0.2.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`, App-integration cohort complete). The concept is realized: `pkg/plugin` SDK + `plugin.toml` manifest + capability model + in-process and out-of-process (subprocess/stdio over `pkg/protocol`) loaders sharing one lifecycle + failure isolation. WebSocket/HTTP plugin transports remain described design-space options, not v1 deliverables. |
 | — | — | Planned examples: `examples/plugin/distribution/` |

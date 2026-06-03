@@ -1,7 +1,7 @@
 # Plugin Distribution — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-plugin-distribution.md](l1-plugin-distribution.md)
 
@@ -179,3 +179,4 @@ var (
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-30 | Initial L2 draft — Go translation of l1-plugin-distribution v0.1.0. Public `pkg/plugin` SDK (no `internal/`), `plugin.toml` manifest parser, `CapabilitySet` + runtime-enforcing `capabilityProxy`, SemVer `Constraint`, in-process + OOP loaders sharing one lifecycle (INV-4), OOP failure isolation over `pkg/protocol` (INV-8), plugin-ID-tagged commands (INV-7), checksum-immutable manifests (INV-9). No Go `plugin` stdlib (.so). Authored ahead of Phase 6 Track N (`/magic.spec`). Draft — L1 parent Draft + no implementation yet. |
+| 0.2.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`). Realized in `internal/plugin` (+`pkg/plugin` SDK): manifest parse + SemVer `Constraint`, `CapabilitySet` + `capabilityProxy`, discovery + capability-grant approval, the in-process loader (compile-time factory registry → `LoadInProcess`/`FinishInProcess` lifecycle) and the OOP loader (`oop` supervisor + `ProxyPlugin` over `pkg/protocol`, failure isolation INV-8). OOP transport is subprocess/stdio as scoped. L1 parent now Stable. |

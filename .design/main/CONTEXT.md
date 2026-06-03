@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-06-02
+**Generated:** 2026-06-03
 
 ## Active Technologies
 
@@ -11,10 +11,13 @@
 ```plaintext
 .
 ├── .design/
+│   ├── .cache/
+│   ├── .graph-cache/
 │   ├── .version
 │   ├── INDEX.md
 │   ├── RULES.md
 │   ├── main/
+│   ├── wiki/
 │   └── workspace.json
 ├── cmd/
 │   ├── apidiff/
@@ -37,6 +40,7 @@
 │   ├── config/
 │   ├── diagnostic/
 │   ├── ecs/
+│   ├── editor/
 │   ├── gltf/
 │   ├── goldens.json
 │   ├── math/
@@ -56,6 +60,7 @@
 │   ├── definition/
 │   ├── diag/
 │   ├── ecs/
+│   ├── grapheditor/
 │   ├── platform/
 │   ├── plugin/
 │   ├── render/

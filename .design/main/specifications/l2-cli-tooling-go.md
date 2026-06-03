@@ -1,7 +1,7 @@
 # CLI Tooling — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-cli-tooling.md](l1-cli-tooling.md)
 
@@ -144,3 +144,4 @@ type Output interface {
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-30 | Initial L2 draft — Go translation of l1-cli-tooling v0.2.0. stdlib-`flag` `Router` + `Command` registry with availability gating (INV-3), no-arg structured help (INV-2), overwrite-safe scaffolding (INV-1), `--json` stable-key output via `Output` sink (INV-4), `ecs plugin …` subcommands fronting the `pkg/plugin` SDK, `codegen` front-end. Authored ahead of Phase 6 Track F (`/magic.spec`). Draft — L1 parent Draft + cmd/cli is a Phase-0 stub. |
+| 0.2.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`). Reconciled to the built `cmd/cli`: `Router` + `Command` registry with gating, no-arg help, overwrite-safe `scaffold` (component\|system\|plugin), `--json` `Output` sink, and `plugin validate\|list` fronting the `pkg/plugin` SDK. Realized surface matches the spec; further subcommands are incremental layers, not deferred claims. L1 parent now Stable. |

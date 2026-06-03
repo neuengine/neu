@@ -3,8 +3,8 @@
 | Metadata | Value |
 | :--- | :--- |
 | **Layer** | 1 (concept) |
-| **Status** | Draft |
-| **Version** | 0.2.0 |
+| **Status** | Stable |
+| **Version** | 0.3.0 |
 | **Related Specifications** | [l2-visual-graph-editor-bridge.md](l2-visual-graph-editor-bridge.md) (L2 editor/IPC contract), [definition-system.md](l1-definition-system.md), [scripting-system.md](l1-scripting-system.md), [multi-repo-architecture.md](l1-multi-repo-architecture.md), [type-registry.md](l1-type-registry.md), [event-system.md](l1-event-system.md), [command-system.md](l1-command-system.md), [query-system.md](l1-query-system.md), [component-system.md](l1-component-system.md), [system-scheduling.md](l1-system-scheduling.md), [app-framework.md](l1-app-framework.md) |
 
 ## Overview
@@ -482,3 +482,4 @@ AIGraphNodesPlugin (implements Plugin)
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-01 | Initial draft: graph data model, node taxonomy, execution model, serialization format, pkg/editor/ interfaces ("the door"), IPC protocol extensions, integration map |
 | 0.2.0 | 2026-05-15 | Extracted §4.7–§4.8 (Door interfaces + IPC protocol) into `l2-visual-graph-editor-bridge.md` to clear SPEC_DECOMPOSE and restore L1 Purity (591→483 lines); §4.7/§4.8 now conceptual pointers |
+| 0.3.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`, App-integration cohort complete). Realized: graph model + `NodeRegistry` + `ValidateGraph` (INV-3/INV-4) + lazy-pull `Interpreter` (INV-1/2/4) + built-in node set + editor "door" interfaces, and now the engine-side bridge wiring (`internal/grapheditor` concrete impls + `graphDebugSyncSystem`). The `Delay`-node coroutine model and parallel graph execution remain described future optimizations, not deferred deliverables. |

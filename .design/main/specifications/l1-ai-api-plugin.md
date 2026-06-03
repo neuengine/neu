@@ -1,7 +1,7 @@
 # AI API Plugin (`pkg/plugins/aiapi/`)
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -332,4 +332,5 @@ The registration call adds a factory to the global provider registry; the user s
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-01 | Initial draft — first-party AI API plugin (`pkg/plugins/aiapi/`); reference implementation of `l1-plugin-distribution.md` |
+| 0.2.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`, App-integration cohort complete). Realized: `pkg/plugins/aiapi` with OpenAI/Anthropic/Gemini/local providers over HTTP. Credentials come from `env` (stdlib default); `keyring` + encrypted-file sources are ADR-gated opt-ins — the loader returns an explicit "ADR pending" error for them, matching the spec's documented gating. |
 | — | — | Planned examples: `examples/plugin/aiapi/` |

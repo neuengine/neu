@@ -1,6 +1,6 @@
 # Workspace Specifications Registry
 
-**Version:** 2.42.0
+**Version:** 2.43.0
 **Status:** Active
 
 ## Overview
@@ -113,22 +113,22 @@ Local registry of specifications for this workspace. Organized by priority batch
 | [l2-codegen-tools.md](specifications/l2-codegen-tools.md) | Automatic boilerplate generation and type-safe query wrappers (Implements: l1-build-tooling) | Draft | tool | 0.2.0 |
 | [l1-code-documentation.md](specifications/l1-code-documentation.md) | AI-readable symbol metadata (AI-Meta) + workflow-artifact hygiene for code/docs | Draft | concept | 0.1.0 |
 | [l2-code-documentation-go.md](specifications/l2-code-documentation-go.md) | Go impl: `AI-Meta:` godoc grammar, stability vocab, scope tiers, ci detection | Draft | go | 0.1.0 |
-| [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Draft | concept | 0.2.0 |
-| [l2-cli-tooling-go.md](specifications/l2-cli-tooling-go.md) | Go impl: stdlib-flag Router + Command registry with availability gating (INV-3), no-arg structured help, overwrite-safe scaffolding, --json stable output, ecs plugin subcommands fronting pkg/plugin SDK (Implements: l1-cli-tooling) | Draft | go | 0.1.0 |
+| [l1-cli-tooling.md](specifications/l1-cli-tooling.md) | Internal command-line interface for scaffolding, managing assets, and executing engine routines | Stable | concept | 0.3.0 |
+| [l2-cli-tooling-go.md](specifications/l2-cli-tooling-go.md) | Go impl: stdlib-flag Router + Command registry with availability gating (INV-3), no-arg structured help, overwrite-safe scaffolding, --json stable output, ecs plugin subcommands fronting pkg/plugin SDK (Implements: l1-cli-tooling) | Stable | go | 0.2.0 |
 | [l1-platform-system.md](specifications/l1-platform-system.md) | Cross-platform abstraction: tiers, capabilities, build tags, backends | Stable | concept | 0.1.0 |
 | [l2-platform-system-go.md](specifications/l2-platform-system-go.md) | Go impl: immutable PlatformProfile resource, PlatformCaps bitfield (branchless Has), //go:build-isolated per-OS files, headless tag reusing nop/headless backends, PlatformPlugin wired by DefaultPlugins (Implements: l1-platform-system) | Stable | go | 0.1.0 |
-| [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Draft | concept | 0.2.0 |
-| [l2-ai-assistant-system-go.md](specifications/l2-ai-assistant-system-go.md) | Go impl (//go:build editor): AssistantManager + JSON AgentMessage over stdio/ws/http, Capability bitfield gating methods + EditorContext, Command-pipeline modification tagged agent+request for undo, worker-pool async + per-request cancel/timeout (Implements: l1-ai-assistant-system) | Draft | go | 0.1.0 |
-| [l1-plugin-distribution.md](specifications/l1-plugin-distribution.md) | Third-party plugin distribution: manifest, in/out-of-process modes, capabilities, public SDK | Draft | concept | 0.1.0 |
-| [l2-plugin-distribution-go.md](specifications/l2-plugin-distribution-go.md) | Go impl: public pkg/plugin SDK (no internal/), plugin.toml manifest + SemVer Constraint, CapabilitySet + runtime capabilityProxy, in-process + OOP loaders sharing one lifecycle, OOP failure isolation over pkg/protocol, plugin-ID-tagged commands (Implements: l1-plugin-distribution) | Draft | go | 0.1.0 |
-| [l1-ai-api-plugin.md](specifications/l1-ai-api-plugin.md) | First-party AI API plugin (`pkg/plugins/aiapi/`): OpenAI/Anthropic/Gemini/local providers via HTTP | Draft | concept | 0.1.0 |
-| [l2-ai-api-plugin-go.md](specifications/l2-ai-api-plugin-go.md) | Go impl (//go:build editor): Provider interface + canonical request/response (one file per provider), env/keyring/age credentials with zeroing + redaction, worker-pool HTTP timeout/cancel, per-provider rate limiter, E-PLUGIN-AIAPI codes, FakeProvider mode-parity tests (Implements: l1-ai-api-plugin) | Draft | go | 0.1.0 |
+| [l1-ai-assistant-system.md](specifications/l1-ai-assistant-system.md) | AI assistant plugin architecture for editor: agents, capabilities, protocol | Stable | concept | 0.3.0 |
+| [l2-ai-assistant-system-go.md](specifications/l2-ai-assistant-system-go.md) | Go impl (//go:build editor): AssistantManager + JSON AgentMessage over stdio/http (ws ADR-gated), Capability bitfield gating methods + EditorContext, Command-pipeline modification tagged agent+request for undo, worker-pool async + per-request cancel/timeout (Implements: l1-ai-assistant-system) | Stable | go | 0.2.0 |
+| [l1-plugin-distribution.md](specifications/l1-plugin-distribution.md) | Third-party plugin distribution: manifest, in/out-of-process modes, capabilities, public SDK | Stable | concept | 0.2.0 |
+| [l2-plugin-distribution-go.md](specifications/l2-plugin-distribution-go.md) | Go impl: public pkg/plugin SDK (no internal/), plugin.toml manifest + SemVer Constraint, CapabilitySet + runtime capabilityProxy, in-process + OOP loaders sharing one lifecycle, OOP failure isolation over pkg/protocol, plugin-ID-tagged commands (Implements: l1-plugin-distribution) | Stable | go | 0.2.0 |
+| [l1-ai-api-plugin.md](specifications/l1-ai-api-plugin.md) | First-party AI API plugin (`pkg/plugins/aiapi/`): OpenAI/Anthropic/Gemini/local providers via HTTP | Stable | concept | 0.2.0 |
+| [l2-ai-api-plugin-go.md](specifications/l2-ai-api-plugin-go.md) | Go impl (//go:build editor): Provider interface + canonical request/response (one file per provider), env credentials (keyring/age ADR-gated) with zeroing + redaction, worker-pool HTTP timeout/cancel, per-provider rate limiter, E-PLUGIN-AIAPI codes, FakeProvider mode-parity tests (Implements: l1-ai-api-plugin) | Stable | go | 0.2.0 |
 | [l1-examples-framework.md](specifications/l1-examples-framework.md) | Examples directory structure, conventions, and lifecycle (realized by cmd/examplecheck) | Stable | concept | 0.5.0 |
 | [l1-compatibility-policy.md](specifications/l1-compatibility-policy.md) | Policy on engine versioning and Go toolchain compatibility matrix (realized by pkg/version + cmd/apidiff) | Stable | concept | 0.4.0 |
 | [l1-error-core.md](specifications/l1-error-core.md) | Structured error taxonomy: E-series codes, localization, severity | Stable | concept | 0.2.0 |
 | [l2-error-core-go.md](specifications/l2-error-core-go.md) | Go impl: EngineError over stdlib errors, Severity/Audience total-switch enums, range-partitioned Code registry, fs.FS locale catalog with default fallback, build-tag debug traces, Fatal+Developer-only panic (Implements: l1-error-core) | Stable | go | 0.1.0 |
-| [l1-visual-graph-system.md](specifications/l1-visual-graph-system.md) | Blueprint-style visual graph programming: node model, execution engine, editor "door" interfaces | Draft | concept | 0.2.0 |
-| [l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md) | Go impl: `pkg/editor/graph.go` interfaces (GraphEditorPlugin/NodeRegistryQuery/GraphDebugger) + `pkg/protocol/graph.go` IPC — contract surface implemented, engine wiring deferred (Implements: l1-visual-graph-system) | Draft | go | 0.2.0 |
+| [l1-visual-graph-system.md](specifications/l1-visual-graph-system.md) | Blueprint-style visual graph programming: node model, execution engine, editor "door" interfaces | Stable | concept | 0.3.0 |
+| [l2-visual-graph-editor-bridge.md](specifications/l2-visual-graph-editor-bridge.md) | Go impl: `pkg/editor/graph.go` interfaces (GraphEditorPlugin/NodeRegistryQuery/GraphDebugger) + `pkg/protocol/graph.go` IPC + internal/grapheditor concrete impls + graphDebugSyncSystem (Implements: l1-visual-graph-system) | Stable | go | 0.3.0 |
 
 ## P7 — Advanced Core
 

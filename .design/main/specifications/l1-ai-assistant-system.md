@@ -1,7 +1,7 @@
 # AI Assistant System
 
-**Version:** 0.2.0
-**Status:** Draft
+**Version:** 0.3.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -264,4 +264,5 @@ The editor scans agent directories at startup and presents available agents in a
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-26 | Initial draft — AI assistant plugin architecture for editor |
 | 0.2.0 | 2026-03-30 | Added C26 example correlation placeholder for the planned AI assistant stub example |
+| 0.3.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`, App-integration cohort complete). Realized: `AssistantManager` + capability model + `EditorContext`/`ContextProvider` + `stdio` and `http` transports. The **WebSocket** transport is an ADR-gated future option (C-003) — described at concept level but explicitly NOT a v1 deliverable, so promotion is on the realized stdio+http surface. |
 | — | — | Planned examples: `examples/app/ai_assistant_stub/` |

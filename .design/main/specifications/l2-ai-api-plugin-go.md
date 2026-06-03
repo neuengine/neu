@@ -1,7 +1,7 @@
 # AI API Plugin — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-ai-api-plugin.md](l1-ai-api-plugin.md)
 
@@ -175,3 +175,4 @@ func RegisterProvider(name string, p Provider)
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-30 | Initial L2 draft — Go translation of l1-ai-api-plugin v0.1.0. `pkg/plugins/aiapi` (`//go:build editor`): `Provider` interface + canonical request/response types (one file per provider), embedded manifest, env/keyring/age credential sources with `crypto/subtle` zeroing + redaction (INV-1), worker-pool HTTP with per-request timeout/cancel (INV-2/INV-6), per-provider RPM+TPM token bucket (INV-8), `E-PLUGIN-AIAPI-{NNN}` mapping (INV-5), token/cost diagnostics (INV-9), `FakeProvider` for deterministic + mode-parity tests (INV-7), `RegisterProvider` extension point. Authored ahead of Phase 6 Track O (`/magic.spec`). Draft — L1 parent Draft + depends on Track N SDK + no implementation yet. |
+| 0.2.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`, Track O complete). Realized: `Provider` interface + canonical request/response (one file per provider: OpenAI/Anthropic/Gemini/local), embedded manifest, SSE streaming, 10-method dispatch, per-provider rate limiter (INV-8), `E-PLUGIN-AIAPI` codes (INV-5), token/cost diagnostics (INV-9), `FakeProvider` mode-parity (INV-7), redaction (INV-1). **Narrowed:** the `env` credential source is the realized default; `keyring`/`age` are ADR-gated (`credentials.go` returns an explicit "ADR pending" error). Full subprocess-RPC parity awaits OOP method dispatch — the canonical-boundary half of INV-7 is proven today. L1 parent now Stable. |

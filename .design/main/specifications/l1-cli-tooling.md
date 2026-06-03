@@ -1,7 +1,7 @@
 # CLI Tooling
 
-**Version:** 0.2.0
-**Status:** Draft
+**Version:** 0.3.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -102,4 +102,5 @@ Command groups are introduced only when their backing systems exist:
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-30 | Initial Draft |
 | 0.2.0 | 2026-03-31 | Added phased rollout rules and aligned the spec with the current bootstrap CLI stub. |
+| 0.3.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`, App-integration cohort complete). The CLI is realized as the intended incremental layers in `cmd/cli`: stdlib-`flag` Router + Command registry (availability gating INV-3), no-arg structured help (INV-2), overwrite-safe scaffolding (INV-1), `--json` output (INV-4), and `plugin validate|list` subcommands fronting the `pkg/plugin` SDK. Additional subcommands remain implementation-backed future layers, not deferred claims. |
 | — | — | Planned examples: [examples/ecs/cli_stub/](../../../examples/ecs/cli_stub/) |

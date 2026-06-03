@@ -1,7 +1,7 @@
 # Visual Graph Editor Bridge — Go Implementation
 
-**Version:** 0.2.0
-**Status:** Draft
+**Version:** 0.3.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-visual-graph-system.md](l1-visual-graph-system.md)
 
@@ -216,3 +216,4 @@ GraphLiveUpdate
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-15 | Initial draft: extracted from `l1-visual-graph-system.md` §4.7–§4.8 (Door interfaces + IPC protocol) per `/magic-analyze` SPEC_DECOMPOSE |
 | 0.2.0 | 2026-06-01 | Contract surface implemented (`/magic.run` Track P04): `pkg/editor/graph.go` (3 interfaces + editor-local DTOs) + `pkg/protocol/graph.go` (4 IPC messages + 4 codec Decode cases). Reconciled to the multi-repo decoupling precedent — self-contained DTOs, `uint64` entity IDs, `OnGraphOpened(graphID string)` instead of a `GraphDefinition` parameter — so `pkg/editor` stays import-free of engine graph types (passes `TestEditorPkgIsContractOnly`); `pkg/protocol` stays stdlib-only (`TestProtocolStdlibOnly`). Canonical References populated; protocol round-trip + fake-implementer contract tests green (protocol 94.6%). Engine-side wiring (`graphDebugSyncSystem` + concrete impls) deferred to App integration. Status stays Draft pending that wiring. |
+| 0.3.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`). The engine-side wiring v0.2.0 deferred is now built (T-6P04·rem.1+.2): `internal/grapheditor` concrete `GraphEditorPlugin`/`NodeRegistryQuery`/`GraphDebugger` + `DebugStore` + the `PostUpdate` `graphDebugSyncSystem` emitting `pkg/protocol` graph IPC, plus the interpreter trace hook (`Interpreter.RunTraced` + `TraceRecorder`, defined in `pkg/visualgraph` to keep it editor/protocol-free). Validated end-to-end by `examples/editor` (T-6T07, hash-stable). L1 parent now Stable. |

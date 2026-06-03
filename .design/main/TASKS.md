@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.28.0
+**Version:** 1.29.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.28.0
+**Based on:** .design/main/PLAN.md v1.29.0
 **Based on RULES:** .design/RULES.md v1.8.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` 72/112. **Phases 1–5 Done** (106/106 tasks). **Phase 6 engine-core cohort COMPLETE** (12 specs Stable) + **editor-layer L2 tier authored + mapped** (5 new L2: plugin-distribution, ai-assistant, ai-api-plugin, cli, definition-integration — `Draft [Bootstrap]`). **Full P6 L1+L2 parity.** Tooling (E/F/I/J/L/M) + editor (H/N/O/P) tracks deferred (specs ready, impl pending). **Held Draft:** `asset-formats` L1+L2. **Next:** activate tooling/editor tracks via `/magic.run`, or implement glTF.
+**Mode:** Specs `Stable` **86/112**. **Phases 1–5 Done** (106/106 tasks). **Phase 6 App-integration cohort COMPLETE** (Groups 1–4 + validation T-6T07). **5 editor-feature families promoted Draft → Stable** (`/magic.task` 2026-06-03): cli-tooling, plugin-distribution, ai-api-plugin, ai-assistant-system, visual-graph (L1+L2) — App-integration blockers cleared; ai-assistant (ws) + ai-api (keyring/age) **narrowed** to ADR-gated. **Held Draft:** `asset-formats` L1+L2 (glTF-gated). **User-gated:** ws-dep ADR + `x/image/font` ADR (T-6X04). **Next:** weigh closing Phase 6 vs. the user-gated ADRs.
 
 ## Overview
 

@@ -1,7 +1,7 @@
 # AI Assistant System — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** [l1-ai-assistant-system.md](l1-ai-assistant-system.md)
 
@@ -10,7 +10,9 @@
 Go-level design for editor-facing AI agents (all `//go:build editor`). An
 `AssistantManager` resource holds per-agent connections + capability sets and a
 request log. Agents speak a JSON `AgentMessage` protocol over pluggable
-transports (`stdio` subprocess, `websocket`, `http`). A `ContextProvider`
+transports: `stdio` (subprocess) and `http` are implemented; `websocket` is
+**ADR-gated** (C-003 — a WS dependency or a minimal RFC6455 stdlib impl is a
+deferred opt-in, not part of the realized v1 surface). A `ContextProvider`
 assembles a capability-filtered `EditorContext` on demand. All agent world
 mutations are translated into plugin-ID + request-ID-tagged Commands and grouped
 into one undo step (INV-1/INV-4). Every agent call is asynchronous with a
@@ -176,3 +178,4 @@ var (
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-05-30 | Initial L2 draft — Go translation of l1-ai-assistant-system v0.2.0. `//go:build editor` `pkg/assistant`: `AssistantManager`, JSON `AgentMessage` over stdio/ws/http transports sharing one `Connection` contract, `Capability` bitfield gating methods + `EditorContext` fields (INV-2), Command-pipeline modification tagged agent+request grouped for undo (INV-1/INV-4), worker-pool async with per-request cancel + timeout (INV-5), `AgentRegistry` directory scan. Authored ahead of Phase 6 Track H (`/magic.spec`). Draft — L1 parent Draft + no implementation yet. |
+| 0.2.0 | 2026-06-03 | Promoted Draft → Stable (`/magic.task`). Realized in `pkg/assistant` (`//go:build editor`): `AssistantManager`, JSON `AgentMessage` over the `Connection` contract with `StdioConnection` + `HTTPTransport`/`HTTPConnection` + in-memory transports, `Capability` gating + `EditorContext`/`ContextProvider` (INV-2), per-request cancel/timeout (INV-5). **Narrowed (overclaim correction):** the `websocket` transport is ADR-gated (C-003) and explicitly NOT part of the realized v1 surface — promotion is on `stdio`+`http`; ws follows its ADR. L1 parent now Stable. |

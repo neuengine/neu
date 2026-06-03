@@ -1,0 +1,28 @@
+# AI API Plugin manifest (L1 ai-api-plugin §4.2).
+# Arrays are single-line: the engine's minimal stdlib TOML-subset parser
+# (pkg/plugin.ParseManifest) reads one assignment per line.
+
+[plugin]
+id          = "io.teratron.neuengine.aiapi"
+version     = "0.1.0"
+name        = "AI API Plugin"
+description = "Connect the engine's AI Assistant System to OpenAI-compatible providers."
+authors     = ["Neu Engine Core Team"]
+license     = "MIT"
+homepage    = "https://github.com/neuengine/neu"
+mode        = "in-process"
+
+[compatibility]
+engine_version = "^0.1.0"
+go_version     = "^1.26"
+platforms      = ["linux-amd64", "linux-arm64", "darwin-amd64", "darwin-arm64", "windows-amd64"]
+
+[capabilities.required]
+items = ["network.outbound", "events.publish.assistant.*", "events.subscribe.assistant.request.*", "metrics.publish"]
+
+[capabilities.optional]
+items = ["world.commands", "fs.write.project", "assets.write"]
+
+[entry.in_process]
+package_path = "github.com/neuengine/neu/pkg/plugins/aiapi"
+factory      = "New"

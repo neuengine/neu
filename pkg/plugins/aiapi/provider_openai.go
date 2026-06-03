@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 )
@@ -38,6 +37,7 @@ type oaiRequest struct {
 	Model       string         `json:"model"`
 	Messages    []oaiMessage   `json:"messages"`
 	Temperature any            `json:"temperature,omitempty"`
+	Stream      bool           `json:"stream,omitempty"`
 	Extra       map[string]any `json:"-"`
 }
 
@@ -90,44 +90,53 @@ func parseOpenAIResponse(body []byte) (CanonicalResponse, error) {
 	}, nil
 }
 
-// Complete builds the request, POSTs it, maps HTTP errors (INV-5), and parses
-// the canonical response.
+// Complete builds the request, POSTs it via the shared client (HTTP errors →
+// coded errors, INV-5), and parses the canonical response.
 func (p *openAIProvider) Complete(ctx context.Context, r CanonicalRequest) (CanonicalResponse, error) {
 	wire := buildOpenAIRequest(p.cfg.Model, r)
 	body, err := json.Marshal(wire)
 	if err != nil {
 		return CanonicalResponse{}, APIError{Code: CodeParse, Message: err.Error()}
 	}
+	data, err := postJSON(ctx, p.client, p.cfg.Endpoint+"/chat/completions", body, p.cfg.ExtraHeaders)
+	if err != nil {
+		return CanonicalResponse{}, err
+	}
+	return parseOpenAIResponse(data)
+}
+
+// Stream issues a streaming chat-completions request (`stream: true`) and decodes
+// the Server-Sent-Events response, delivering each content delta to sink (INV-6:
+// cancellable at any chunk boundary). HTTP errors map to coded errors (INV-5).
+func (p *openAIProvider) Stream(ctx context.Context, r CanonicalRequest, sink func(Chunk) error) error {
+	wire := buildOpenAIRequest(p.cfg.Model, r)
+	wire.Stream = true
+	body, err := json.Marshal(wire)
+	if err != nil {
+		return APIError{Code: CodeParse, Message: err.Error()}
+	}
 	url := p.cfg.Endpoint + "/chat/completions"
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
-		return CanonicalResponse{}, APIError{Code: CodeUnknown, Message: err.Error()}
+		return APIError{Code: CodeUnknown, Message: err.Error()}
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Accept", "text/event-stream")
 	for k, v := range p.cfg.ExtraHeaders {
 		httpReq.Header.Set(k, v)
 	}
 	resp, err := p.client.Do(httpReq)
 	if err != nil {
 		if ctx.Err() != nil {
-			return CanonicalResponse{}, APIError{Code: CodeTimeout, Message: ctx.Err().Error()}
+			return APIError{Code: CodeCancelled, Message: ctx.Err().Error()}
 		}
-		return CanonicalResponse{}, APIError{Code: CodeHTTP5xx, Message: err.Error()}
+		return APIError{Code: CodeHTTP5xx, Message: err.Error()}
 	}
 	defer resp.Body.Close()
 	if code, isErr := MapHTTPStatus(resp.StatusCode); isErr {
-		return CanonicalResponse{}, APIError{Code: code, Message: fmt.Sprintf("provider HTTP %d", resp.StatusCode)}
+		return APIError{Code: code, Message: fmt.Sprintf("provider HTTP %d", resp.StatusCode)}
 	}
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return CanonicalResponse{}, APIError{Code: CodeParse, Message: err.Error()}
-	}
-	return parseOpenAIResponse(respBody)
-}
-
-// Stream is deferred for Bootstrap (chat streaming lands with SSE wiring).
-func (p *openAIProvider) Stream(context.Context, CanonicalRequest, func(Chunk) error) error {
-	return ErrUnsupported
+	return decodeSSE(ctx, resp.Body, sink)
 }
 
 // Embeddings is not implemented by the chat provider.

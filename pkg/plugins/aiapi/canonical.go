@@ -60,12 +60,32 @@ type CanonicalResponse struct {
 }
 
 // Text returns the concatenated text content of the response message.
-func (r CanonicalResponse) Text() string {
+func (r CanonicalResponse) Text() string { return messageText(r.Message) }
+
+// messageText concatenates the text parts of a message (skipping non-text parts).
+func messageText(m CanonicalMessage) string {
 	var s strings.Builder
-	for _, p := range r.Message.Content {
+	for _, p := range m.Content {
 		if p.Kind == "text" {
 			s.WriteString(p.Text)
 		}
 	}
 	return s.String()
+}
+
+// intParam extracts an integer parameter from a canonical parameter map. JSON
+// decodes numbers as float64, so both float64 and int are accepted.
+func intParam(params map[string]any, key string) (int, bool) {
+	v, ok := params[key]
+	if !ok {
+		return 0, false
+	}
+	switch n := v.(type) {
+	case int:
+		return n, true
+	case float64:
+		return int(n), true
+	default:
+		return 0, false
+	}
 }

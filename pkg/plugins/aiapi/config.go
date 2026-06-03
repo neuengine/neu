@@ -6,11 +6,11 @@ import "time"
 
 // ProviderConfig configures one provider endpoint (L1 §4.3).
 type ProviderConfig struct {
-	Endpoint      string            `json:"endpoint"`
-	Model         string            `json:"model"`
-	APIKeySource  string            `json:"api_key_source"` // "env:NAME" | "keyring:label" | "file:path"
-	OrganizationID string           `json:"organization_id,omitempty"`
-	ExtraHeaders  map[string]string `json:"extra_headers,omitempty"`
+	Endpoint       string            `json:"endpoint"`
+	Model          string            `json:"model"`
+	APIKeySource   string            `json:"api_key_source"` // "env:NAME" | "keyring:label" | "file:path"
+	OrganizationID string            `json:"organization_id,omitempty"`
+	ExtraHeaders   map[string]string `json:"extra_headers,omitempty"`
 }
 
 // Config is the plugin's user configuration (L1 §4.3), validated against the

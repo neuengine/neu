@@ -27,6 +27,25 @@ type NodeBehavior struct {
 	Exec func(props, inputs map[string]any, sink CommandSink) (nextPin string, err error)
 }
 
+// ExecutionFrame is a neutral record of one execution step, emitted to a
+// TraceRecorder. It is self-contained (no editor/protocol import) so the
+// debugger bridge maps it onto its own frame type — keeping this package free of
+// any editor/IPC dependency.
+type ExecutionFrame struct {
+	PinValues map[string]any
+	NodeID    string
+	NodeType  string
+	StepIndex uint32
+}
+
+// TraceRecorder observes execution steps for debugging. It is passed into
+// [Interpreter.RunTraced] (not stored on the interpreter) so concurrent passes
+// for different graphs/entities each record into their own recorder. A nil
+// recorder disables tracing at zero cost.
+type TraceRecorder interface {
+	RecordStep(ExecutionFrame)
+}
+
 // DefaultStepLimit bounds a pass when none is configured (L1 §4.4).
 const DefaultStepLimit = 10000
 
@@ -57,6 +76,7 @@ type run struct {
 	in    *Interpreter
 	g     *GraphDefinition
 	sink  CommandSink
+	rec   TraceRecorder
 	memo  map[string]map[string]any // node ID → evaluated data outputs (lazy, once per pass)
 	steps int
 }
@@ -66,11 +86,18 @@ type run struct {
 // Execution is bounded by the step limit (INV-2) and deterministic given the
 // same graph + sink (INV-4).
 func (in *Interpreter) Run(g *GraphDefinition, entryNodeID string, sink CommandSink) error {
+	return in.RunTraced(g, entryNodeID, sink, nil)
+}
+
+// RunTraced behaves like Run but reports each executed step to rec (a debugger
+// hook). A nil rec is identical to Run, so the trace path is zero-overhead when
+// no editor is attached.
+func (in *Interpreter) RunTraced(g *GraphDefinition, entryNodeID string, sink CommandSink, rec TraceRecorder) error {
 	entry, ok := g.Node(entryNodeID)
 	if !ok {
 		return fmt.Errorf("%w: entry %q", ErrUnknownNode, entryNodeID)
 	}
-	r := &run{in: in, g: g, sink: sink, memo: make(map[string]map[string]any)}
+	r := &run{in: in, g: g, sink: sink, rec: rec, memo: make(map[string]map[string]any)}
 	return r.execChain(entry)
 }
 
@@ -88,6 +115,14 @@ func (r *run) execChain(node Node) error {
 			return fmt.Errorf("%w: %q (node %s)", ErrNoHandler, cur.Type, cur.ID)
 		}
 		inputs := r.pullDataInputs(cur)
+		if r.rec != nil {
+			r.rec.RecordStep(ExecutionFrame{
+				PinValues: inputs,
+				NodeID:    cur.ID,
+				NodeType:  cur.Type,
+				StepIndex: uint32(r.steps),
+			})
+		}
 		nextPin, err := b.Exec(cur.Properties, inputs, r.sink)
 		if err != nil {
 			return err

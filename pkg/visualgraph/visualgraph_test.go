@@ -117,6 +117,44 @@ func dataEvalGraph() *GraphDefinition {
 	}
 }
 
+// captureRecorder records the frames an interpreter emits (TraceRecorder).
+type captureRecorder struct{ frames []ExecutionFrame }
+
+func (c *captureRecorder) RecordStep(f ExecutionFrame) { c.frames = append(c.frames, f) }
+
+func TestInterpreterRunTraced(t *testing.T) {
+	t.Parallel()
+	g := dataEvalGraph()
+	in := NewInterpreter(0)
+
+	// nil recorder behaves exactly like Run and records nothing.
+	var sink recSink
+	if err := in.RunTraced(g, "evt", &sink, nil); err != nil {
+		t.Fatalf("RunTraced(nil rec): %v", err)
+	}
+
+	// A recorder captures one frame per executed exec node, in order, with the
+	// lazily-pulled input values and a 1-based StepIndex.
+	var rec captureRecorder
+	var sink2 recSink
+	if err := in.RunTraced(g, "evt", &sink2, &rec); err != nil {
+		t.Fatalf("RunTraced: %v", err)
+	}
+	if len(rec.frames) != 2 {
+		t.Fatalf("recorded %d frames, want 2 (evt → log)", len(rec.frames))
+	}
+	if rec.frames[0].NodeID != "evt" || rec.frames[0].StepIndex != 1 {
+		t.Errorf("frame[0] = %+v, want evt step 1", rec.frames[0])
+	}
+	if rec.frames[1].NodeID != "log" || rec.frames[1].NodeType != "action.Log" {
+		t.Errorf("frame[1] = %+v, want log/action.Log", rec.frames[1])
+	}
+	// The log node's data input (msg) was pulled from add (= 5, float64 per toFloat).
+	if rec.frames[1].PinValues["msg"] != float64(5) {
+		t.Errorf("frame[1].PinValues[msg] = %v, want 5", rec.frames[1].PinValues["msg"])
+	}
+}
+
 func TestInterpreterDataEvalAndSink(t *testing.T) {
 	t.Parallel()
 	g := dataEvalGraph()

@@ -62,13 +62,13 @@ func (c *conn) receive() (any, protocol.Kind, error) {
 // Supervisor manages one out-of-process plugin subprocess. Obtain one via
 // Spawn (real process) or newSupervisorFromConn (tests).
 type Supervisor struct {
-	id     string    // plugin ID (for logging)
+	id     string // plugin ID (for logging)
 	c      *conn
 	cmd    *exec.Cmd // nil in unit tests
 	mu     sync.Mutex
 	failed bool
 	done   chan struct{} // closed when the subprocess exits or the supervisor is closed
-	once   sync.Once    // guards done-channel close
+	once   sync.Once     // guards done-channel close
 }
 
 // Spawn launches binary with its working directory restricted to workDir, sends

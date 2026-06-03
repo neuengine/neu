@@ -139,9 +139,9 @@ func (b *fakeBuilder) AddSystems(schedule string, ss ...scheduler.System) appfac
 	}
 	return b
 }
-func (b *fakeBuilder) SetResource(any) appface.Builder              { b.resources++; return b }
-func (b *fakeBuilder) InitResource(any) appface.Builder             { return b }
-func (b *fakeBuilder) AddPlugin(appface.Plugin) appface.Builder     { return b }
+func (b *fakeBuilder) SetResource(any) appface.Builder                { b.resources++; return b }
+func (b *fakeBuilder) InitResource(any) appface.Builder               { return b }
+func (b *fakeBuilder) AddPlugin(appface.Plugin) appface.Builder       { return b }
 func (b *fakeBuilder) AddPlugins(appface.PluginGroup) appface.Builder { return b }
 
 var _ appface.Builder = (*fakeBuilder)(nil)

@@ -76,21 +76,21 @@ type fakeBuilder struct{ w *world.World }
 
 func newFakeBuilder() *fakeBuilder { return &fakeBuilder{w: world.NewWorld()} }
 
-func (b *fakeBuilder) World() *world.World                           { return b.w }
-func (b *fakeBuilder) AddSystem(_ string, _ scheduler.System) appface.Builder    { return b }
+func (b *fakeBuilder) World() *world.World                                        { return b.w }
+func (b *fakeBuilder) AddSystem(_ string, _ scheduler.System) appface.Builder     { return b }
 func (b *fakeBuilder) AddSystems(_ string, _ ...scheduler.System) appface.Builder { return b }
-func (b *fakeBuilder) SetResource(any) appface.Builder               { return b }
-func (b *fakeBuilder) InitResource(any) appface.Builder              { return b }
-func (b *fakeBuilder) AddPlugin(appface.Plugin) appface.Builder      { return b }
-func (b *fakeBuilder) AddPlugins(appface.PluginGroup) appface.Builder { return b }
+func (b *fakeBuilder) SetResource(any) appface.Builder                            { return b }
+func (b *fakeBuilder) InitResource(any) appface.Builder                           { return b }
+func (b *fakeBuilder) AddPlugin(appface.Plugin) appface.Builder                   { return b }
+func (b *fakeBuilder) AddPlugins(appface.PluginGroup) appface.Builder             { return b }
 
 var _ appface.Builder = (*fakeBuilder)(nil)
 
 // --- fakePeer (simulates the OOP plugin subprocess over in-process pipes) ----
 
 type fakePeer struct {
-	in    *json.Decoder
-	out   *io.PipeWriter
+	in  *json.Decoder
+	out *io.PipeWriter
 }
 
 func newFakePeer(id string) (*Supervisor, *fakePeer) {
@@ -278,7 +278,9 @@ func TestSupervisor_DriveLifecycle_PluginError(t *testing.T) {
 	sup, peer := newFakePeer("com.test.plugin")
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		_ = peer.send(protocol.PluginError{
 			Type:    protocol.KindPluginError,
@@ -300,7 +302,9 @@ func TestSupervisor_DriveLifecycle_PhaseMismatch(t *testing.T) {
 	sup, peer := newFakePeer("com.test.plugin")
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		_ = peer.send(protocol.PluginLifecycleDone{
 			Type:  protocol.KindPluginLifecycleDone,
@@ -322,7 +326,9 @@ func TestSupervisor_DriveLifecycle_ContextCancelled(t *testing.T) {
 	cancel()
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 	}()
 
@@ -361,7 +367,9 @@ func TestSupervisor_DriveLifecycle_TransportEOF(t *testing.T) {
 	sup, peer := newFakePeer("com.test.plugin")
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		peer.closeOutput()
 	}()
@@ -378,7 +386,9 @@ func TestSupervisor_DriveLifecycle_UnexpectedKind(t *testing.T) {
 	sup, peer := newFakePeer("com.test.plugin")
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		_ = peer.send(protocol.PluginInit{Type: protocol.KindPluginInit, EngineVersion: "0.1.0"})
 	}()
@@ -467,7 +477,9 @@ func TestProxyPlugin_Build_Failure(t *testing.T) {
 	proxy := NewProxyPlugin(id, sup, rec.set)
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		_ = peer.send(protocol.PluginError{
 			Type: protocol.KindPluginError, Phase: protocol.PhaseBuild, Message: "oops",
@@ -526,7 +538,9 @@ func TestProxyPlugin_Ready_Failure(t *testing.T) {
 	proxy := NewProxyPlugin(id, sup, rec.set)
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		_ = peer.send(protocol.PluginError{
 			Type: protocol.KindPluginError, Phase: protocol.PhaseReady, Message: "ready error",
@@ -546,7 +560,9 @@ func TestProxyPlugin_Finish_Failure(t *testing.T) {
 	proxy := NewProxyPlugin(id, sup, rec.set)
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		_ = peer.send(protocol.PluginError{
 			Type: protocol.KindPluginError, Phase: protocol.PhaseFinish, Message: "finish error",
@@ -566,7 +582,9 @@ func TestProxyPlugin_Cleanup_DriveError(t *testing.T) {
 	proxy := NewProxyPlugin(id, sup, rec.set)
 
 	go func() {
-		var raw struct{ Phase string `json:"phase"` }
+		var raw struct {
+			Phase string `json:"phase"`
+		}
 		_ = peer.recv(&raw)
 		peer.closeOutput()
 	}()
@@ -578,5 +596,5 @@ func TestProxyPlugin_Cleanup_DriveError(t *testing.T) {
 }
 
 // compile-time interface assertions (also in proxyplugin.go)
-var _ appface.Plugin     = (*ProxyPlugin)(nil)
+var _ appface.Plugin = (*ProxyPlugin)(nil)
 var _ appface.FullPlugin = (*ProxyPlugin)(nil)

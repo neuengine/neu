@@ -161,8 +161,8 @@ func TestGrantStoreJSONRoundTrip(t *testing.T) {
 
 func TestDiscoverAndRegister(t *testing.T) {
 	fsys := fstest.MapFS{
-		"ok/plugin.toml":     {Data: []byte(manifestTOML("com.example.ok", "^1.0.0", `"world.read"`))},
-		"deny/plugin.toml":   {Data: []byte(manifestTOML("com.example.deny", "^1.0.0", `"world.commands"`))},
+		"ok/plugin.toml":       {Data: []byte(manifestTOML("com.example.ok", "^1.0.0", `"world.read"`))},
+		"deny/plugin.toml":     {Data: []byte(manifestTOML("com.example.deny", "^1.0.0", `"world.commands"`))},
 		"incompat/plugin.toml": {Data: []byte(manifestTOML("com.example.incompat", "^2.0.0", ""))},
 	}
 	m := NewManager(mustVersion(t, "1.0.0"))

@@ -53,7 +53,7 @@ func (p *fullPlugin) Ready(_ appface.Builder)   { p.readied = true }
 func (p *fullPlugin) Finish(_ appface.Builder)  { p.finished = true }
 func (p *fullPlugin) Cleanup(_ appface.Builder) { p.cleaned = true }
 
-var _ appface.Plugin     = (*buildOnlyPlugin)(nil)
+var _ appface.Plugin = (*buildOnlyPlugin)(nil)
 var _ appface.FullPlugin = (*fullPlugin)(nil)
 
 // --- registry tests ----------------------------------------------------------

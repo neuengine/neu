@@ -42,12 +42,12 @@ func TestWatchAssetTypePublishesReloadOnBus(t *testing.T) {
 		t.Fatal("WatchAssetType must register the AssetEvent bus")
 	}
 
-	pkgasset.Load[string](s, "/a.txt")     // initial load — no event
+	pkgasset.Load[string](s, "/a.txt") // initial load — no event
 	if bus.Len() != 0 {
 		t.Fatalf("initial Load emitted %d events, want 0", bus.Len())
 	}
 
-	pkgasset.Reload[string](s, "/a.txt")   // reload — one Modified event
+	pkgasset.Reload[string](s, "/a.txt") // reload — one Modified event
 	if bus.Len() != 1 {
 		t.Fatalf("Reload emitted %d events on the bus, want 1", bus.Len())
 	}

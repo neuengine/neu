@@ -12,8 +12,8 @@ import (
 // host application must call RegisterFactory for each in-process plugin it
 // links (typically from an init() or an explicit bootstrap function). T-6N03b.
 var (
-	globalRegistryMu      sync.RWMutex
-	globalFactories       = map[pkgplugin.PluginID]func() appface.Plugin{}
+	globalRegistryMu sync.RWMutex
+	globalFactories  = map[pkgplugin.PluginID]func() appface.Plugin{}
 )
 
 // RegisterFactory records factory as the constructor for the in-process plugin

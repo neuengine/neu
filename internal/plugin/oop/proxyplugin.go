@@ -95,5 +95,5 @@ func (p *ProxyPlugin) Cleanup(app appface.Builder) {
 }
 
 // compile-time assertions
-var _ appface.Plugin     = (*ProxyPlugin)(nil)
+var _ appface.Plugin = (*ProxyPlugin)(nil)
 var _ appface.FullPlugin = (*ProxyPlugin)(nil)

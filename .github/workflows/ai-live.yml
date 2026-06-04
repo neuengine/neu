@@ -1,0 +1,37 @@
+# Live AI provider smoke test (Track T / T-6T05).
+#
+# This workflow spends real API budget, so it is OPT-IN: it runs only when a
+# pull request carries the `live-ai` label. Default pushes and PRs never trigger
+# it. The API key is a project secret injected at job level; the request itself
+# is cost-bounded (a one-word prompt, the cheap gpt-4o-mini model, capped output
+# tokens, a single test) and the job has a hard 5-minute timeout.
+#
+# The test is doubly build-tagged (`editor && live_ai`) so it cannot run in any
+# other CI job or local `go test` invocation.
+name: ai-live
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  live-smoke:
+    name: live provider smoke
+    # Cost guard: only run when the PR explicitly carries the `live-ai` label.
+    if: contains(github.event.pull_request.labels.*.name, 'live-ai')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26.3"
+      - name: Live provider smoke (cost-bounded)
+        env:
+          # Project secret — never echoed; redacted by the plugin on any log path.
+          AIAPI_LIVE_KEY: ${{ secrets.AIAPI_LIVE_KEY }}
+          AIAPI_LIVE_MODEL: gpt-4o-mini
+        run: go test -tags 'editor live_ai' -run TestLiveSmoke -count=1 -v ./pkg/plugins/aiapi/

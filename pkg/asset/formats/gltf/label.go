@@ -7,9 +7,11 @@
 // The loader is stateless and never panics on malformed input: every failure
 // returns a wrapped error and no partial asset enters the store (INV-2).
 //
-// Bootstrap: l2-asset-formats-go Draft. Animations, skins, morph targets, the
-// scene.DynamicScene conversion, and external-URI resource resolution are
-// deferred to App integration (they require the World / AssetServer / VFS).
+// Bootstrap: l2-asset-formats-go Draft. Animations now fan out to
+// animation.AnimationClip (translation/rotation/scale channels, STEP/LINEAR/
+// CUBICSPLINE). Skins, morph targets, the scene.DynamicScene conversion, and
+// external-URI resource resolution remain deferred to App integration (they
+// require the World / AssetServer / VFS).
 package gltf
 
 import "strconv"

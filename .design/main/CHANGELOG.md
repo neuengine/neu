@@ -1,100 +1,10 @@
-# Project Context
+# Changelog
 
-**Generated:** 2026-06-04
+Phase-level changelog for the Neu engine. Each entry summarizes a completed
+phase; per-version planning history lives in `PLAN.md`, and detailed per-task
+records in the archived `tasks/phase-{N}.md` workbooks.
 
-## Active Technologies
-
-- Go
-
-## Core Project Structure
-
-```plaintext
-.
-├── .design/
-│   ├── .cache/
-│   ├── .graph-cache/
-│   ├── .version
-│   ├── INDEX.md
-│   ├── RULES.md
-│   ├── main/
-│   ├── wiki/
-│   └── workspace.json
-├── cmd/
-│   ├── apidiff/
-│   ├── benchcompare/
-│   ├── cli/
-│   ├── codegen/
-│   ├── examplecheck/
-│   └── releasenotes/
-├── examples/
-│   ├── 2d/
-│   ├── 3d/
-│   ├── README.md
-│   ├── _template/
-│   ├── animation/
-│   ├── app/
-│   ├── asset/
-│   ├── async/
-│   ├── audio/
-│   ├── camera/
-│   ├── config/
-│   ├── diagnostic/
-│   ├── ecs/
-│   ├── editor/
-│   ├── gltf/
-│   ├── goldens.json
-│   ├── math/
-│   ├── networking/
-│   ├── physics/
-│   ├── scene/
-│   ├── shader/
-│   ├── stress_test/
-│   ├── tweening/
-│   ├── ui/
-│   ├── window/
-│   └── world/
-├── internal/
-│   ├── animation/
-│   ├── asset/
-│   ├── audio/
-│   ├── definition/
-│   ├── diag/
-│   ├── ecs/
-│   ├── grapheditor/
-│   ├── platform/
-│   ├── plugin/
-│   ├── render/
-│   ├── tween/
-│   ├── ui/
-│   └── window/
-└── pkg/
-    ├── animation/
-    ├── app/
-    ├── asset/
-    ├── assistant/
-    ├── audio/
-    ├── definition/
-    ├── diag/
-    ├── ecs/
-    ├── editor/
-    ├── errs/
-    ├── math/
-    ├── platform/
-    ├── plugin/
-    ├── plugins/
-    ├── protocol/
-    ├── render/
-    ├── scene/
-    ├── task/
-    ├── tween/
-    ├── ui/
-    ├── version/
-    ├── visualgraph/
-    └── window/
-```
-
-## Recent Changes
-
+## Phase 6 — UI, Tooling & Quality (2026-06-03)
 
 The editor-and-tooling phase. Closed with all activated tasks Done, 86/112 specs
 Stable, and the full default test suite green (75 packages).
@@ -110,4 +20,3 @@ Stable, and the full default test suite green (75 packages).
 - **Asset formats** — glTF 2.0 loader (mesh/material/texture fan-out) extended with **animation** decoding (translation/rotation/scale channels, STEP/LINEAR/CUBICSPLINE); `.scene.json` decode + `SerializedScene → World` hydration/spawn.
 - **Validation** — `examples/editor` App-integration round-trip (hash-stable C29); plugin-SDK contract tests (manifest fuzz, capability enforcement); aiapi per-method parity matrix; CLI golden output; codegen + bench gates.
 - **Governance** — 5 editor-feature spec families promoted Draft→Stable (cli-tooling, plugin-distribution, ai-api-plugin, ai-assistant-system, visual-graph); added rule **C32 — Third-Party Dependency ADRs** formalizing the zero-dependency posture.
-

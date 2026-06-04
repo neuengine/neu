@@ -22,20 +22,46 @@ const (
 )
 
 // document is the parsed glTF 2.0 JSON document (the subset the loader consumes).
-// Fields the engine does not yet map (cameras, samplers, sparse accessors,
-// animations, skins) are intentionally omitted — unknown JSON keys are ignored.
+// Fields the engine does not yet map (cameras, texture samplers, sparse
+// accessors, skins, morph targets) are intentionally omitted — unknown JSON keys
+// are ignored.
 type document struct {
-	Asset       assetInfo      `json:"asset"`
-	Scene       *uint32        `json:"scene"`
-	Scenes      []gltfScene    `json:"scenes"`
-	Nodes       []gltfNode     `json:"nodes"`
-	Meshes      []gltfMesh     `json:"meshes"`
-	Materials   []gltfMaterial `json:"materials"`
-	Accessors   []accessor     `json:"accessors"`
-	BufferViews []bufferView   `json:"bufferViews"`
-	Buffers     []buffer       `json:"buffers"`
-	Images      []gltfImage    `json:"images"`
-	Textures    []gltfTexture  `json:"textures"`
+	Asset       assetInfo       `json:"asset"`
+	Scene       *uint32         `json:"scene"`
+	Scenes      []gltfScene     `json:"scenes"`
+	Nodes       []gltfNode      `json:"nodes"`
+	Meshes      []gltfMesh      `json:"meshes"`
+	Materials   []gltfMaterial  `json:"materials"`
+	Accessors   []accessor      `json:"accessors"`
+	BufferViews []bufferView    `json:"bufferViews"`
+	Buffers     []buffer        `json:"buffers"`
+	Images      []gltfImage     `json:"images"`
+	Textures    []gltfTexture   `json:"textures"`
+	Animations  []gltfAnimation `json:"animations"`
+}
+
+// gltfAnimation is one glTF animation: a set of channels (target node + property)
+// driven by samplers (keyframe input/output accessors).
+type gltfAnimation struct {
+	Name     string        `json:"name"`
+	Channels []animChannel `json:"channels"`
+	Samplers []animSampler `json:"samplers"`
+}
+
+type animChannel struct {
+	Target  animTarget `json:"target"`
+	Sampler uint32     `json:"sampler"`
+}
+
+type animTarget struct {
+	Node *uint32 `json:"node"`
+	Path string  `json:"path"` // "translation" | "rotation" | "scale" | "weights"
+}
+
+type animSampler struct {
+	Interpolation string `json:"interpolation"` // "LINEAR" (default) | "STEP" | "CUBICSPLINE"
+	Input         uint32 `json:"input"`         // keyframe-time accessor (SCALAR FLOAT)
+	Output        uint32 `json:"output"`        // keyframe-value accessor (VEC3/VEC4 FLOAT)
 }
 
 type assetInfo struct {

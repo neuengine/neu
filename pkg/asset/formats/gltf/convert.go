@@ -188,12 +188,20 @@ func (d *decoder) buildPrimitive(p primitive) (*mesh.Mesh, error) {
 		{"TEXCOORD_1", mesh.AttrUV1, mesh.FormatFloat32x2},
 		{"TANGENT", mesh.AttrTangent, mesh.FormatFloat32x4},
 		{"COLOR_0", mesh.AttrColor, mesh.FormatFloat32x4},
+		{"WEIGHTS_0", mesh.AttrJointWeights, mesh.FormatFloat32x4}, // float skin weights (T-6 skin foundation)
 	}
 	for _, oa := range optional {
 		if idx, ok := p.Attributes[oa.name]; ok {
 			if err := d.addVertexAttr(m, oa.kind, oa.format, idx); err != nil {
 				return nil, err
 			}
+		}
+	}
+	// JOINTS_0 carries integer joint indices (unsigned byte/short), so it needs a
+	// dedicated path rather than the FLOAT-only addVertexAttr.
+	if idx, ok := p.Attributes["JOINTS_0"]; ok {
+		if err := d.addJointIndices(m, idx); err != nil {
+			return nil, err
 		}
 	}
 	if p.Indices != nil {
@@ -224,6 +232,34 @@ func (d *decoder) addVertexAttr(m *mesh.Mesh, kind mesh.AttrKind, format mesh.Ve
 		return fmt.Errorf("gltf: attribute accessor %d: element size mismatch for mesh format", accessorIdx)
 	}
 	m.SetAttribute(mesh.VertexAttribute{Kind: kind, Format: format, Data: data})
+	return nil
+}
+
+// addJointIndices reads a JOINTS_0 accessor (VEC4 of unsigned byte or short) and
+// attaches it as a uint16x4 joint-index stream, widening 8-bit indices to 16-bit
+// (the mesh package's joint-index width). Skin weights (WEIGHTS_0) go through the
+// FLOAT optional path; the runtime skinning/skeleton is a later (Phase 7) concern.
+func (d *decoder) addJointIndices(m *mesh.Mesh, accessorIdx uint32) error {
+	data, compType, compCount, count, err := d.accessorData(accessorIdx)
+	if err != nil {
+		return err
+	}
+	if compCount != 4 {
+		return fmt.Errorf("gltf: JOINTS_0 accessor %d must be VEC4", accessorIdx)
+	}
+	var out []byte
+	switch compType {
+	case compUnsignedShort:
+		out = data // already uint16x4, tightly packed
+	case compUnsignedByte:
+		out = make([]byte, int(count)*8) // 4 components × 2 bytes
+		for i := range int(count) * 4 {
+			out[i*2] = data[i] // low byte = value; high byte stays 0 (LE)
+		}
+	default:
+		return fmt.Errorf("gltf: JOINTS_0 accessor %d: unsupported componentType %d (want unsigned byte/short)", accessorIdx, compType)
+	}
+	m.SetAttribute(mesh.VertexAttribute{Kind: mesh.AttrJointIndices, Format: mesh.FormatUint16x4, Data: out})
 	return nil
 }
 

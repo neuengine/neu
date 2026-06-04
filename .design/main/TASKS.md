@@ -1,9 +1,9 @@
 # Master Task Index (Registry)
 
-**Version:** 1.29.0
+**Version:** 1.30.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.29.0
-**Based on RULES:** .design/RULES.md v1.8.0
+**Based on:** .design/main/PLAN.md v1.30.0
+**Based on RULES:** .design/RULES.md v1.9.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
 **Mode:** Specs `Stable` **86/112**. **Phases 1–5 Done** (106/106 tasks). **Phase 6 App-integration cohort COMPLETE** (Groups 1–4 + validation T-6T07). **5 editor-feature families promoted Draft → Stable** (`/magic.task` 2026-06-03): cli-tooling, plugin-distribution, ai-api-plugin, ai-assistant-system, visual-graph (L1+L2) — App-integration blockers cleared; ai-assistant (ws) + ai-api (keyring/age) **narrowed** to ADR-gated. **Held Draft:** `asset-formats` L1+L2 (glTF-gated). **User-gated:** ws-dep ADR + `x/image/font` ADR (T-6X04). **Next:** weigh closing Phase 6 vs. the user-gated ADRs.

@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.8.0
+**Version:** 1.9.0
 **Status:** Active
 
 ## Overview
@@ -261,6 +261,15 @@ Do not invoke `node .magic/scripts/executor.js sync-docs` (or any automation tha
 
 Applies to all workflows that perform documentation repair or version-sync steps.
 
+### C32 — Third-Party Dependency ADRs
+
+Adding the engine's **first external Go dependency** is a consequential, near-irreversible decision (a precedent plus a supply-chain surface) under C24§6 (Zero-Dependency Goal). Every proposal to add a third-party dependency MUST be recorded here as a numbered ADR — rejected, or accepted-with-justification — **before** the dependency is introduced. Decisions to date:
+
+1. **`golang.org/x/image/font` — REJECTED (2026-06-03).** UI text is realized via an embedded stdlib bitmap font (`internal/ui/bitmapfont.go`, T-6D04.2) feeding the existing `FontAtlas`, preserving zero dependencies; the diagnostic overlay (`internal/ui/overlay.go`) consumes it. A real TTF/proportional rasterizer remains a future ADR if extended-glyph typography is required.
+2. **WebSocket library (e.g. `nhooyr.io/websocket`) — REJECTED (2026-06-03).** The AI-assistant transport keeps the stdlib `stdio` + `http` connections (`pkg/assistant`); a WebSocket transport is not pursued. A minimal stdlib RFC6455 implementation remains the path if a long-lived bidirectional transport is later required.
+
+Rationale for the default-reject stance: rejecting a dependency is reversible (a later ADR can accept it), whereas adding one sets an irreversible precedent — so the conservative choice preserves C24§6 until a need is proven.
+
 ## Document History
 
 | Version | Date | Description |
@@ -275,3 +284,4 @@ Applies to all workflows that perform documentation repair or version-sync steps
 | 1.7.0 | 2026-04-20 | Added C30 — Reference Code Utilization. |
 | 1.7.1 | 2026-04-25 | Cleanup: removed stray `Sprint 3` heading; reordered §7 conventions monotonically (C1..C30). |
 | 1.8.0 | 2026-04-26 | Added C31 — sync-docs Safety Gate. |
+| 1.9.0 | 2026-06-03 | Added C32 — Third-Party Dependency ADRs (formalizes the `x/image/font` + WebSocket rejections under C24§6). |

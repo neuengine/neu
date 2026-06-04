@@ -8,6 +8,7 @@ import (
 	"io"
 	"sort"
 
+	"github.com/neuengine/neu/pkg/animation"
 	"github.com/neuengine/neu/pkg/asset"
 	renderimage "github.com/neuengine/neu/pkg/render/image"
 	"github.com/neuengine/neu/pkg/render/material"
@@ -70,6 +71,7 @@ type GltfAsset struct {
 	Meshes       []*mesh.Mesh
 	Materials    []*material.Material
 	Textures     []renderimage.Image
+	Animations   []animation.AnimationClip
 	meshMaterial []int // material index per mesh (-1 = none)
 	DefaultScene int
 }
@@ -99,6 +101,8 @@ func (a *GltfAsset) Get(label GltfAssetLabel) (any, bool) {
 		return a.Materials[idx], true
 	case KindTexture:
 		return a.Textures[idx], true
+	case KindAnimation:
+		return a.Animations[idx], true
 	}
 	return nil, false
 }
@@ -271,6 +275,15 @@ func (d *decoder) build() (GltfAsset, error) {
 	if d.doc.Scene != nil {
 		a.DefaultScene = int(*d.doc.Scene)
 	}
+	// Animations: one AnimationClip per glTF animation, in declaration order.
+	clips, err := d.buildAnimations()
+	if err != nil {
+		return GltfAsset{}, err
+	}
+	for i := range clips {
+		a.labels[GltfAssetLabel{Kind: KindAnimation, Index: uint32(i)}] = i
+	}
+	a.Animations = clips
 	return a, nil
 }
 

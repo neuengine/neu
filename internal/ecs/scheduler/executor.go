@@ -103,7 +103,7 @@ func runSystemSafe(sys System, w *world.World) (err error) {
 			err = fmt.Errorf("%w: %q: %v", ErrSystemPanic, sys.Name(), r)
 		}
 	}()
-	sys.Run(w)
+	dispatchRun(sys, w)
 	return nil
 }
 

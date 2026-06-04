@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.30.0
+**Version:** 1.32.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.30.0
-**Based on RULES:** .design/RULES.md v1.9.0
+**Based on:** .design/main/PLAN.md v1.32.0
+**Based on RULES:** .design/RULES.md v1.10.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` **86/112**. **Phases 1–5 Done** (106/106 tasks). **Phase 6 App-integration cohort COMPLETE** (Groups 1–4 + validation T-6T07). **5 editor-feature families promoted Draft → Stable** (`/magic.task` 2026-06-03): cli-tooling, plugin-distribution, ai-api-plugin, ai-assistant-system, visual-graph (L1+L2) — App-integration blockers cleared; ai-assistant (ws) + ai-api (keyring/age) **narrowed** to ADR-gated. **Held Draft:** `asset-formats` L1+L2 (glTF-gated). **User-gated:** ws-dep ADR + `x/image/font` ADR (T-6X04). **Next:** weigh closing Phase 6 vs. the user-gated ADRs.
+**Mode:** Specs `Stable` **86/114**. **Phases 1–6 Done** (Phase 6 CLOSED 2026-06-03). **Phase 7 (Advanced Core) STARTED 2026-06-04** — hot-reload + profiling slice decomposed into 8 atomic tasks: **Track A** profiling (T-7A01..04) + **Track J** hot-reload (T-7J01..04), both `[Bootstrap]` (Draft L1 parents), parallelizable, grounded on shipped Phase-6 infra. Multiplayer stack (T-7B..I + T-7T) stays deferred Bootstrap (L1-only). **Next:** `/magic.run "phase-7"` to execute the slice.
 
 ## Overview
 
@@ -21,8 +21,8 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 | [Phase 3](tasks/phase-3.md) | Assets, Math & Concurrency — task pool, asset server, scene, math (18 atomic tasks, Tracks A–D + T; decomposed 2026-05-18) | Done |
 | [Phase 4](tasks/phase-4.md) | Render Pipeline — render graph, mesh, materials, camera, post-processing (19 atomic tasks, Tracks A–E + T; decomposed 2026-05-19) | Done |
 | [Phase 5](tasks/phase-5.md) | Content Systems — audio, asset codecs, 2D, animation, tweening (18 atomic tasks, Tracks A–E + T; decomposed 2026-05-28) | Done |
-| [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Active (engine-core cohort COMPLETE 17/17, 12 specs Stable; tooling+editor tracks deferred) |
-| [Phase 7](tasks/phase-7.md) | Networking & Hot-Reload — profiling, transport, replication, sync, RPC, hot-reload | Hold |
+| [Phase 6](tasks/phase-6.md) | UI, Tooling & Quality — definition, window, UI, build, CLI, platform, AI, plugins, visual graph, examples, errors, benchmark, codegen | Done (CLOSED 2026-06-03; all cohorts + C32 ADRs + CHANGELOG L1) |
+| [Phase 7](tasks/phase-7.md) | Networking & Hot-Reload — profiling, transport, replication, sync, RPC, hot-reload | Active (hot-reload + profiling slice: T-7A01..04 + T-7J01..04, Bootstrap; multiplayer stack deferred L1-only) |
 | [Phase 8](tasks/phase-8.md) | Physics & Scripting — physics server, bodies, colliders, queries, joints, character, scripting | Hold |
 
 ## Archived Phases

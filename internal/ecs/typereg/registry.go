@@ -134,6 +134,29 @@ func (r *TypeRegistry) ResolveByName(name string) *TypeRegistration {
 	return r.byName[name]
 }
 
+// RegisterAlias maps an additional (legacy) name to an already-registered type.
+// It is the migration hook the hot-reload system uses to resolve a component
+// serialized under a former type name after a rename — e.g. after renaming
+// PlayerHealth to Health, RegisterAlias("…PlayerHealth", reflect.TypeFor[Health]())
+// lets a pre-rename snapshot still deserialize into Health.
+//
+// The target type t MUST already be registered ([ErrTypeNotRegistered]
+// otherwise). An alias that collides with a different registered canonical or
+// alias name is rejected ([ErrDuplicateTypeName]); re-aliasing the same name to
+// the same type is idempotent. Aliases are looked up by [ResolveByName] exactly
+// like canonical names.
+func (r *TypeRegistry) RegisterAlias(oldName string, t reflect.Type) error {
+	reg, ok := r.byType[t]
+	if !ok {
+		return fmt.Errorf("%w: %v", ErrTypeNotRegistered, t)
+	}
+	if existing, dup := r.byName[oldName]; dup && existing.Type != t {
+		return fmt.Errorf("%w: alias %q already maps to %v", ErrDuplicateTypeName, oldName, existing.Type)
+	}
+	r.byName[oldName] = reg
+	return nil
+}
+
 // ResolveByID returns the registration with the given [TypeID]. The sentinel
 // (id == 0) and out-of-range ids both yield nil.
 func (r *TypeRegistry) ResolveByID(id TypeID) *TypeRegistration {

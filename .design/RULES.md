@@ -1,6 +1,6 @@
 # Project Specification Rules
 
-**Version:** 1.9.0
+**Version:** 1.10.0
 **Status:** Active
 
 ## Overview
@@ -267,6 +267,7 @@ Adding the engine's **first external Go dependency** is a consequential, near-ir
 
 1. **`golang.org/x/image/font` — REJECTED (2026-06-03).** UI text is realized via an embedded stdlib bitmap font (`internal/ui/bitmapfont.go`, T-6D04.2) feeding the existing `FontAtlas`, preserving zero dependencies; the diagnostic overlay (`internal/ui/overlay.go`) consumes it. A real TTF/proportional rasterizer remains a future ADR if extended-glyph typography is required.
 2. **WebSocket library (e.g. `nhooyr.io/websocket`) — REJECTED (2026-06-03).** The AI-assistant transport keeps the stdlib `stdio` + `http` connections (`pkg/assistant`); a WebSocket transport is not pursued. A minimal stdlib RFC6455 implementation remains the path if a long-lived bidirectional transport is later required.
+3. **Tracy profiler client (CGo C library) — REJECTED (2026-06-04).** The profiling protocol (`pkg/diag/profiling`, T-7A03) ships **stdlib-only exporters**: a `chrome://tracing` Trace-Event-Format writer (`encoding/json`) and a `runtime/pprof` span-timing aggregator. The Tracy real-time GUI named by the L1 spec requires CGo plus a vendored third-party C client — both a dependency and a non-pure-Go build — so it is not implemented. The `ProfileExporter` interface leaves it a drop-in for anyone who accepts the CGo dependency under their own ADR (INV-5); `chrome://tracing`/Perfetto provides the comparable timeline view with zero dependencies.
 
 Rationale for the default-reject stance: rejecting a dependency is reversible (a later ADR can accept it), whereas adding one sets an irreversible precedent — so the conservative choice preserves C24§6 until a need is proven.
 
@@ -285,3 +286,4 @@ Rationale for the default-reject stance: rejecting a dependency is reversible (a
 | 1.7.1 | 2026-04-25 | Cleanup: removed stray `Sprint 3` heading; reordered §7 conventions monotonically (C1..C30). |
 | 1.8.0 | 2026-04-26 | Added C31 — sync-docs Safety Gate. |
 | 1.9.0 | 2026-06-03 | Added C32 — Third-Party Dependency ADRs (formalizes the `x/image/font` + WebSocket rejections under C24§6). |
+| 1.10.0 | 2026-06-04 | C32 ADR #3: Tracy profiler CGo client REJECTED — profiling ships stdlib-only Chrome-TEF + pprof exporters (T-7A03). |

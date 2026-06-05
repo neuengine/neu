@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.32.1
+**Version:** 1.33.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.32.1
+**Based on:** .design/main/PLAN.md v1.33.0
 **Based on RULES:** .design/RULES.md v1.10.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` **86/114**. **Phases 1–6 Done.** **Phase 7 hot-reload + profiling slice IMPLEMENTED 2026-06-05 (8/8: T-7A01..04 + T-7J01..04)** — `pkg/diag/profiling` (dual-tag spans + stdlib exporters, Tracy rejected) + `internal/hotreload` (editor-tagged ID-pinning snapshot/restore + shader swap + daemon); all four tag builds green (default 84 pkgs). Both L2s now implemented+validated → eligible Draft→Stable. Multiplayer stack (T-7B..I + T-7T) stays deferred Bootstrap (L1-only). **Next:** `/magic.spec` (multiplayer L2s) or `/magic.task` (promote profiling+hot-reload).
+**Mode:** Specs `Stable` **86/122**. **Phases 1–6 Done.** **Phase 7 hot-reload + profiling slice IMPLEMENTED (8/8: T-7A/T-7J)**; **networking stack now FULLY DECOMPOSED** (8 L2s → ~22 atomic tasks, Tracks B/C/D/E/F/G/H/I + T validation, `[Bootstrap]`). Deep sequential dep chain B→C→{D‖H}→{E‖F‖G}→I; critical-path = transport reliability + DeterministicSchedule. **Next:** `/magic.run "phase-7"` to implement (start T-7B), or `/magic.task` to promote profiling+hot-reload Draft→Stable.
 
 ## Overview
 

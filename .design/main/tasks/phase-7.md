@@ -2,7 +2,7 @@
 phase: 7
 name: "Networking & Hot-Reload"
 status: Active
-subsystem: "pkg/diag/profiling, internal/hotreload, pkg/protocol, cmd/hot-reload-daemon (active slice); pkg/net (deferred)"
+subsystem: "pkg/diag/profiling, internal/hotreload, cmd/hot-reload-daemon (DONE); internal/net{,/transport,/replication,/rpc,/interp,/predict,/lockstep,/netdiag} (decomposed, Tracks B-I+T)"
 requires:
   - "Phase 2 App Framework Stable (satisfied)"
   - "Phase 1 Scheduler Stable (satisfied)"
@@ -53,17 +53,59 @@ Package `internal/hotreload/` — all `//go:build editor`. Reuses the `DynamicSc
 
 **Active slice COMPLETE (8/8): Track A profiling + Track J hot-reload.** Phase stays Active for the deferred multiplayer stack below (L1-only — author L2 via `/magic.spec` first).
 
-## Deferred — Multiplayer Stack & Network Diagnostics (Bootstrap, L1-only)
+## Networking Stack — Atomic Tasks (Bootstrap; all 8 L2s authored 2026-06-05)
 
-These remain **L1 concept specs with no L2 contract** → not task-decomposable. Author each L2 via `/magic.spec`
-(dependency order transport → replication → {sync models} → rpc → diagnostics) before `/magic.task` decomposes them.
+Decomposed from the complete 8-spec networking L2 tier. All `[Bootstrap]` (Draft L1 parents → tentative until Stable).
+**Deep sequential dependency chain** (NOT parallel like Tracks A/J): `B → C → {D ‖ H} → {E ‖ F ‖ G} → I`, T validates throughout.
+Per CLAUDE.md: every new Go file ≥80% cov, `-race` on concurrent tests (transport goroutine + reliability), `gofmt`/`vet`/`modernize` clean.
+**Skeptic flags:** transport reliability (T-7C01) + DeterministicSchedule (T-7B02) are the high-risk critical-path items — a determinism bug blocks both prediction (F) and lockstep (G); split into `.1/.2` at execution if they grow.
 
-- [ ] [T-7B] Networking system: snapshot/rollback primitives, fixed-step sync. ([l1-networking-system.md](../specifications/l1-networking-system.md))
-- [ ] [T-7C] UDP transport: channels, reliability, lifecycle, MTU. ([l1-transport.md](../specifications/l1-transport.md))
-- [ ] [T-7D] Replication: markers, entity mapping, visibility, deltas, priority. ([l1-replication.md](../specifications/l1-replication.md))
-- [ ] [T-7E] Snapshot interpolation: server snapshots + client buffer + adaptive delay. ([l1-snapshot-interpolation.md](../specifications/l1-snapshot-interpolation.md))
-- [ ] [T-7F] Client prediction: input prediction, reconciliation, rollback smoothing. ([l1-client-prediction.md](../specifications/l1-client-prediction.md))
-- [ ] [T-7G] Lockstep: deterministic, input delay, speculative exec, desync detect. ([l1-lockstep.md](../specifications/l1-lockstep.md))
-- [ ] [T-7H] RPC: typed send/receive, event integration, rate limiting. ([l1-rpc.md](../specifications/l1-rpc.md))
-- [ ] [T-7I] Network diagnostics: metrics, alerts, overlay, desync reports. ([l1-network-diagnostics.md](../specifications/l1-network-diagnostics.md))
-- [ ] [T-7T] Validation (deferred): lossy-network sim suite, deterministic lockstep checksum, rollback fuzz.
+### Track B — Networking System ([l2-networking-system-go.md](../specifications/l2-networking-system-go.md) → [l1-networking-system.md](../specifications/l1-networking-system.md)) · `internal/net`
+
+- [ ] **T-7B01 — Transport abstraction + handles.** `transport.go`: `NetworkTransport` interface, `ConnectionID`/`ChannelID`/`DeliveryMode`/`ChannelConfig`, `InboundPacket`, `Connected`/`Disconnected` events (INV-5 — gameplay sees handles + events, never sockets). The contract Track C implements.
+- [ ] **T-7B02 — Deterministic primitives.** `deterministic.go` (`DeterministicSchedule`: SequentialExecutor over explicit order + per-tick `RngSeed^tick`, INV-2) + `snapshot.go` (`SnapshotManager` over the `pkg/scene` codec + CRC32 + entity-ID-stable restore, ring + `GetDelta`, INV-3) + `input.go` (`InputBuffer` binary pack/unpack, INV-4). *Critical-path — gates prediction (F) + lockstep (G).*
+- [ ] **T-7B03 — Pipeline + plugin.** `rollback.go` (reference `RollbackCoordinator`, ServiceRegistry-replaceable) + `systems.go` (`NetworkReceive` PreUpdate / `NetworkSend` PostUpdate — INV-1 no socket in schedules) + `plugin.go` (`NetworkPlugin` SubApp: default channels, transport injection, resources).
+
+### Track C — Transport ([l2-transport-go.md](../specifications/l2-transport-go.md) → [l1-transport.md](../specifications/l1-transport.md)) · `internal/net/transport`
+
+- [ ] **T-7C01 — Packet codec + reliability.** `packet.go` (`UDPDatagram`/`MessageFrame` `encoding/binary` codec, protocol-id reject, bounds-checked) + `reliability.go` (sliding window, piggybacked ACK bitfield, RTO=SRTT+4·RTTVAR EWMA, reorder buffer, dup bitfield — INV-1/2/3/6). *High-risk critical-path.*
+- [ ] **T-7C02 — UDP loop + backend.** `udp.go` (`UDPTransport` network goroutine on IO pool, channel ECS boundary — INV-5) + `connection.go` (per-conn seqs/window/stats/MTU) + `backend.go` (`SocketBackend` iface + `net.UDPConn` default + `memBackend` for tests).
+- [ ] **T-7C03 — Lifecycle + MTU.** `handshake.go` (ConnectRequest/Accept/Reject/Ack over ch 2, version check) + heartbeat/timeout (INV-4) + `mtu.go` (PMTUD 1400→1200→576) + `settings.go`.
+
+### Track D — Replication ([l2-replication-go.md](../specifications/l2-replication-go.md) → [l1-replication.md](../specifications/l1-replication.md)) · `internal/net/replication`
+
+- [ ] **T-7D01 — Markers + EntityMap.** `markers.go` (`Replicated`/`ServerOnly`/`ClientOnly` tags + `ReplicationRule` + `ReplicationConfig`, INV-1 whitelist) + `entitymap.go` (bijective map + `Remap` reusing the scene EntityID-field walk + placeholder/deferred resolution, INV-2/3).
+- [ ] **T-7D02 — Visibility + messages + delta.** `visibility.go` (`VisibilityPolicy` ReplicateAll/Grid/Custom + `VisibilitySet`, INV-4) + `message.go` (`ReplicationMessage` codec + channel assignment) + `delta.go` (`ClientAckState` over change-detection `ChangedTick` + optional `DeltaSerializer`).
+- [ ] **T-7D03 — Send/receive + priority + plugin.** `send.go` (read-only, INV-5) + `receive.go` (command-buffer-applied, INV-5; despawn propagation INV-6) + `priority.go` (accumulator + bandwidth budget) + `plugin.go` (default rules).
+
+### Track H — RPC ([l2-rpc-go.md](../specifications/l2-rpc-go.md) → [l1-rpc.md](../specifications/l1-rpc.md)) · `internal/net/rpc`
+
+- [ ] **T-7H01 — Registry + send + receive.** `registry.go` (`RpcTypeID↔reflect.Type`, `RegisterRpc[T]`) + `sender.go` (`Send[T]` + direction-validated `RpcTarget`, Except→no echo INV-1) + `receive.go` (`RpcReceiveSystem` PreUpdate, unknown-ID drop+log INV-3, `EntityMap` remap, typed-event INV-4) + `message.go` (+ fuzz decoder).
+- [ ] **T-7H02 — Rate limit + plugin.** `ratelimit.go` (token bucket global + per-type) + `plugin.go`.
+
+### Track E — Snapshot Interpolation ([l2-snapshot-interpolation-go.md](../specifications/l2-snapshot-interpolation-go.md) → [l1-snapshot-interpolation.md](../specifications/l1-snapshot-interpolation.md)) · `internal/net/interp`
+
+- [ ] **T-7E01 — Buffer + interpolate.** `buffer.go` (tick-sorted ring, out-of-order/dup discard INV-3) + `interpolate.go` (render-clock bracket, `t=clamp(...,0,1)` + bounded extrapolation INV-1/2/4, type-driven Lerp/Slerp into render-only state).
+- [ ] **T-7E02 — Adaptive delay + plugin.** `adaptive.go` (render-delay controller vs buffer fill) + `config.go` + `plugin.go` (consume replication snapshots).
+
+### Track F — Client Prediction ([l2-client-prediction-go.md](../specifications/l2-client-prediction-go.md) → [l1-client-prediction.md](../specifications/l1-client-prediction.md)) · `internal/net/predict`
+
+- [ ] **T-7F01 — Authority + history + predict loop.** `authority.go` (`NetworkAuthority` partition, INV-5 query-filter) + `history.go` (ring + crc32, INV-3) + `predict.go` (FixedUpdate loop over the `DeterministicSchedule` subset, INV-2).
+- [ ] **T-7F02 — Reconcile + rollback + smoothing.** `reconcile.go` (compare → `SnapshotManager.RestoreSnapshot` + `InputBuffer` + `DeterministicSchedule.RunTick` resimulate, INV-1/4) + `smoothing.go` (`CorrectionState` blend, no teleport) + `plugin.go`.
+
+### Track G — Lockstep ([l2-lockstep-go.md](../specifications/l2-lockstep-go.md) → [l1-lockstep.md](../specifications/l1-lockstep.md)) · `internal/net/lockstep`
+
+- [ ] **T-7G01 — Scheduler + input flow.** `scheduler.go` (all-peers-ready gate, RunTick, catch-up, checksum cadence — INV-1/2/5) + `inputflow.go` (local tag+broadcast / remote receive — INV-3).
+- [ ] **T-7G02 — Desync + speculative + late join.** `desync.go` (crc32 checksum exchange + halt + `DesyncDetected`, INV-4) + `speculative.go` (opt-in — reuses Track F rollback path) + `latejoin.go` (snapshot transfer) + `plugin.go`.
+
+### Track I — Network Diagnostics ([l2-network-diagnostics-go.md](../specifications/l2-network-diagnostics-go.md) → [l1-network-diagnostics.md](../specifications/l1-network-diagnostics.md)) · `internal/net/netdiag`
+
+- [ ] **T-7I01 — Metrics + gated collection.** `paths.go` (`"net/..."` `DiagnosticPath` constants) + `collect.go` (per-category `Last`-schedule systems, `HasAnyReader`-gated zero-cost INV-1, read-only INV-2, standard `DiagnosticsStore` API INV-3).
+- [ ] **T-7I02 — Alerts + overlay + desync report.** `alerts.go` (`NetworkAlertConfig` thresholds → `pkg/protocol.NetworkAlert`, INV-4) + `overlay.go` (diag-overlay reuse; headless resource) + `desyncreport.go` + `plugin.go`.
+
+### Track T — Networking Validation
+
+- [ ] **T-7T01 — Transport conformance.** `FuzzPacketDecode` (hostile/truncated datagrams never panic) + a `memBackend` lossy-network sim (drop/reorder/dup) asserting Unreliable tolerates gaps + Reliable delivers exactly-once-in-order.
+- [ ] **T-7T02 — Determinism + rollback equivalence.** Deterministic lockstep checksum match across two in-proc peers; client-prediction rollback reproduces live state given the same inputs (a forced divergence triggers exactly one rollback to the correct state).
+- [ ] **T-7T03 — Replication round-trip.** Server→client EntityMap bijection + visibility gating (out-of-visibility entity never delivered) + whitelist (unmarked component never serialized) + despawn propagation.
+- [ ] **T-7T04 — End-to-end.** `examples/networking` (in-proc server+client over `memBackend`, hash-stable ×20 via `cmd/examplecheck`) exercising the full pipeline.

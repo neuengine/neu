@@ -15,7 +15,7 @@
 // the scene hydrator relies on.
 package hotreload
 
-import "encoding/json"
+import "github.com/neuengine/neu/internal/worldsnap"
 
 // CurrentSnapshotVersion is the on-disk format version. Bump on an
 // incompatible layout change so a stale snapshot is rejected rather than
@@ -76,35 +76,25 @@ type AppState struct {
 	Time            TimeSnapshot   `json:"time"`
 }
 
-// ComponentSnapshot is one component's captured state: its fully-qualified
-// type name (the TypeRegistry key) plus its JSON-encoded field values.
-type ComponentSnapshot struct {
-	TypeName string          `json:"type"`
-	Data     json.RawMessage `json:"data"`
-}
-
-// EntitySnapshot captures one entity by its full packed EntityID (index +
-// generation) and its serializable components. The ID is preserved exactly so
-// restore can pin it (INV-5).
-type EntitySnapshot struct {
-	Components []ComponentSnapshot `json:"components"`
-	ID         uint64              `json:"id"`
-}
+// The ID-preserving entity capture types are shared with internal/net via the
+// build-tag-free internal/worldsnap core; aliased here so existing hot-reload
+// code and tests keep referring to them by these names.
+type (
+	// ComponentSnapshot is one component's captured type name + JSON data.
+	ComponentSnapshot = worldsnap.ComponentSnapshot
+	// EntitySnapshot captures one entity by its full EntityID + components.
+	EntitySnapshot = worldsnap.EntitySnapshot
+	// DroppedComponent records a component type skipped during capture (INV-2).
+	DroppedComponent = worldsnap.DroppedComponent
+)
 
 // Snapshot is the complete hot-reload state capture: a header, the captured
-// entities (ID-preserving), and the app state. Dropped records component types
-// skipped during capture because they are not registered/serializable (INV-2)
-// so the restore side can surface them — never drop silently.
+// entities (ID-preserving, via worldsnap), and the app state. Dropped records
+// component types skipped during capture because they are not
+// registered/serializable (INV-2) so the restore side can surface them.
 type Snapshot struct {
 	App      AppState           `json:"app"`
 	Entities []EntitySnapshot   `json:"entities"`
 	Dropped  []DroppedComponent `json:"dropped,omitempty"`
 	Header   SnapshotHeader     `json:"header"`
-}
-
-// DroppedComponent records a component type that could not be serialized,
-// together with how many entities lost it (INV-2: dropped, never silent).
-type DroppedComponent struct {
-	TypeName     string `json:"type_name"`
-	AffectedRows int    `json:"affected_rows"`
 }

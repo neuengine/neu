@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.32.0
+**Version:** 1.32.1
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.32.0
+**Based on:** .design/main/PLAN.md v1.32.1
 **Based on RULES:** .design/RULES.md v1.10.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` **86/114**. **Phases 1–6 Done** (Phase 6 CLOSED 2026-06-03). **Phase 7 (Advanced Core) STARTED 2026-06-04** — hot-reload + profiling slice decomposed into 8 atomic tasks: **Track A** profiling (T-7A01..04) + **Track J** hot-reload (T-7J01..04), both `[Bootstrap]` (Draft L1 parents), parallelizable, grounded on shipped Phase-6 infra. Multiplayer stack (T-7B..I + T-7T) stays deferred Bootstrap (L1-only). **Next:** `/magic.run "phase-7"` to execute the slice.
+**Mode:** Specs `Stable` **86/114**. **Phases 1–6 Done.** **Phase 7 hot-reload + profiling slice IMPLEMENTED 2026-06-05 (8/8: T-7A01..04 + T-7J01..04)** — `pkg/diag/profiling` (dual-tag spans + stdlib exporters, Tracy rejected) + `internal/hotreload` (editor-tagged ID-pinning snapshot/restore + shader swap + daemon); all four tag builds green (default 84 pkgs). Both L2s now implemented+validated → eligible Draft→Stable. Multiplayer stack (T-7B..I + T-7T) stays deferred Bootstrap (L1-only). **Next:** `/magic.spec` (multiplayer L2s) or `/magic.task` (promote profiling+hot-reload).
 
 ## Overview
 

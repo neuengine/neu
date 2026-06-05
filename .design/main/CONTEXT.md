@@ -1,6 +1,6 @@
 # Project Context
 
-**Generated:** 2026-06-04
+**Generated:** 2026-06-05
 
 ## Active Technologies
 
@@ -25,6 +25,7 @@
 │   ├── cli/
 │   ├── codegen/
 │   ├── examplecheck/
+│   ├── hot-reload-daemon/
 │   └── releasenotes/
 ├── examples/
 │   ├── 2d/
@@ -65,6 +66,7 @@
 │   ├── platform/
 │   ├── plugin/
 │   ├── profiling/
+│   ├── releaseguard/
 │   ├── render/
 │   ├── tween/
 │   ├── ui/

@@ -6,12 +6,16 @@
 // (l1-hot-reload INV-4). This file defines the snapshot wire format; encode and
 // restore live in snapshot.go and restore.go.
 //
-// The World payload reuses the scene serialization codec (l2-scene-system-go):
-// a snapshot IS a scene.SerializedScene plus a header and captured app state.
-// No parallel serialization format is introduced.
+// World capture reuses the scene system's reflection extraction (the
+// WorldReader/ArchetypeView interfaces of l2-scene-system-go) and the
+// TypeRegistry, but uses a self-contained per-entity JSON encoding rather than
+// scene.SerializedScene: the latter is positional and drops the entity
+// generation, whereas hot-reload MUST preserve the full EntityID (index +
+// generation) for INV-5. Component values use the same JSON round-trip coercion
+// the scene hydrator relies on.
 package hotreload
 
-import "github.com/neuengine/neu/pkg/scene"
+import "encoding/json"
 
 // CurrentSnapshotVersion is the on-disk format version. Bump on an
 // incompatible layout change so a stale snapshot is rejected rather than
@@ -72,15 +76,30 @@ type AppState struct {
 	Time            TimeSnapshot   `json:"time"`
 }
 
-// Snapshot is the complete hot-reload state capture: a header, the World as a
-// portable scene payload (reusing the scene codec), and the app state. Dropped
-// records non-serializable component types skipped during capture (INV-2) so
-// the restore side can surface them — never drop silently.
+// ComponentSnapshot is one component's captured state: its fully-qualified
+// type name (the TypeRegistry key) plus its JSON-encoded field values.
+type ComponentSnapshot struct {
+	TypeName string          `json:"type"`
+	Data     json.RawMessage `json:"data"`
+}
+
+// EntitySnapshot captures one entity by its full packed EntityID (index +
+// generation) and its serializable components. The ID is preserved exactly so
+// restore can pin it (INV-5).
+type EntitySnapshot struct {
+	Components []ComponentSnapshot `json:"components"`
+	ID         uint64              `json:"id"`
+}
+
+// Snapshot is the complete hot-reload state capture: a header, the captured
+// entities (ID-preserving), and the app state. Dropped records component types
+// skipped during capture because they are not registered/serializable (INV-2)
+// so the restore side can surface them — never drop silently.
 type Snapshot struct {
-	World   scene.SerializedScene `json:"world"`
-	App     AppState              `json:"app"`
-	Header  SnapshotHeader        `json:"header"`
-	Dropped []DroppedComponent    `json:"dropped,omitempty"`
+	App      AppState           `json:"app"`
+	Entities []EntitySnapshot   `json:"entities"`
+	Dropped  []DroppedComponent `json:"dropped,omitempty"`
+	Header   SnapshotHeader     `json:"header"`
 }
 
 // DroppedComponent records a component type that could not be serialized,

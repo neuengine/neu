@@ -166,3 +166,50 @@ func (a *EntityAllocator) Reserve(n int) {
 		a.freeList = grown
 	}
 }
+
+// PlaceAt forces the slot at index to be alive at the given generation, growing
+// the arena as needed (unfilled lower slots get generation 0, the "unused"
+// marker). It is the restore primitive used by hot-reload to pin a snapshot's
+// EntityIDs exactly (l1-hot-reload INV-5) so cached Entity handles survive a
+// process restart.
+//
+// PlaceAt is intended for a FRESH allocator during restore, not for
+// interleaving with Allocate: it does not consult or update the free list (call
+// [EntityAllocator.RebuildFreeList] once after placing every entity). A
+// generation of 0 is rejected (0 is the null/unused sentinel). Re-placing the
+// same index overwrites its generation and does not double-count alive.
+// Safe for concurrent use, though restore is single-threaded by nature.
+func (a *EntityAllocator) PlaceAt(index, generation uint32) {
+	if generation == 0 {
+		return
+	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	for uint32(len(a.generations)) <= index {
+		a.generations = append(a.generations, 0) // 0 = unused slot
+	}
+	if a.generations[index] == 0 {
+		a.alive++
+	}
+	a.generations[index] = generation
+}
+
+// RebuildFreeList reconstructs the free list from the gaps left after a batch of
+// [EntityAllocator.PlaceAt] calls: every slot still carrying generation 0
+// (never placed) becomes free, so subsequent Allocate calls reuse those indices
+// before extending the arena. Each reclaimed gap's generation is set to 1 so a
+// subsequent Allocate hands out a valid (non-null) entity, exactly as a freshly
+// extended slot would — leaving a gap at generation 0 would make Allocate
+// return the null sentinel. Indices are pushed in descending order so the
+// lowest free index is handed out first. Safe for concurrent use.
+func (a *EntityAllocator) RebuildFreeList() {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	a.freeList = a.freeList[:0]
+	for i := len(a.generations) - 1; i >= 0; i-- {
+		if a.generations[i] == 0 {
+			a.generations[i] = 1
+			a.freeList = append(a.freeList, uint32(i))
+		}
+	}
+}

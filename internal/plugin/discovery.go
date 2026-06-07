@@ -12,9 +12,9 @@ import (
 // directory it lives in (for resolving the entry binary / checksum on load) and
 // the originating source name (for the manager's audit log).
 type DiscoveredPlugin struct {
-	Manifest pkgplugin.Manifest
 	Dir      string
 	Source   string
+	Manifest pkgplugin.Manifest
 }
 
 // Source enumerates the plugins available from one location. The engine scans
@@ -33,8 +33,8 @@ type Source interface {
 // — one plugin per directory that contains one. Backing the source with fs.FS
 // (not a raw path) keeps it stdlib-only and unit-testable with fstest.MapFS.
 type DirSource struct {
-	SourceName string
 	FS         fs.FS
+	SourceName string
 }
 
 // Name implements [Source].

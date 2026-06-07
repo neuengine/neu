@@ -23,11 +23,11 @@ const DefaultMaxTrace = 256
 // pkg/protocol graph IPC messages; keeping that mapping out of the store leaves
 // this package free of any protocol import.
 type TraceEvent struct {
-	Frame      editor.GraphExecutionFrame
 	GraphID    string
-	Err        string // non-empty → a runtime error occurred at Frame.NodeID
+	Err        string
+	Frame      editor.GraphExecutionFrame
 	EntityID   uint64
-	Breakpoint bool // the node had an active breakpoint when this frame was recorded
+	Breakpoint bool
 }
 
 // graphDebug is the mutable debug state for one open graph.

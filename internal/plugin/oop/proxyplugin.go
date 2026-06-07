@@ -20,11 +20,11 @@ type stateSetterFn func(id pkgplugin.PluginID, s pkgplugin.State)
 // If the subprocess crashes or the transport fails during any phase, the plugin
 // is marked Failed and the method returns without panicking (INV-8).
 type ProxyPlugin struct {
-	id       pkgplugin.PluginID
+	ctx      context.Context
 	sup      *Supervisor
 	setState stateSetterFn
-	ctx      context.Context    // parent context from Spawn call
-	cancel   context.CancelFunc // cancels all in-flight DriveLifecycle calls
+	cancel   context.CancelFunc
+	id       pkgplugin.PluginID
 }
 
 // NewProxyPlugin creates a ProxyPlugin that routes lifecycle calls through sup.

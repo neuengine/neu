@@ -199,9 +199,9 @@ func TestSetFocusTransfers(t *testing.T) {
 // RegisterComponent + query construction work) that records the system the
 // plugin registers and the schedule it targets.
 type recordingBuilder struct {
+	system   scheduler.System
 	w        *world.World
 	schedule string
-	system   scheduler.System
 }
 
 func (b *recordingBuilder) World() *world.World { return b.w }

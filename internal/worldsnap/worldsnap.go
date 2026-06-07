@@ -103,8 +103,8 @@ func Restore(w *world.World, ents []EntitySnapshot, reg *typereg.TypeRegistry) R
 	dropTally := map[string]int{}
 
 	type staged struct {
-		e    entity.Entity
 		data []component.Data
+		e    entity.Entity
 	}
 	all := make([]staged, 0, len(ents))
 	for i := range ents {

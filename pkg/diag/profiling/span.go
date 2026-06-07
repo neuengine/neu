@@ -70,8 +70,8 @@ func (c SpanCategory) String() string {
 // KeyValue is an optional annotation attached to a span (entity count, query
 // size, allocation delta, etc.).
 type KeyValue struct {
-	Key   string
 	Value any
+	Key   string
 }
 
 // Span is a named, timed region of execution. It is pure data: the live
@@ -80,8 +80,8 @@ type KeyValue struct {
 // value (never by pointer) so the pooled instance can be recycled immediately
 // after End — exporters that buffer must copy what they need.
 type Span struct {
-	metadata []KeyValue
 	name     string
+	metadata []KeyValue
 	id       SpanID
 	parentID SpanID
 	startNs  int64

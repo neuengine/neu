@@ -20,9 +20,9 @@ const (
 // bridge that publishes it lives in internal/asset). [Reload] emits
 // AssetModified; AssetCreated / AssetRemoved are reserved for future wiring.
 type AssetEvent[A any] struct {
-	Kind AssetEventKind
-	ID   AssetID
 	Path string
+	ID   AssetID
+	Kind AssetEventKind
 }
 
 // loadedRef records the type and current slot id of the asset most recently

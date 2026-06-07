@@ -65,8 +65,8 @@ func (e *rtoEstimator) rto() time.Duration {
 // producing the piggybacked Ack (Base = highest seen, Bits = bitfield of the 32
 // preceding). Wraparound-aware.
 type ackTracker struct {
-	base uint16
 	bits uint32
+	base uint16
 	any  bool
 }
 
@@ -204,8 +204,8 @@ func ackFrame(a Ack, seq uint16) bool { return acked(a, seq) }
 // detects duplicates; frames older than the window are dropped as duplicates.
 type reliableReceiver struct {
 	reorder map[uint16][]byte
-	highest uint16
 	seen    uint64
+	highest uint16
 	expect  uint16
 	mode    netcore.DeliveryMode
 	started bool

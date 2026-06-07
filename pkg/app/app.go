@@ -53,9 +53,9 @@ type App struct {
 	executor   *scheduler.SequentialExecutor
 	registry   *pluginRegistry
 	subApps    map[string]*SubApp
-	lifecycle  []appface.FullPlugin // plugins implementing the full lifecycle
 	runner     RunnerFn
 	exitReader *event.EventReader[AppExit]
+	lifecycle  []appface.FullPlugin
 	runMode    RunMode
 	shouldExit bool
 	exitCode   uint8

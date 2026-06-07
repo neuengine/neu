@@ -90,12 +90,12 @@ func TestDefaultProfilingConfig(t *testing.T) {
 
 // countingExporter records calls for MultiExporter fan-out assertions.
 type countingExporter struct {
+	failOn  string
 	spans   int
 	frames  int
 	inits   int
 	flushes int
 	shuts   int
-	failOn  string // method name that returns an error
 }
 
 func (c *countingExporter) Init() error {

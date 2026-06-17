@@ -118,7 +118,8 @@ func acked(a Ack, seq uint16) bool {
 type pendingFrame struct {
 	lastSent    time.Time
 	payload     []byte
-	seq         uint16
+	seq         uint16  // channel-level msg seq; stable across retransmits (for receiver dedup)
+	datagramSeq uint16  // datagram PacketSeq of the last transmission (for ACK matching)
 	retransmits int
 }
 
@@ -154,13 +155,15 @@ func (s *reliableSender) queue(payload []byte) (uint16, bool) {
 }
 
 // onAck removes acknowledged frames from the window and samples RTT for frames
-// acked on their first transmission.
+// acked on their first transmission. Matching uses datagramSeq (the PacketSeq of
+// the datagram the frame was last sent in) so channel msg seqs and datagram seqs
+// do not need to coincide.
 func (s *reliableSender) onAck(a Ack, now time.Time) {
 	kept := s.window[:0]
 	for i := range s.window {
 		f := s.window[i]
-		if ackFrame(a, f.seq) {
-			if f.retransmits == 0 && !f.lastSent.IsZero() {
+		if !f.lastSent.IsZero() && ackFrame(a, f.datagramSeq) {
+			if f.retransmits == 0 {
 				s.est.sample(now.Sub(f.lastSent))
 			}
 			continue // acked → drop from window
@@ -170,9 +173,23 @@ func (s *reliableSender) onAck(a Ack, now time.Time) {
 	s.window = kept
 }
 
+// setDatagramSeq records the datagram PacketSeq that a channel msg frame was last
+// sent in. Called by sendFrames after Encode so the Ack-matching uses the correct
+// datagram sequence number, not the channel-level msg sequence.
+func (s *reliableSender) setDatagramSeq(msgSeq, datagramSeq uint16) {
+	for i := range s.window {
+		if s.window[i].seq == msgSeq {
+			s.window[i].datagramSeq = datagramSeq
+			return
+		}
+	}
+}
+
 // due returns the frames that must be (re)transmitted now: never-sent frames and
 // frames whose RTO has elapsed. It stamps them sent and bumps the retransmit
 // count for resends. Returned payloads alias the window — encode immediately.
+// datagramSeq is initialised to seq as a placeholder; the caller should call
+// setDatagramSeq after it knows the actual datagram PacketSeq.
 func (s *reliableSender) due(now time.Time) []Frame {
 	rto := s.est.rto()
 	var out []Frame
@@ -183,6 +200,7 @@ func (s *reliableSender) due(now time.Time) []Frame {
 				f.retransmits++
 			}
 			f.lastSent = now
+			f.datagramSeq = f.seq // placeholder; overridden by setDatagramSeq
 			out = append(out, Frame{MsgSeq: f.seq, Payload: f.payload})
 		}
 	}

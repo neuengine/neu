@@ -1,7 +1,7 @@
 # Profiling Protocol
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -230,27 +230,28 @@ PprofExporter enriches these profiles with span labels:
 
 ## 5. Open Questions
 
-- Should the Tracy exporter support Tracy's lock tracking for mutex contention visualization?
-- Should spans carry a "budget" field (expected duration) for automatic regression detection?
-- How should GPU timing interact with async compute — separate lanes or merged timeline?
-- Should the profiling layer detect and annotate GC STW pauses automatically?
-- Is there value in a network exporter (UDP streaming) for profiling remote devices?
+- Should the Tracy exporter support Tracy's lock tracking for mutex contention visualization? *(non-blocking — Tracy is ADR-deferred under C32; additive when accepted)*
+- Should spans carry a "budget" field (expected duration) for automatic regression detection? *(non-blocking — deferred to future revision)*
+- How should GPU timing interact with async compute — separate lanes or merged timeline? *(non-blocking — GPU timing stubbed under ADR; deferred)*
+- Should the profiling layer detect and annotate GC STW pauses automatically? *(non-blocking — deferred to future revision)*
+- Is there value in a network exporter (UDP streaming) for profiling remote devices? *(non-blocking — deferred to future revision)*
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
-
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| span-api | pkg/diag/profiling/span.go | Span/SpanID types, BeginSpan/EndSpan/EmitSpan API surface |
+| profile-on | pkg/diag/profiling/profile_on.go | Live pooled-span machinery (`//go:build profiling`) |
+| profile-off | pkg/diag/profiling/profile_off.go | Inlinable no-op stubs for release builds (`//go:build !profiling`) |
+| exporter-iface | pkg/diag/profiling/exporter.go | ProfileExporter interface |
+| chrome-exporter | pkg/diag/profiling/exporter_chrome.go | Chrome TEF JSON writer |
+| pprof-exporter | pkg/diag/profiling/exporter_pprof.go | pprof label aggregator |
+| plugin | internal/profiling/plugin.go | ProfilingPlugin — App integration entry point |
+| invariant-tests | pkg/diag/profiling/profiling_test.go | 0-alloc invariant + build-tag CI tests |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-28 | Initial draft: span API, Tracy/pprof/chrome exporters, auto-instrumentation |
-| — | — | Planned examples: `examples/diagnostic/` |
+| 0.2.0 | 2026-06-16 | Promoted Draft → Stable: Canonical References populated; open questions annotated non-blocking (Tracy ADR-deferred under C32; GPU timing stubbed). Implementation complete in `pkg/diag/profiling` (dual-tag spans, Chrome TEF + pprof exporters) and `internal/profiling` (ProfilingPlugin). |

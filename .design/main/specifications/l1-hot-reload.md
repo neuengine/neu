@@ -1,7 +1,7 @@
 # Hot-Reload System
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** concept
 
 ## Overview
@@ -349,28 +349,30 @@ Detection heuristic (best-effort):
 
 ## 5. Open Questions
 
-- Should the snapshot format be human-readable (JSON) for debugging, or binary-only for speed?
-- Should hot-reload support partial World snapshots (only serialize entities in the current scene)?
-- How should hot-reload interact with active network connections (multiplayer testing)?
-- Should the orchestrator support "rewind" — restoring a previous snapshot after a bad reload?
-- Should shader hot-reload support SPIR-V bytecode replacement, or only source recompilation?
-- How should hot-reload handle changes to init/startup systems that ran once at launch?
+- Should the snapshot format be human-readable (JSON) for debugging, or binary-only for speed? *(resolved — L2 chose interned binary codec for speed; debug JSON dump is additive and deferred)*
+- Should hot-reload support partial World snapshots (only serialize entities in the current scene)? *(non-blocking — deferred to future revision)*
+- How should hot-reload interact with active network connections (multiplayer testing)? *(non-blocking — sockets are non-serializable; they are reconstructed post-reload by plugin Build/Ready)*
+- Should the orchestrator support "rewind" — restoring a previous snapshot after a bad reload? *(non-blocking — deferred to future revision)*
+- Should shader hot-reload support SPIR-V bytecode replacement, or only source recompilation? *(non-blocking — current implementation: source recompilation only; SPIR-V replacement deferred)*
+- How should hot-reload handle changes to init/startup systems that ran once at launch? *(non-blocking — current behavior: clean restart; once-only init re-runs in the new process)*
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. List authoritative source files that downstream agents
-     MUST read before implementing this spec. Use relative paths from project root.
-     Stub state — fill with concrete files when implementation begins (Phase 1+). -->
-
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no canonical sources yet. Populate one row per authoritative file
-     when implementation lands (Phase 1+). Stable promotion requires ≥1 row. -->
+| snapshot | internal/hotreload/snapshot.go | World capture via DynamicScene codec |
+| restore | internal/hotreload/restore.go | Transactional restore + IdentityRemapper entity-ID pinning |
+| format | internal/hotreload/format.go | Snapshot header/AppState serialization structures |
+| shader | internal/hotreload/shader.go | ShaderReloader in-process double-buffered swap |
+| scope | internal/hotreload/scope.go | ClassifyChange AST heuristic (SystemOnly/ComponentAdded/TypeChanged) |
+| orchestrator | internal/hotreload/orchestrator.go | RouteFile + build pipeline coordination |
+| plugin | internal/hotreload/plugin.go | HotReloadPlugin — App integration entry point (`//go:build editor`) |
+| daemon | cmd/hot-reload-daemon/main.go | Editor daemon binary |
+| releaseguard | internal/releaseguard/hotreload_guard_test.go | INV-4 build-absence guard (verifies editor tag isolation) |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-03-28 | Initial draft: process-restart with state snapshot, shader hot-swap, orchestrator design |
-| — | — | Planned examples: `examples/app/` |
+| 0.2.0 | 2026-06-16 | Promoted Draft → Stable: Canonical References populated; open questions annotated (Q1 resolved: binary codec chosen; Q2–Q6 non-blocking). Implementation complete: `internal/hotreload` (snapshot/restore/shader/scope/orchestrator/plugin), `cmd/hot-reload-daemon`, `internal/releaseguard` INV-4 guard. |

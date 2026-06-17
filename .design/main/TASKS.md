@@ -1,12 +1,12 @@
 # Master Task Index (Registry)
 
-**Version:** 1.33.0
+**Version:** 1.34.0
 **Generated:** 2026-05-28
-**Based on:** .design/main/PLAN.md v1.33.0
+**Based on:** .design/main/PLAN.md v1.34.0
 **Based on RULES:** .design/RULES.md v1.10.0
 **Execution Mode:** Parallel (per C3)
 **Status:** Active
-**Mode:** Specs `Stable` **86/122**. **Phases 1–6 Done.** **Phase 7 hot-reload + profiling slice IMPLEMENTED (8/8: T-7A/T-7J)**; **networking stack now FULLY DECOMPOSED** (8 L2s → ~22 atomic tasks, Tracks B/C/D/E/F/G/H/I + T validation, `[Bootstrap]`). Deep sequential dep chain B→C→{D‖H}→{E‖F‖G}→I; critical-path = transport reliability + DeterministicSchedule. **Next:** `/magic.run "phase-7"` to implement (start T-7B), or `/magic.task` to promote profiling+hot-reload Draft→Stable.
+**Mode:** Specs `Stable` **90/122**. **Phases 1–6 Done.** **Phase 7 hot-reload + profiling slice IMPLEMENTED + PROMOTED** (8/8 tasks; all 4 specs Stable 0.2.0); **networking stack FULLY DECOMPOSED** (8 L2s → ~22 atomic tasks, Tracks B/C/D/E/F/G/H/I + T validation, `[Bootstrap]`). Deep sequential dep chain B→C→{D‖H}→{E‖F‖G}→I; critical-path = transport reliability + DeterministicSchedule. **Next:** `/magic.run "phase-7"` → T-7B (networking-system).
 
 ## Overview
 
@@ -43,7 +43,8 @@ Tactical registry of all phases and their statuses. Atomic checklists live in pe
 
 ## Meta Information
 
-- **Last Updated**: 2026-05-28
+- **Last Updated**: 2026-06-16
+- **Pre-Planning Stabilization (2026-06-16, `/magic.task`)**: **4 P7 advanced-core specs promoted Draft → Stable** — `l1-profiling-protocol` 0.1.0→0.2.0, `l2-profiling-protocol-go` 0.1.0→0.2.0, `l1-hot-reload` 0.1.0→0.2.0, `l2-hot-reload-go` 0.1.0→0.2.0. C29 P7 gate met (all T-7A/T-7J tasks Done). Canonical References populated on all 4; `[Bootstrap]` deactivated for profiling+hot-reload pairs. Networking tracks (B/C/D/E/F/G/H/I/T) remain `[Bootstrap]` — Draft L1 parents + no impl. **Stable 86 → 90, Draft 36 → 32.** PLAN v1.33.0 → v1.34.0. INDEX unchanged (v2.48.0, 122 specs).
 - **Maintainer**: Core Team
 - **Phase 5 Activated (2026-05-28, `/magic.task`)**: Phase 5 `Ready` → **Active** — all unfreeze conditions met (render-core Stable gate cleared + 5 L2 Go contracts authored + 18 tasks decomposed). Pre-Planning Stabilization promoted **0 specs** (C29 P5 gate unmet — no validating `examples/{audio,animation,tweening,2d}/` yet; Bootstrap retained for all 10 P5 specs, consistent with the P1–P4 per-phase discipline where specs promote Draft→Stable only after the validation track closes the gate). `phase-5.md` frontmatter `status: Active`; High-Level Checklist links L2 contracts. No INDEX/spec-status change (v2.32.0). PLAN/TASKS v1.14.0 → v1.15.0. No engine files modified — no C14 bump. **Hand off to `/magic.run main`** — critical path {A‖D} → B → T; Track E independent; T-5T05 closes the C29 P5 gate.
 - **Phase 5 L2 Contracts Authored (2026-05-28, `/magic.spec`)**: 5 new L2 Go specs created — `l2-{audio-system,asset-formats,2d-rendering,animation-system,tweening-system}-go` (all Draft, each `Implements:` its L1 parent). Resolves the "P5 specs are L1-only" advisory — `/magic.run` Phase 5 tasks now implement against Go-level contracts (parity with Phases 1–4). Status Draft is correct: L1 parents Draft + no implementation → Canonical References stub → Stable blocked. INDEX v2.31.0 → v2.32.0 (96 → 101 specs, L2 Go 29 → 34, Draft 46 → 51), PLAN/TASKS v1.13.0 → v1.14.0. No engine files modified — no C14 bump. The 18 P5 atomic tasks in `tasks/phase-5.md` should now reference their L2 contract as the implementation source.

@@ -1,7 +1,7 @@
 # Profiling Protocol — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** l1-profiling-protocol.md
 
@@ -236,17 +236,25 @@ ProfilingConfig (config.go, untagged — an ECS resource):
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub state — this L2 is Draft (L1 parent Draft +
-     no implementation yet). Populate with on-disk source/test/example files when
-     implementation lands (Phase 7). Stable promotion requires >=1 row. -->
-
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no implementation yet. One row per authoritative file when code lands. -->
+| span-api | pkg/diag/profiling/span.go | Span/SpanID types, BeginSpan/EndSpan/EmitSpan API surface |
+| config | pkg/diag/profiling/config.go | ProfileConfig (sample rate, flush interval) |
+| profile-on | pkg/diag/profiling/profile_on.go | Live pooled-span machinery (`//go:build profiling`) |
+| profile-off | pkg/diag/profiling/profile_off.go | Inlinable no-op stubs for release builds (`//go:build !profiling`) |
+| exporter-iface | pkg/diag/profiling/exporter.go | ProfileExporter interface |
+| chrome-exporter | pkg/diag/profiling/exporter_chrome.go | Chrome TEF JSON writer |
+| pprof-exporter | pkg/diag/profiling/exporter_pprof.go | pprof label aggregator |
+| gpu-stub | pkg/diag/profiling/gpu.go | GPU timing stub (ADR-deferred) |
+| plugin | internal/profiling/plugin.go | ProfilingPlugin — App integration entry point |
+| plugin-off | internal/profiling/plugin_off.go | No-op plugin stub (`//go:build !profiling`) |
+| invariant-tests | pkg/diag/profiling/profiling_test.go | 0-alloc invariant + build-tag CI tests |
+| pool-tests | pkg/diag/profiling/profile_on_test.go | sync.Pool lifecycle and span-tree tests |
+| backend-tests | pkg/diag/profiling/exporter_backends_test.go | Exporter backend conformance tests |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-06-04 | Initial Draft: dual-file build-tag span machinery, pooled zero-alloc spans, context-propagated hierarchy, stdlib pprof + Chrome TEF exporters, Tracy deferred under ADR, GPU timing stubbed. Implements l1-profiling-protocol. |
+| 0.2.0 | 2026-06-16 | Promoted Draft → Stable: Canonical References populated with 13 on-disk-verified source, stub, and test files. L1 parent promoted simultaneously. |

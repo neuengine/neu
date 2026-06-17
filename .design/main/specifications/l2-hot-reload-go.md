@@ -1,7 +1,7 @@
 # Hot-Reload System — Go Implementation
 
-**Version:** 0.1.0
-**Status:** Draft
+**Version:** 0.2.0
+**Status:** Stable
 **Layer:** go
 **Implements:** l1-hot-reload.md
 
@@ -255,17 +255,26 @@ For developers not using the editor, `cmd/hot-reload-daemon` provides the same w
 
 ## Canonical References
 
-<!-- MANDATORY for Stable status. Stub state — this L2 is Draft (L1 parent Draft +
-     no implementation yet). Populate with on-disk source/test/example files when
-     implementation lands (Phase 7). Stable promotion requires >=1 row. -->
-
 | Alias | Path | Purpose |
 | :--- | :--- | :--- |
-
-<!-- Empty table = no implementation yet. One row per authoritative file when code lands. -->
+| snapshot | internal/hotreload/snapshot.go | World capture via DynamicScene codec |
+| restore | internal/hotreload/restore.go | Transactional restore + IdentityRemapper entity-ID pinning (INV-5) |
+| format | internal/hotreload/format.go | Snapshot header/AppState serialization structures |
+| shader | internal/hotreload/shader.go | ShaderReloader in-process double-buffered swap (INV-3) |
+| scope | internal/hotreload/scope.go | ClassifyChange AST heuristic (SystemOnly/ComponentAdded/TypeChanged) |
+| orchestrator | internal/hotreload/orchestrator.go | RouteFile + build pipeline coordination |
+| plugin | internal/hotreload/plugin.go | HotReloadPlugin — App integration entry point (`//go:build editor`) |
+| daemon | cmd/hot-reload-daemon/main.go | Editor daemon binary |
+| daemon-stub | cmd/hot-reload-daemon/main_stub.go | No-editor build stub |
+| releaseguard | internal/releaseguard/hotreload_guard_test.go | INV-4 build-absence guard |
+| snapshot-tests | internal/hotreload/snapshot_test.go | ID-preservation round-trip characterization test |
+| feature-tests | internal/hotreload/feature_test.go | End-to-end reload feature tests (`//go:build editor`) |
+| format-tests | internal/hotreload/format_test.go | Snapshot header serialization tests |
+| ipc-messages | pkg/protocol/messages.go | IPC wire messages (reload protocol Kinds) |
 
 ## Document History
 
 | Version | Date | Description |
 | :--- | :--- | :--- |
 | 0.1.0 | 2026-06-04 | Initial Draft: process-restart with transactional snapshot/restore reusing the DynamicScene codec, entity-ID pinning via IdentityRemapper + EntityAllocator free-list reconstruction (INV-5), in-process double-buffered shader hot-swap (INV-3), editor/daemon orchestrator with AST change-scope classifier, //go:build editor isolation (INV-4). Implements l1-hot-reload. |
+| 0.2.0 | 2026-06-16 | Promoted Draft → Stable: Canonical References populated with 14 on-disk-verified source, stub, and test files. L1 parent promoted simultaneously. |

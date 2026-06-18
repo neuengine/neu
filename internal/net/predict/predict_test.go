@@ -4,10 +4,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/neuengine/neu/internal/ecs/component"
 	"github.com/neuengine/neu/internal/ecs/entity"
+	"github.com/neuengine/neu/internal/ecs/scheduler"
 	"github.com/neuengine/neu/internal/ecs/typereg"
 	"github.com/neuengine/neu/internal/ecs/world"
 	netcore "github.com/neuengine/neu/internal/net"
+	neumath "github.com/neuengine/neu/pkg/math"
+	"github.com/neuengine/neu/pkg/app/appface"
+	"github.com/neuengine/neu/pkg/scene"
 )
 
 // ─── PredictionHistory ───────────────────────────────────────────────────────
@@ -374,6 +379,284 @@ func TestPredictionSystemHistory(t *testing.T) {
 	sys := NewPredictionSystem(1, 0, hist)
 	if sys.History() != hist {
 		t.Error("History() should return the history passed to NewPredictionSystem")
+	}
+}
+
+// ─── CorrectionState / CorrectionSmoothingSystem ─────────────────────────────
+
+func TestCorrectionStateDefaults(t *testing.T) {
+	t.Parallel()
+	cs := CorrectionState{BlendDuration: DefaultBlendDuration}
+	if cs.BlendDuration != DefaultBlendDuration {
+		t.Errorf("BlendDuration = %v, want %v", cs.BlendDuration, DefaultBlendDuration)
+	}
+}
+
+func TestNewCorrectionSmoothingSystemDefaultDt(t *testing.T) {
+	t.Parallel()
+	sys := NewCorrectionSmoothingSystem(0)
+	if sys.dt != time.Second/60 {
+		t.Errorf("dt = %v, want %v", sys.dt, time.Second/60)
+	}
+}
+
+func spawnEntityWithCorrectionState(w *world.World, cs CorrectionState) entity.Entity {
+	data := component.NewData[CorrectionState](w.Components(), cs)
+	return w.Spawn(data)
+}
+
+func TestCorrectionSmoothingSystemNoRegisteredComponent(t *testing.T) {
+	t.Parallel()
+	w := world.NewWorld()
+	sys := NewCorrectionSmoothingSystem(0)
+	// Should not panic when CorrectionState is unregistered.
+	sys.Run(w)
+}
+
+func TestCorrectionSmoothingSystemDecaysOffset(t *testing.T) {
+	t.Parallel()
+	w := world.NewWorld()
+	dt := 10 * time.Millisecond
+	sys := NewCorrectionSmoothingSystem(dt)
+
+	cs := CorrectionState{
+		VisualOffset:   neumath.Vec3{X: 10, Y: 0, Z: 0},
+		RotationOffset: neumath.QuatIdentity(),
+		BlendRemaining: 100 * time.Millisecond,
+		BlendDuration:  100 * time.Millisecond,
+	}
+	ent := spawnEntityWithCorrectionState(w, cs)
+	sys.Run(w)
+
+	got, ok := world.Get[CorrectionState](w, ent)
+	if !ok {
+		t.Fatal("CorrectionState removed too early")
+	}
+	if got.BlendRemaining != 90*time.Millisecond {
+		t.Errorf("BlendRemaining = %v, want 90ms", got.BlendRemaining)
+	}
+	// VisualOffset should have moved toward zero.
+	if got.VisualOffset.X >= 10 {
+		t.Errorf("VisualOffset.X = %v, expected decay", got.VisualOffset.X)
+	}
+}
+
+func TestCorrectionSmoothingSystemRemovesWhenExpired(t *testing.T) {
+	t.Parallel()
+	w := world.NewWorld()
+	dt := 50 * time.Millisecond
+	sys := NewCorrectionSmoothingSystem(dt)
+
+	cs := CorrectionState{
+		VisualOffset:   neumath.Vec3{X: 1},
+		RotationOffset: neumath.QuatIdentity(),
+		BlendRemaining: 30 * time.Millisecond, // less than dt
+		BlendDuration:  100 * time.Millisecond,
+	}
+	ent := spawnEntityWithCorrectionState(w, cs)
+	sys.Run(w)
+
+	if _, ok := world.Get[CorrectionState](w, ent); ok {
+		t.Error("CorrectionState should be removed when BlendRemaining expires")
+	}
+}
+
+func TestCorrectionSmoothingSystemMultipleEntities(t *testing.T) {
+	t.Parallel()
+	w := world.NewWorld()
+	dt := 20 * time.Millisecond
+	sys := NewCorrectionSmoothingSystem(dt)
+
+	cs1 := CorrectionState{
+		VisualOffset:   neumath.Vec3{X: 5},
+		RotationOffset: neumath.QuatIdentity(),
+		BlendRemaining: 10 * time.Millisecond, // expires
+		BlendDuration:  100 * time.Millisecond,
+	}
+	cs2 := CorrectionState{
+		VisualOffset:   neumath.Vec3{X: 3},
+		RotationOffset: neumath.QuatIdentity(),
+		BlendRemaining: 100 * time.Millisecond,
+		BlendDuration:  100 * time.Millisecond,
+	}
+	ent1 := spawnEntityWithCorrectionState(w, cs1)
+	ent2 := spawnEntityWithCorrectionState(w, cs2)
+	sys.Run(w)
+
+	if _, ok := world.Get[CorrectionState](w, ent1); ok {
+		t.Error("ent1 CorrectionState should be removed (expired)")
+	}
+	if _, ok := world.Get[CorrectionState](w, ent2); !ok {
+		t.Error("ent2 CorrectionState should remain")
+	}
+}
+
+// ─── ServerState / ReconciliationSystem ──────────────────────────────────────
+
+func buildReconcileWorld(t *testing.T) *world.World {
+	t.Helper()
+	w := buildPredictWorld(t)
+	world.SetResource(w, ServerState{})
+	return w
+}
+
+func TestReconciliationSystemNoServerStateResource(t *testing.T) {
+	t.Parallel()
+	w := buildPredictWorld(t)
+	hist := NewPredictionHistory(0)
+	sys := NewReconciliationSystem(hist)
+	sys.Run(w) // should not panic
+}
+
+func TestReconciliationSystemNotValid(t *testing.T) {
+	t.Parallel()
+	w := buildReconcileWorld(t)
+	hist := NewPredictionHistory(8)
+	hist.RecordTick(5, 0xABCD)
+	sys := NewReconciliationSystem(hist)
+	sys.Run(w) // Valid=false: no action
+	if hist.Len() != 1 {
+		t.Error("history should be unchanged when Valid=false")
+	}
+}
+
+func TestReconciliationSystemMatchDiscardsHistory(t *testing.T) {
+	t.Parallel()
+	w := buildReconcileWorld(t)
+	// Set up prediction history with ticks 1..5.
+	hist := NewPredictionHistory(8)
+	for i := uint64(1); i <= 5; i++ {
+		hist.RecordTick(i, uint32(i)*0x100)
+	}
+	// Mark tick 3 as confirmed by server.
+	ssP, _ := world.Resource[ServerState](w)
+	ssP.Tick = 3
+	ssP.Checksum = 3 * 0x100
+	ssP.Valid = true
+
+	sys := NewReconciliationSystem(hist)
+	sys.Run(w)
+
+	// Ticks 1,2,3 should be discarded; 4,5 should remain.
+	if hist.Len() != 2 {
+		t.Errorf("Len = %d, want 2 after DiscardThrough(3)", hist.Len())
+	}
+	for _, tick := range []uint64{1, 2, 3} {
+		if _, ok := hist.Get(tick); ok {
+			t.Errorf("tick %d should be discarded", tick)
+		}
+	}
+}
+
+func TestReconciliationSystemMismatchRollsBack(t *testing.T) {
+	t.Parallel()
+	w := buildReconcileWorld(t)
+
+	// Advance the coordinator a few ticks so there are snapshots to rollback to.
+	rcP, _ := world.Resource[*netcore.RollbackCoordinator](w)
+	rc := *rcP
+	reader := scene.NewWorldAdapter(w)
+	for i := uint64(1); i <= 3; i++ {
+		rc.AdvanceTick(w, reader, i)
+	}
+
+	hist := NewPredictionHistory(8)
+	hist.RecordTick(1, 0xBAAD) // stored checksum for tick 1 (will mismatch)
+
+	ssP, _ := world.Resource[ServerState](w)
+	ssP.Tick = 1
+	ssP.Checksum = 0xCAFE // server says 0xCAFE; history says 0xBAAD
+	ssP.Valid = true
+
+	sys := NewReconciliationSystem(hist)
+	sys.Run(w)
+
+	// Valid should be cleared.
+	if ssP.Valid {
+		t.Error("ServerState.Valid should be cleared after consumption")
+	}
+	// History for tick 1 should be discarded.
+	if _, ok := hist.Get(1); ok {
+		t.Error("tick 1 should be discarded after rollback")
+	}
+}
+
+func TestReconciliationSystemMissingHistoryEntry(t *testing.T) {
+	t.Parallel()
+	w := buildReconcileWorld(t)
+
+	hist := NewPredictionHistory(8)
+	// No history for tick 5.
+
+	ssP, _ := world.Resource[ServerState](w)
+	ssP.Tick = 5
+	ssP.Checksum = 0x1234
+	ssP.Valid = true
+
+	sys := NewReconciliationSystem(hist)
+	sys.Run(w) // should not panic; just discards before tick 5
+}
+
+// ─── PredictionPlugin ────────────────────────────────────────────────────────
+
+// fakeBuilder records calls to AddSystem and world changes for plugin testing.
+type fakePredictBuilder struct {
+	w       *world.World
+	systems []string
+}
+
+func newFakePredictBuilder() *fakePredictBuilder {
+	return &fakePredictBuilder{w: world.NewWorld()}
+}
+
+func (f *fakePredictBuilder) World() *world.World { return f.w }
+func (f *fakePredictBuilder) AddSystem(schedule string, sys scheduler.System) appface.Builder {
+	f.systems = append(f.systems, schedule+":"+sys.Name())
+	return f
+}
+func (f *fakePredictBuilder) AddSystems(schedule string, systems ...scheduler.System) appface.Builder {
+	for _, s := range systems {
+		f.systems = append(f.systems, schedule+":"+s.Name())
+	}
+	return f
+}
+func (f *fakePredictBuilder) SetResource(v any) appface.Builder         { return f }
+func (f *fakePredictBuilder) InitResource(v any) appface.Builder        { return f }
+func (f *fakePredictBuilder) AddPlugin(p appface.Plugin) appface.Builder { p.Build(f); return f }
+func (f *fakePredictBuilder) AddPlugins(g appface.PluginGroup) appface.Builder {
+	for _, p := range g.Plugins() {
+		p.Build(f)
+	}
+	return f
+}
+
+func TestPredictionPluginBuild(t *testing.T) {
+	t.Parallel()
+	fb := newFakePredictBuilder()
+
+	// NetworkPlugin resources must exist before PredictionPlugin.
+	reg := typereg.NewTypeRegistry()
+	snaps := netcore.NewSnapshotManager(reg, 16)
+	sched := netcore.NewDeterministicSchedule(0, time.Millisecond)
+	rc := netcore.NewRollbackCoordinator(snaps, sched)
+	buf := netcore.NewInputBuffer()
+	w := fb.w
+	world.SetResource(w, snaps)
+	world.SetResource(w, sched)
+	world.SetResource(w, rc)
+	world.SetResource(w, buf)
+	world.SetResource(w, netcore.OutboundQueue{})
+
+	plugin := PredictionPlugin{LocalPlayer: 1, ServerConn: 0}
+	plugin.Build(fb)
+
+	// Three systems should be registered.
+	if len(fb.systems) != 3 {
+		t.Errorf("systems registered = %d, want 3: got %v", len(fb.systems), fb.systems)
+	}
+	// ServerState resource should be set.
+	if _, ok := world.Resource[ServerState](w); !ok {
+		t.Error("ServerState resource should be set by PredictionPlugin")
 	}
 }
 

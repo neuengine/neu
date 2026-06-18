@@ -4,9 +4,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/neuengine/neu/internal/ecs/scheduler"
 	"github.com/neuengine/neu/internal/ecs/typereg"
 	"github.com/neuengine/neu/internal/ecs/world"
 	netcore "github.com/neuengine/neu/internal/net"
+	"github.com/neuengine/neu/pkg/app/appface"
+	"github.com/neuengine/neu/pkg/scene"
 )
 
 // ─── mock transport ──────────────────────────────────────────────────────────
@@ -500,5 +503,479 @@ func TestChecksumPacketShort(t *testing.T) {
 	_, _, ok := DecodeChecksumPacket([]byte{0, 1})
 	if ok {
 		t.Error("DecodeChecksumPacket with 2 bytes: want ok=false")
+	}
+}
+
+// ─── LockstepScheduler.Run ───────────────────────────────────────────────────
+
+func TestLockstepSchedulerRun(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{1}, InputDelay: 1})
+	w, _ := buildLockstepWorld(t)
+	feedInputs(t, w, 1, []netcore.PlayerID{1})
+	ls.Run(w)
+	if ls.CurrentTick() != 1 {
+		t.Errorf("CurrentTick() = %d, want 1 after Run", ls.CurrentTick())
+	}
+}
+
+// ─── DesyncReceiveSystem ──────────────────────────────────────────────────────
+
+func TestDesyncReceiveSystemNoResources(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewDesyncReceiveSystem(ls)
+	w := world.NewWorld()
+	sys.Run(w) // no InboundQueue resource → early return, no panic
+}
+
+func TestDesyncReceiveSystemIgnoresNonEventChannel(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewDesyncReceiveSystem(ls)
+	w, _ := buildLockstepWorld(t)
+
+	payload := encodeChecksumPacket(1, 0xDEAD)
+	iqP, _ := world.Resource[netcore.InboundQueue](w)
+	iqP.Packets = []netcore.InboundPacket{
+		{Channel: netcore.ChannelSnapshot, Payload: payload},
+	}
+	sys.Run(w)
+	if ls.Halted() {
+		t.Error("packet on non-events channel should not cause halt")
+	}
+}
+
+func TestDesyncReceiveSystemHaltOnMismatch(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	desyncCh := make(chan DesyncDetected, 1)
+	ls.OnDesync = func(d DesyncDetected) { desyncCh <- d }
+	sys := NewDesyncReceiveSystem(ls)
+	w, _ := buildLockstepWorld(t)
+
+	// Record a snapshot at tick 3 so ReceiveChecksum has something to compare.
+	snapsP, _ := world.Resource[*netcore.SnapshotManager](w)
+	snaps := *snapsP
+	reader := scene.NewWorldAdapter(w)
+	snaps.TakeSnapshot(reader, 3)
+
+	// Send a checksum that differs from the local snapshot → mismatch.
+	payload := encodeChecksumPacket(3, 0xBADCAFE)
+	iqP, _ := world.Resource[netcore.InboundQueue](w)
+	iqP.Packets = []netcore.InboundPacket{
+		{Channel: netcore.ChannelEvents, Connection: netcore.ConnectionID(2), Payload: payload},
+	}
+	sys.Run(w)
+
+	if !ls.Halted() {
+		t.Error("scheduler should halt on checksum mismatch")
+	}
+	select {
+	case d := <-desyncCh:
+		if d.Tick != 3 {
+			t.Errorf("DesyncDetected.Tick = %d, want 3", d.Tick)
+		}
+		if d.Peer != 2 {
+			t.Errorf("DesyncDetected.Peer = %d, want 2", d.Peer)
+		}
+	default:
+		t.Error("OnDesync should have been called")
+	}
+}
+
+func TestDesyncReceiveSystemNoHaltOnMatch(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewDesyncReceiveSystem(ls)
+	w, _ := buildLockstepWorld(t)
+
+	// Record a real snapshot and use its exact checksum.
+	snapsP, _ := world.Resource[*netcore.SnapshotManager](w)
+	snaps := *snapsP
+	reader := scene.NewWorldAdapter(w)
+	h := snaps.TakeSnapshot(reader, 7)
+
+	payload := encodeChecksumPacket(7, h.Checksum)
+	iqP, _ := world.Resource[netcore.InboundQueue](w)
+	iqP.Packets = []netcore.InboundPacket{
+		{Channel: netcore.ChannelEvents, Payload: payload},
+	}
+	sys.Run(w)
+
+	if ls.Halted() {
+		t.Error("scheduler should not halt when checksums match")
+	}
+}
+
+// ─── SpeculativeExecutor ─────────────────────────────────────────────────────
+
+func TestSpeculativeExecutorDefaultMaxSpec(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: true})
+	if ex.config.MaxSpeculative != defaultMaxSpeculative {
+		t.Errorf("MaxSpeculative = %d, want %d", ex.config.MaxSpeculative, defaultMaxSpeculative)
+	}
+}
+
+func TestSpeculativeExecutorDisabledNoOp(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{2}, InputDelay: 1})
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: false})
+	w, _ := buildLockstepWorld(t)
+	ex.Run(w)
+	if ex.specCount != 0 || len(ex.pending) != 0 {
+		t.Error("disabled executor should leave specCount=0 and pending empty")
+	}
+}
+
+func TestSpeculativeExecutorHaltedNoOp(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{2}, InputDelay: 1})
+	ls.halted = true
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: true})
+	w, _ := buildLockstepWorld(t)
+	ex.Run(w)
+	if len(ex.pending) != 0 {
+		t.Error("halted scheduler: executor should not predict")
+	}
+}
+
+func TestSpeculativeExecutorNoResources(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{2}, InputDelay: 1})
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: true})
+	w := world.NewWorld()
+	ex.Run(w) // no resources → early return, no panic
+}
+
+func TestSpeculativeExecutorPredictsInput(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{2}, InputDelay: 1})
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: true})
+	w, _ := buildLockstepWorld(t)
+
+	ex.Run(w)
+
+	// target = ls.currentTick(0) + InputDelay(1) = 1
+	bufP, _ := world.Resource[*netcore.InputBuffer](w)
+	buf := *bufP
+	if _, ok := buf.GetInput(1, 2); !ok {
+		t.Error("speculative executor should predict input for missing peer")
+	}
+	if ex.specCount != 1 {
+		t.Errorf("specCount = %d, want 1", ex.specCount)
+	}
+	if len(ex.pending) != 1 {
+		t.Errorf("len(pending) = %d, want 1", len(ex.pending))
+	}
+}
+
+func TestSpeculativeExecutorConfirmsCorrect(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{2}, InputDelay: 1})
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: true})
+	w, _ := buildLockstepWorld(t)
+
+	// First run: predict nil data (PredictInput with no history returns nil Data).
+	ex.Run(w)
+	if ex.specCount != 1 {
+		t.Fatalf("specCount = %d, want 1 after first run", ex.specCount)
+	}
+
+	// Real input arrives matching the prediction (nil bytes → same checksum).
+	bufP, _ := world.Resource[*netcore.InputBuffer](w)
+	buf := *bufP
+	buf.RecordInput(1, 2, nil)
+
+	// Second run: confirm, pending cleared, no rollback.
+	ex.Run(w)
+	if ex.specCount != 0 {
+		t.Errorf("specCount = %d after correct confirm, want 0", ex.specCount)
+	}
+	if len(ex.pending) != 0 {
+		t.Errorf("len(pending) = %d after correct confirm, want 0", len(ex.pending))
+	}
+}
+
+func TestSpeculativeExecutorRollbackOnMismatch(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{Peers: []netcore.PlayerID{2}, InputDelay: 1})
+	ex := NewSpeculativeExecutor(ls, SpeculativeConfig{Enabled: true})
+	w, _ := buildLockstepWorld(t)
+
+	// First run: predict nil data for player 2 at tick 1.
+	ex.Run(w)
+	if ex.specCount != 1 {
+		t.Fatalf("specCount = %d, want 1", ex.specCount)
+	}
+
+	// Real input arrives with conflicting data → mismatch.
+	bufP, _ := world.Resource[*netcore.InputBuffer](w)
+	buf := *bufP
+	buf.RecordInput(1, 2, []byte{0xFF})
+
+	// Second run: misprediction detected, pending and specCount cleared.
+	ex.Run(w)
+	if ex.specCount != 0 {
+		t.Errorf("specCount = %d after mismatch, want 0", ex.specCount)
+	}
+	if len(ex.pending) != 0 {
+		t.Errorf("len(pending) = %d after mismatch, want 0", len(ex.pending))
+	}
+}
+
+// ─── LatejoinSystem ──────────────────────────────────────────────────────────
+
+// trackingTransport extends mockTransport to record per-connection sends and
+// expose a configurable connection list.
+type trackingTransport struct {
+	mockTransport
+	conns []netcore.ConnectionID
+	sent  []trackingSent
+}
+
+type trackingSent struct {
+	conn    netcore.ConnectionID
+	channel netcore.ChannelID
+	payload []byte
+}
+
+func (m *trackingTransport) Connections() []netcore.ConnectionID { return m.conns }
+func (m *trackingTransport) Send(id netcore.ConnectionID, ch netcore.ChannelID, p []byte) error {
+	m.sent = append(m.sent, trackingSent{conn: id, channel: ch, payload: p})
+	return nil
+}
+
+func TestLatejoinPacketRoundtrip(t *testing.T) {
+	t.Parallel()
+	data := []byte("snapshot-bytes")
+	payload := encodeLateJoinPacket(42, data)
+	tick, got, ok := decodeLateJoinPacket(payload)
+	if !ok {
+		t.Fatal("decodeLateJoinPacket: want ok=true")
+	}
+	if tick != 42 {
+		t.Errorf("tick = %d, want 42", tick)
+	}
+	if string(got) != string(data) {
+		t.Errorf("data = %q, want %q", got, data)
+	}
+}
+
+func TestLatejoinPacketShortPayload(t *testing.T) {
+	t.Parallel()
+	_, _, ok := decodeLateJoinPacket([]byte{0, 1, 2})
+	if ok {
+		t.Error("short payload: want ok=false")
+	}
+}
+
+func TestLatejoinPacketWrongMagic(t *testing.T) {
+	t.Parallel()
+	payload := make([]byte, 12)
+	copy(payload, []byte{'X', 'X', 'X', 'X'})
+	_, _, ok := decodeLateJoinPacket(payload)
+	if ok {
+		t.Error("wrong magic bytes: want ok=false")
+	}
+}
+
+func TestLatejoinSystemServerNoResources(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, true)
+	w := world.NewWorld()
+	sys.Run(w) // no TransportResource or SnapshotManager → early return, no panic
+}
+
+func TestLatejoinSystemServerSendsSnapshot(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, true)
+	w, _ := buildLockstepWorld(t)
+
+	// Record a snapshot at tick 0 (ls.currentTick).
+	snapsP, _ := world.Resource[*netcore.SnapshotManager](w)
+	snaps := *snapsP
+	reader := scene.NewWorldAdapter(w)
+	snaps.TakeSnapshot(reader, 0)
+
+	tt := &trackingTransport{conns: []netcore.ConnectionID{7}}
+	world.SetResource(w, netcore.TransportResource{T: tt})
+
+	sys.Run(w)
+
+	if len(tt.sent) != 1 {
+		t.Fatalf("sent %d packets, want 1", len(tt.sent))
+	}
+	if tt.sent[0].conn != 7 {
+		t.Errorf("sent to conn %d, want 7", tt.sent[0].conn)
+	}
+	if tt.sent[0].channel != netcore.ChannelSnapshot {
+		t.Errorf("sent on channel %d, want ChannelSnapshot", tt.sent[0].channel)
+	}
+	tick, _, ok := decodeLateJoinPacket(tt.sent[0].payload)
+	if !ok {
+		t.Fatal("sent payload does not decode as latejoin packet")
+	}
+	if tick != 0 {
+		t.Errorf("latejoin tick = %d, want 0", tick)
+	}
+}
+
+func TestLatejoinSystemServerIgnoresKnownConn(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, true)
+	w, _ := buildLockstepWorld(t)
+
+	snapsP, _ := world.Resource[*netcore.SnapshotManager](w)
+	snaps := *snapsP
+	reader := scene.NewWorldAdapter(w)
+	snaps.TakeSnapshot(reader, 0)
+
+	tt := &trackingTransport{conns: []netcore.ConnectionID{5}}
+	world.SetResource(w, netcore.TransportResource{T: tt})
+
+	// First run: conn 5 is new → send snapshot.
+	sys.Run(w)
+	if len(tt.sent) != 1 {
+		t.Fatalf("first run: sent %d packets, want 1", len(tt.sent))
+	}
+	// Second run: conn 5 is already known → no resend.
+	sys.Run(w)
+	if len(tt.sent) != 1 {
+		t.Errorf("second run: sent %d total packets, want still 1 (known conn suppressed)", len(tt.sent))
+	}
+}
+
+func TestLatejoinSystemClientNoResources(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, false)
+	w := world.NewWorld()
+	sys.Run(w) // no InboundQueue → early return, no panic
+}
+
+func TestLatejoinSystemClientAppliesSnapshot(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, false)
+	w, _ := buildLockstepWorld(t)
+
+	// Encode a latejoin packet with an empty but valid JSON snapshot.
+	payload := encodeLateJoinPacket(10, []byte("[]"))
+	iqP, _ := world.Resource[netcore.InboundQueue](w)
+	iqP.Packets = []netcore.InboundPacket{
+		{Channel: netcore.ChannelSnapshot, Payload: payload},
+	}
+	sys.Run(w)
+
+	if ls.currentTick != 10 {
+		t.Errorf("currentTick = %d, want 10 after latejoin", ls.currentTick)
+	}
+}
+
+func TestLatejoinSystemClientIgnoresNonSnapshotChannel(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, false)
+	w, _ := buildLockstepWorld(t)
+
+	payload := encodeLateJoinPacket(5, []byte("[]"))
+	iqP, _ := world.Resource[netcore.InboundQueue](w)
+	iqP.Packets = []netcore.InboundPacket{
+		{Channel: netcore.ChannelEvents, Payload: payload}, // wrong channel
+	}
+	sys.Run(w)
+
+	if ls.currentTick != 0 {
+		t.Errorf("currentTick = %d, want 0 (events-channel packet ignored)", ls.currentTick)
+	}
+}
+
+func TestLatejoinSystemClientIgnoresBadMagic(t *testing.T) {
+	t.Parallel()
+	ls := NewLockstepScheduler(LockstepConfig{})
+	sys := NewLatejoinSystem(ls, false)
+	w, _ := buildLockstepWorld(t)
+
+	bad := make([]byte, 12)
+	copy(bad, []byte{'X', 'X', 'X', 'X'})
+	iqP, _ := world.Resource[netcore.InboundQueue](w)
+	iqP.Packets = []netcore.InboundPacket{
+		{Channel: netcore.ChannelSnapshot, Payload: bad},
+	}
+	sys.Run(w)
+
+	if ls.currentTick != 0 {
+		t.Errorf("currentTick = %d, want 0 (bad magic ignored)", ls.currentTick)
+	}
+}
+
+// ─── LockstepPlugin ──────────────────────────────────────────────────────────
+
+type fakeLockstepBuilder struct {
+	w       *world.World
+	systems map[string][]string
+}
+
+func newFakeLockstepBuilder(w *world.World) *fakeLockstepBuilder {
+	return &fakeLockstepBuilder{w: w, systems: make(map[string][]string)}
+}
+
+func (b *fakeLockstepBuilder) World() *world.World { return b.w }
+
+func (b *fakeLockstepBuilder) AddSystem(schedule string, sys scheduler.System) appface.Builder {
+	b.systems[schedule] = append(b.systems[schedule], sys.Name())
+	return b
+}
+
+func (b *fakeLockstepBuilder) AddSystems(schedule string, sys ...scheduler.System) appface.Builder {
+	for _, s := range sys {
+		b.systems[schedule] = append(b.systems[schedule], s.Name())
+	}
+	return b
+}
+
+func (b *fakeLockstepBuilder) SetResource(_ any) appface.Builder          { return b }
+func (b *fakeLockstepBuilder) InitResource(_ any) appface.Builder         { return b }
+func (b *fakeLockstepBuilder) AddPlugin(_ appface.Plugin) appface.Builder { return b }
+func (b *fakeLockstepBuilder) AddPlugins(_ appface.PluginGroup) appface.Builder {
+	return b
+}
+
+func TestLockstepPluginBuild(t *testing.T) {
+	t.Parallel()
+	w, _ := buildLockstepWorld(t)
+	fb := newFakeLockstepBuilder(w)
+
+	p := LockstepPlugin{
+		Config:      LockstepConfig{Peers: []netcore.PlayerID{1, 2}},
+		LocalPlayer: 1,
+		IsServer:    false,
+		Speculative: SpeculativeConfig{Enabled: false},
+	}
+	p.Build(fb)
+
+	wantSystems := map[string][]string{
+		appface.PreUpdate:      {"lockstep.RemoteInputSystem", "lockstep.LatejoinSystem"},
+		appface.FixedPreUpdate: {"lockstep.SpeculativeExecutor"},
+		appface.FixedUpdate:    {"lockstep.LocalInputSystem", "lockstep.LockstepScheduler"},
+		appface.PostUpdate:     {"lockstep.DesyncReceiveSystem"},
+	}
+	for sched, want := range wantSystems {
+		got := fb.systems[sched]
+		if len(got) != len(want) {
+			t.Errorf("schedule %q: got %d systems %v, want %d %v", sched, len(got), got, len(want), want)
+			continue
+		}
+		for i, name := range want {
+			if got[i] != name {
+				t.Errorf("schedule %q[%d]: got %q, want %q", sched, i, got[i], name)
+			}
+		}
 	}
 }

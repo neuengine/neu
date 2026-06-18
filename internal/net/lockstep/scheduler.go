@@ -94,6 +94,9 @@ func (ls *LockstepScheduler) CurrentTick() uint64 { return ls.currentTick }
 // Halted reports whether the scheduler has stopped due to a desync (INV-4).
 func (ls *LockstepScheduler) Halted() bool { return ls.halted }
 
+// Run wraps Step for ECS schedule registration, discarding the bool return.
+func (ls *LockstepScheduler) Run(w *world.World) { _ = ls.Step(w) }
+
 // Step attempts to advance one simulation tick. It returns true if the tick was
 // executed, false if the scheduler is waiting for peer input or has been halted.
 func (ls *LockstepScheduler) Step(w *world.World) bool {
